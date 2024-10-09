@@ -5,7 +5,6 @@ import swaggerUI from 'swagger-ui-express';
 import passport from 'passport';
 import morgan from 'morgan';
 import { websiteRouter } from './router/website.js';
-import { workspaceRouter } from './router/workspace.js';
 import { telemetryRouter } from './router/telemetry.js';
 import {
   trpcExpressMiddleware,
@@ -15,6 +14,7 @@ import {
 import { env } from './utils/env.js';
 import cors from 'cors';
 import { serverStatusRouter } from './router/serverStatus.js';
+import { lighthouseRouter } from './router/lighthouse.js';
 import { logger } from './utils/logger.js';
 import { monitorRouter } from './router/monitor.js';
 import { healthRouter } from './router/health.js';
@@ -27,7 +27,11 @@ const app = express();
 
 app.set('trust proxy', true);
 app.use(compression());
-app.use(express.json());
+app.use(
+  express.json({
+    limit: '10mb',
+  })
+);
 app.use(passport.initialize());
 app.use(morgan('tiny'));
 app.use(cors());
@@ -45,10 +49,10 @@ app.use(
 app.use('/health', healthRouter);
 app.use('/api/auth/*', ExpressAuth(authConfig));
 app.use('/api/website', websiteRouter);
-app.use('/api/workspace', workspaceRouter);
 app.use('/monitor', monitorRouter);
 app.use('/telemetry', telemetryRouter);
 app.use('/serverStatus', serverStatusRouter);
+app.use('/lh', lighthouseRouter);
 
 app.use('/trpc', trpcExpressMiddleware);
 

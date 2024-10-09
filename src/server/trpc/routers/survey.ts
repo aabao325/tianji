@@ -3,7 +3,7 @@ import {
   OpenApiMetaInfo,
   publicProcedure,
   router,
-  workspaceOwnerProcedure,
+  workspaceAdminProcedure,
   workspaceProcedure,
 } from '../trpc.js';
 import { OPENAPI_TAG } from '../../utils/const.js';
@@ -220,7 +220,7 @@ export const surveyRouter = router({
 
       return 'success';
     }),
-  create: workspaceOwnerProcedure
+  create: workspaceAdminProcedure
     .meta(
       buildSurveyOpenapi({
         method: 'POST',
@@ -252,7 +252,7 @@ export const surveyRouter = router({
 
       return res;
     }),
-  update: workspaceOwnerProcedure
+  update: workspaceAdminProcedure
     .meta(
       buildSurveyOpenapi({
         method: 'PATCH',
@@ -294,7 +294,7 @@ export const surveyRouter = router({
 
       return res;
     }),
-  delete: workspaceOwnerProcedure
+  delete: workspaceAdminProcedure
     .meta(
       buildSurveyOpenapi({
         method: 'DELETE',
@@ -337,8 +337,7 @@ export const surveyRouter = router({
     )
     .output(buildCursorResponseSchema(SurveyResultModelSchema))
     .query(async ({ input }) => {
-      const limit = input.limit;
-      const { cursor, surveyId } = input;
+      const { cursor, surveyId, limit } = input;
 
       const where: Prisma.SurveyResultWhereInput = {
         surveyId,

@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { cn } from '@/utils/style';
-import { setUserInfo, useUserInfo } from '@/store/user';
+import {
+  changeUserCurrentWorkspace,
+  setUserInfo,
+  useCurrentWorkspace,
+  useCurrentWorkspaceSafe,
+  useUserInfo,
+} from '@/store/user';
 import { LuPlusCircle } from 'react-icons/lu';
 import { useTranslation } from '@i18next-toolkit/react';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
@@ -30,6 +36,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { trpc } from '@/api/trpc';
 import { showErrorToast } from '@/utils/error';
 import { first, upperCase } from 'lodash-es';
+import { Empty } from 'antd';
 
 interface WorkspaceSwitcherProps {
   isCollapsed: boolean;
@@ -41,6 +48,7 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = React.memo(
     const [open, setOpen] = React.useState(false);
     const [showNewWorkspaceDialog, setShowNewWorkspaceDialog] = useState(false);
     const [newWorkspaceName, setNewWorkspaceName] = useState('');
+    const currentWorkspace = useCurrentWorkspaceSafe();
     const createWorkspaceMutation = trpc.workspace.create.useMutation({
       onSuccess: (userInfo) => {
         setUserInfo(userInfo);
@@ -56,7 +64,7 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = React.memo(
       async (workspace: { id: string; name: string }) => {
         setOpen(false);
 
-        if (userInfo?.currentWorkspace.id === workspace.id) {
+        if (userInfo?.currentWorkspaceId === workspace.id) {
           return;
         }
 
@@ -64,6 +72,7 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = React.memo(
           await switchWorkspaceMutation.mutateAsync({
             workspaceId: workspace.id,
           });
+          changeUserCurrentWorkspace(workspace.id);
         } catch (err) {
           showErrorToast(err);
         }
@@ -88,8 +97,6 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = React.memo(
       return null;
     }
 
-    const currentWorkspace = userInfo.currentWorkspace;
-
     return (
       <Dialog
         open={showNewWorkspaceDialog}
@@ -106,27 +113,33 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = React.memo(
                 props.isCollapsed && 'h-9 w-9 items-center justify-center p-0'
               )}
             >
-              <Avatar
-                className={cn('h-5 w-5', props.isCollapsed ? '' : 'mr-2')}
-              >
-                <AvatarImage
-                  src={`https://avatar.vercel.sh/${currentWorkspace.name}.png`}
-                  alt={currentWorkspace.name}
-                  className="grayscale"
-                />
-                <AvatarFallback>
-                  {upperCase(first(currentWorkspace.name))}
-                </AvatarFallback>
-              </Avatar>
+              {currentWorkspace ? (
+                <>
+                  <Avatar
+                    className={cn('h-5 w-5', props.isCollapsed ? '' : 'mr-2')}
+                  >
+                    <AvatarImage
+                      src={`https://avatar.vercel.sh/${currentWorkspace.name}.png`}
+                      alt={currentWorkspace.name}
+                      className="grayscale"
+                    />
+                    <AvatarFallback>
+                      {upperCase(first(currentWorkspace.name))}
+                    </AvatarFallback>
+                  </Avatar>
 
-              <span
-                className={cn(
-                  'flex-1 overflow-hidden text-ellipsis text-left',
-                  props.isCollapsed && 'hidden'
-                )}
-              >
-                {currentWorkspace.name}
-              </span>
+                  <span
+                    className={cn(
+                      'flex-1 overflow-hidden text-ellipsis text-left',
+                      props.isCollapsed && 'hidden'
+                    )}
+                  >
+                    {currentWorkspace.name}
+                  </span>
+                </>
+              ) : (
+                <span>{t('Select Workspace')}</span>
+              )}
 
               <CaretSortIcon
                 className={cn(
@@ -141,6 +154,15 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = React.memo(
               <CommandList>
                 <CommandEmpty>{t('No workspace found.')}</CommandEmpty>
                 <CommandGroup key="workspace" heading={t('Workspace')}>
+                  {userInfo.workspaces.length === 0 && (
+                    <Empty
+                      imageStyle={{ width: 80, height: 80, margin: 'auto' }}
+                      description={t(
+                        'Not any workspace has been found, please create first'
+                      )}
+                    />
+                  )}
+
                   {userInfo.workspaces.map(({ workspace }) => (
                     <CommandItem
                       key={workspace.id}
@@ -170,7 +192,7 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = React.memo(
                       <CheckIcon
                         className={cn(
                           'ml-auto h-4 w-4',
-                          currentWorkspace.id === workspace.id
+                          currentWorkspace?.id === workspace.id
                             ? 'opacity-100'
                             : 'opacity-0'
                         )}
@@ -237,50 +259,6 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = React.memo(
         </DialogContent>
       </Dialog>
     );
-
-    // return (
-    //   <Select value={userInfo.currentWorkspace.id}>
-    //     <SelectTrigger
-    //       className={cn(
-    //         'flex items-center gap-2 [&>span]:line-clamp-1 [&>span]:flex [&>span]:w-full [&>span]:items-center [&>span]:gap-1 [&>span]:truncate [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0',
-    //         props.isCollapsed &&
-    //           'flex h-9 w-9 shrink-0 items-center justify-center p-0 [&>span]:w-auto [&>svg]:hidden'
-    //       )}
-    //       aria-label="Select workspace"
-    //     >
-    //       <SelectValue placeholder="Select workspace">
-    //         <RiRocket2Fill />
-
-    //         <span className={cn('ml-2', props.isCollapsed && 'hidden')}>
-    //           {userInfo.currentWorkspace.name}
-    //         </span>
-    //       </SelectValue>
-    //     </SelectTrigger>
-    //     <SelectContent>
-    //       {userInfo.workspaces.map((w) => (
-    //         <SelectItem key={w.workspace.id} value={w.workspace.id}>
-    //           <div className="[&_svg]:text-foreground flex items-center gap-3 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0">
-    //             <RiRocket2Fill />
-    //             {w.workspace.name}
-    //           </div>
-    //         </SelectItem>
-    //       ))}
-
-    //       <SelectSeparator />
-
-    //       <SelectItem
-    //         value="create"
-    //         onClick={() => console.log('aa')}
-    //         onSelect={() => console.log('bbb')}
-    //       >
-    //         <div className="[&_svg]:text-foreground flex items-center gap-3 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0">
-    //           <LuPlus />
-    //           {t('Create Workspace')}
-    //         </div>
-    //       </SelectItem>
-    //     </SelectContent>
-    //   </Select>
-    // );
   }
 );
 WorkspaceSwitcher.displayName = 'WorkspaceSwitcher';

@@ -13,7 +13,8 @@ type FeedEventItemType =
 export const FeedEventItem: React.FC<{
   className?: string;
   event: FeedEventItemType;
-}> = React.memo(({ className, event }) => {
+  actions?: React.ReactNode;
+}> = React.memo(({ className, event, actions }) => {
   return (
     <div
       className={cn(
@@ -21,15 +22,18 @@ export const FeedEventItem: React.FC<{
         className
       )}
     >
-      <div className="flex-1 gap-2 overflow-hidden">
+      <div className="relative flex-1 gap-2 overflow-hidden">
         <div className="mb-2 flex w-full items-center gap-2 overflow-hidden text-sm">
           <div className="border-muted rounded-lg border p-2">
             <FeedIcon source={event.source} size={24} />
           </div>
-          <div>
+
+          <div className="overflow-hidden">
             <MarkdownViewer value={event.eventContent} />
           </div>
         </div>
+
+        <div className="absolute right-0 top-0 flex gap-1">{actions}</div>
 
         <div className="flex justify-between">
           <div className="flex flex-wrap gap-2">
@@ -37,8 +41,10 @@ export const FeedEventItem: React.FC<{
 
             <Badge variant="secondary">{event.eventName}</Badge>
 
-            {event.tags.map((tag) => (
-              <Badge variant="outline">{tag}</Badge>
+            {event.tags.map((tag, i) => (
+              <Badge key={i} variant="outline">
+                {tag}
+              </Badge>
             ))}
           </div>
 
@@ -46,7 +52,7 @@ export const FeedEventItem: React.FC<{
             <TooltipTrigger className="cursor-default self-end text-xs opacity-60">
               <div>{dayjs(event.createdAt).fromNow()}</div>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent side="left">
               <p>{dayjs(event.createdAt).format('YYYY-MM-DD HH:mm:ss')}</p>
             </TooltipContent>
           </Tooltip>

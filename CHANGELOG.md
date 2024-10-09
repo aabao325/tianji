@@ -1,5 +1,288 @@
 
 
+## [1.15.7](https://github.com/msgbyte/tianji/compare/v1.15.6...v1.15.7) (2024-10-03)
+
+
+### Bug Fixes
+
+* fix a problem which will make request list incorrect ([2d5a09c](https://github.com/msgbyte/tianji/commit/2d5a09c79cae48f62029b8767bae552376e68639))
+
+
+### Document
+
+* fix update code to new version ([1fe5009](https://github.com/msgbyte/tianji/commit/1fe50092bab5e0824c1b96b70d40d33f751f4135))
+
+
+### Others
+
+* split website from monorepo ([e09d7ee](https://github.com/msgbyte/tianji/commit/e09d7eef8788e27ac651f18dcf4d04de895a35ee))
+* update workspace config and remove unused lock file ([7301eeb](https://github.com/msgbyte/tianji/commit/7301eeb82a4fdc4ae6853dbe98c1f1d7b9b79bca))
+
+## [1.15.6](https://github.com/msgbyte/tianji/compare/v1.15.5...v1.15.6) (2024-10-02)
+
+
+### Others
+
+* add build dependency for build zeromq ([79b75f5](https://github.com/msgbyte/tianji/commit/79b75f55e39c057c330bc1fb0b3b15dc10e28a78))
+* improve install package time in docker build static stage ([1be03cc](https://github.com/msgbyte/tianji/commit/1be03ccf532a7dd6d23334a5666dec34e2e68d77))
+* update NODE_OPTIONS in static layer to make sure build can pass ([5eb7696](https://github.com/msgbyte/tianji/commit/5eb7696ead2da961d6ac5223a2badb48502142ba))
+
+## [1.15.5](https://github.com/msgbyte/tianji/compare/v1.15.4...v1.15.5) (2024-10-01)
+
+
+### Features
+
+* add error message for lighthouse ([bb0c574](https://github.com/msgbyte/tianji/commit/bb0c57489347242300c6153ed3908d1822bb692c))
+* add lighthouse score in database fields ([6c2a093](https://github.com/msgbyte/tianji/commit/6c2a0938423385d67309deefa67a3d971bf8d7c8))
+* add webhook playground ([33a0a60](https://github.com/msgbyte/tianji/commit/33a0a60eee53d1ac08cc9accc2e96f06e56ebb52))
+* add webhook playground entry ([92196e4](https://github.com/msgbyte/tianji/commit/92196e4e5bb9b183cfe85aad876115c0e17f824e))
+* add zeromq to make sure lighthouse can only run one at same time ([50a3573](https://github.com/msgbyte/tianji/commit/50a35732ff202f2452b344c2df17aba677426ec3))
+
+
+### Others
+
+* improve avatar display timing for non-avatar user ([04dc1e9](https://github.com/msgbyte/tianji/commit/04dc1e98dd448c0fd6661559722cf594ab2e751e))
+* refactor time event chart to recharts ([1337eaa](https://github.com/msgbyte/tianji/commit/1337eaa2c0ff55651a05878edd722ac1b46a5067))
+* update style of website page card ([b778f8c](https://github.com/msgbyte/tianji/commit/b778f8c982f7df8328c2fffe67783b15cde51c15))
+* upgrade shadcn cli and add recharts ([055f57e](https://github.com/msgbyte/tianji/commit/055f57e087f002b8f891053509e3cad865f1d52b))
+
+## [1.15.4](https://github.com/msgbyte/tianji/compare/v1.15.3...v1.15.4) (2024-09-30)
+
+
+### Features
+
+* allow rename workspace ([63e6bfe](https://github.com/msgbyte/tianji/commit/63e6bfe0d1a989479a6c4658d01ea9d84fc84b45))
+
+
+### Bug Fixes
+
+* fix login view split incorrect if not any extra login way ([b16a7c3](https://github.com/msgbyte/tianji/commit/b16a7c3c2c203394c94ccfee8e829bc7685a2457))
+* remove workspace name validation ([7c271dc](https://github.com/msgbyte/tianji/commit/7c271dc3c14fc6c751fb69b16adf6f08bfd5ac7b))
+
+
+### Others
+
+* add ignore in docker build ([ee72f74](https://github.com/msgbyte/tianji/commit/ee72f74e2c68c9baec500b78a3b994c8083abeed))
+* add logger for lighthouse ([9d3e9d8](https://github.com/msgbyte/tianji/commit/9d3e9d89db40aad4a78df8b64ad3d7bfccb94d2e))
+* add no sandbox args in puppeteer ([8b6a740](https://github.com/msgbyte/tianji/commit/8b6a74033c2838a6921c56990e13eedfbc8a559a))
+* docker add puppeteer support ([23c6915](https://github.com/msgbyte/tianji/commit/23c691541db0a51b4765dd0943488def7741c0f4))
+* downgrade alpine version to 3.19 to avoid issue ([e6df595](https://github.com/msgbyte/tianji/commit/e6df595af8ecddf734fe7e72a797921d84dad2c3))
+* improve docker build and lighthouse config ([57ebaf6](https://github.com/msgbyte/tianji/commit/57ebaf6ad361cae3403263009b94566cc7de2293))
+* improve websocket log ([b44e57d](https://github.com/msgbyte/tianji/commit/b44e57dde8d027eb05b7e8db20d490d2b62607cc))
+* try to resolve no screenshot problem by remove single process. ([fe432f1](https://github.com/msgbyte/tianji/commit/fe432f13325adf5fb4cde3dbb2f4f1218cb789e7)), closes [/github.com/GoogleChrome/lighthouse/issues/11537#issuecomment-799895027](https://github.com/msgbyte//github.com/GoogleChrome/lighthouse/issues/11537/issues/issuecomment-799895027)
+* unity esbuild version to resolve vulnerabilities which cause by esbuild ([bcc215c](https://github.com/msgbyte/tianji/commit/bcc215ca5d33126b368b58a9056d02fd93d5a99a))
+* update dockerfile, carry back auto install dependency ([de09059](https://github.com/msgbyte/tianji/commit/de09059e6561a27e160f0e39e7987da8ad05edaa))
+* update translation ([9c35bca](https://github.com/msgbyte/tianji/commit/9c35bca68508f2009434ebf578f0488a948e6b75))
+* upgrade axios version to latest to resolve vulnerabilities ([d73fa10](https://github.com/msgbyte/tianji/commit/d73fa108978b3c965b07dda725fbe6ae20bc4140))
+* upgrade puppeteer to make sure can fit with alpine image chromium version ([f59793d](https://github.com/msgbyte/tianji/commit/f59793d6f18625ad66b26d0a74aaa14c604ea812))
+* upgrade puppeteer usage to fit new version ([1322741](https://github.com/msgbyte/tianji/commit/13227416c05e2eae5a1a99e5d5f3396679e83d89))
+* upgrade puppeteer version to 23.4.1 ([e942769](https://github.com/msgbyte/tianji/commit/e942769af2e2570da71eb23f3ad489e8dcb72e95))
+
+## [1.15.3](https://github.com/msgbyte/tianji/compare/v1.15.2...v1.15.3) (2024-09-24)
+
+
+### Features
+
+* add fixed server list ([4f2c112](https://github.com/msgbyte/tianji/commit/4f2c1129a0421934b43d3b6e02b17d629d275614))
+
+
+### Others
+
+* add language fallback to make sure its can be display correct ([31e8ce4](https://github.com/msgbyte/tianji/commit/31e8ce4ab9beec4af730b9302c0c3b861234123e))
+* clear unused code ([cdc3ce1](https://github.com/msgbyte/tianji/commit/cdc3ce122386e632f6b4350bc3dd4bdf4c17e0ed))
+* improve monitor detail style, enhance style difference ([f2ce1fb](https://github.com/msgbyte/tianji/commit/f2ce1fb10c92a2e2583ec3b36866308954958e1e))
+
+## [1.15.2](https://github.com/msgbyte/tianji/compare/v1.15.1...v1.15.2) (2024-09-23)
+
+
+### Features
+
+* add admin role and change most owner permission to admin ([79ed059](https://github.com/msgbyte/tianji/commit/79ed059d995da6eaabc452a0844b9acb69dc981c))
+* add label map for device type in website ([f16ccb5](https://github.com/msgbyte/tianji/commit/f16ccb56895f65dea530be295b19f04a03c8ed99))
+* add lighthouse reporter generate in website ([d29785a](https://github.com/msgbyte/tianji/commit/d29785a31184fe48913f7c49833c2d35a92c244a))
+* add status page incident model ([d182041](https://github.com/msgbyte/tianji/commit/d1820416f4924b2fc1920383b2d22b042f6e0381))
+* add workspace role permission check, hide non permission action ([4f4f9b5](https://github.com/msgbyte/tianji/commit/4f4f9b5d3f36192ea0f416997a43691674aa79fd))
+
+
+### Others
+
+* change default workspace name ([2058647](https://github.com/msgbyte/tianji/commit/205864720cdcbb5f46bee92fa6c577769a05f167))
+* fix light mode color issues ([fb75a8b](https://github.com/msgbyte/tianji/commit/fb75a8b6545a507c81acafa9cb526afccd39cd35))
+* invite add id support ([6a1f413](https://github.com/msgbyte/tianji/commit/6a1f413a384021d3c91e136be36a8c6375c74f99))
+* update README roadmap ([4a1d704](https://github.com/msgbyte/tianji/commit/4a1d704fbb88bb87f7e9db61f3da1364fb7543c0))
+* update translation ([6bf65cb](https://github.com/msgbyte/tianji/commit/6bf65cb529a2b0c52204063f2a10ad33e7b39aa5))
+
+## [1.15.1](https://github.com/msgbyte/tianji/compare/v1.15.0...v1.15.1) (2024-09-19)
+
+
+### Features
+
+* add custom oidc/oauth provider support ([d0afdf5](https://github.com/msgbyte/tianji/commit/d0afdf5c91d2112d177ab7bb0315586cb64ad8d7))
+
+
+### Bug Fixes
+
+* fix website cannot delete problem [#91](https://github.com/msgbyte/tianji/issues/91) ([90953e4](https://github.com/msgbyte/tianji/commit/90953e490ceea8e5256fd564e4d220b2e7da50b3))
+
+
+### Others
+
+* add account provider ([84e4722](https://github.com/msgbyte/tianji/commit/84e4722f2fc8026de25fa33d23e17db61a6d4437))
+* fix ci problem ([63484d0](https://github.com/msgbyte/tianji/commit/63484d0db59e1ccc178c7427ec7d60fd7f1484b0))
+
+## [1.15.0](https://github.com/msgbyte/tianji/compare/v1.14.7...v1.15.0) (2024-09-18)
+
+
+### Features
+
+* add delete workspace feature [#96](https://github.com/msgbyte/tianji/issues/96) ([2b9a14c](https://github.com/msgbyte/tianji/commit/2b9a14c969c824d630452e0e4e30834f2a9a1b47))
+* add group feature in backend ([4d39cb5](https://github.com/msgbyte/tianji/commit/4d39cb5ef4d95626e600289a1e949e78ccd7906f))
+* add lighthouse endpoint ([28d982e](https://github.com/msgbyte/tianji/commit/28d982e497bfd04351c8495ec9ddd58fc205e771))
+* add lighthouse html report endpoint ([943f7f5](https://github.com/msgbyte/tianji/commit/943f7f594ba90aa037ab5cb1b057f496e8a5fcb2))
+* add logout button in switch workspace page ([6ce2f7f](https://github.com/msgbyte/tianji/commit/6ce2f7fd4dbcd56b5a5f493108138e8c8447619b))
+* add sortable group component ([ef30750](https://github.com/msgbyte/tianji/commit/ef307508026bf516d321da933c298d87efd0b902))
+* refactor sortable group component and add edit body component ([946ecaf](https://github.com/msgbyte/tianji/commit/946ecaf9f946dfb2d85541170a7441ba6e782e5a))
+
+
+### Others
+
+* add body spaces ([12b8ba9](https://github.com/msgbyte/tianji/commit/12b8ba95b7720d384f8ae607cea0f4133d5f4fc4))
+* add new editable text component which allow to change group title ([e323e10](https://github.com/msgbyte/tianji/commit/e323e104e03569b7131dc1aac1e15c548ebe8485))
+* add sortable group component which using react-beautiful-dnd ([91ade2a](https://github.com/msgbyte/tianji/commit/91ade2ab555e43dc36ec32c7e9cb2856ffccd5ae))
+* change edit style and logic, create new MonitorPicker component ([72a1e7b](https://github.com/msgbyte/tianji/commit/72a1e7b0249c69510af7650e19bf939ed88cf550))
+* fix ci problem and remove unused code ([95b51ca](https://github.com/msgbyte/tianji/commit/95b51ca2e160bf835aafb770e0a11b8ad0fc5858))
+* improve admin style in status page ([ed2141a](https://github.com/msgbyte/tianji/commit/ed2141af22a6103ea5be850eff57be7f24d9011b))
+* improve some style in server status page ([427e9e3](https://github.com/msgbyte/tianji/commit/427e9e3eb7684a58a4c2cb597283c5a5319d9dd3))
+* refactor server status edit form with react-hook-form ([6160d7b](https://github.com/msgbyte/tianji/commit/6160d7bcb9d3bf2a8b617b422e80fe7df8839967))
+* remove sender name in notification ([f309000](https://github.com/msgbyte/tianji/commit/f309000a0c3a58a4e1df9c44803ea6a0299fe9ac))
+* remove unused code and improve display view in status page ([f5151aa](https://github.com/msgbyte/tianji/commit/f5151aa2a4185714f1f988a2bad336b90f410b69))
+* update translation ([ef3d344](https://github.com/msgbyte/tianji/commit/ef3d34423b71969f9a9afee0f64394e17a66143f))
+* update translation ([8b86dcd](https://github.com/msgbyte/tianji/commit/8b86dcdceaf738cd27bbe6253825c9ef967c675f))
+* update translation ([42f41cd](https://github.com/msgbyte/tianji/commit/42f41cdbcb2a4452fbdcf6013451d6008d6d97f1))
+* upgrade @radix-ui/react-scroll-area version ([fc1e67e](https://github.com/msgbyte/tianji/commit/fc1e67e005fa7f4502807df1ab02c49b863bc4e4))
+
+## [1.14.7](https://github.com/msgbyte/tianji/compare/v1.14.6...v1.14.7) (2024-09-10)
+
+
+### Document
+
+* add document and website entry in app ([f74289f](https://github.com/msgbyte/tianji/commit/f74289ff0539b4cf4141eafbc6fc6cec12529357))
+
+
+### Others
+
+* improve data table resizer width to make it more easy to use ([2e60945](https://github.com/msgbyte/tianji/commit/2e609452b55c6aa957fdff3dd96b6b617bda13ed))
+* improve notification and feed channel filter logic ([e770e42](https://github.com/msgbyte/tianji/commit/e770e428936aa84c4ce0811c820ef4e43c2cdea3))
+* update sentry feed content ([1895ac7](https://github.com/msgbyte/tianji/commit/1895ac772cec64c92c490a1a06d78df2eae05191))
+
+## [1.14.6](https://github.com/msgbyte/tianji/compare/v1.14.5...v1.14.6) (2024-09-09)
+
+
+### Features
+
+* add unknown integration log ([d2afa54](https://github.com/msgbyte/tianji/commit/d2afa54301bcdd6a40fe5116b8191196c9b7bb33))
+
+## [1.14.5](https://github.com/msgbyte/tianji/compare/v1.14.4...v1.14.5) (2024-09-07)
+
+
+### Bug Fixes
+
+* fix row header style issue ([cf4531c](https://github.com/msgbyte/tianji/commit/cf4531c5ddc1758a2d11776f058559622771b311))
+
+## [1.14.4](https://github.com/msgbyte/tianji/compare/v1.14.3...v1.14.4) (2024-09-03)
+
+
+### Document
+
+* fix edit page url ([8ccace1](https://github.com/msgbyte/tianji/commit/8ccace127ba6aae012e5c164dbcaa42ee299196c))
+* update manual install to include code update ([2cc098a](https://github.com/msgbyte/tianji/commit/2cc098a5f1f184fa8e627e3d8d65a7910d9967c6))
+
+
+### Others
+
+* fix ci problem which cause build failed ([c4211c2](https://github.com/msgbyte/tianji/commit/c4211c270ffd6b1a6355a871676f0abed0f1e24f))
+
+## [1.14.3](https://github.com/msgbyte/tianji/compare/v1.14.2...v1.14.3) (2024-09-02)
+
+
+### Features
+
+* add feed event url support ([8534ab7](https://github.com/msgbyte/tianji/commit/8534ab7ba029e4c98a642f4c927902455e97d4a9))
+* add sentry webhook integration ([546055e](https://github.com/msgbyte/tianji/commit/546055e5559cf460e7d0f1dcce835e905baafc1e))
+
+
+### Bug Fixes
+
+* fix health bar style problem in page ([01d774d](https://github.com/msgbyte/tianji/commit/01d774d3958abd5ee15631eb771e22d5771f405a))
+
+## [1.14.2](https://github.com/msgbyte/tianji/compare/v1.14.1...v1.14.2) (2024-09-02)
+
+
+### Features
+
+* add archive feature ([3270164](https://github.com/msgbyte/tianji/commit/3270164710179a534692eabca77285dd28d887a7))
+* add curl feed api guide ([5588aca](https://github.com/msgbyte/tianji/commit/5588aca522646d88b7c9ddb5bff98e23c1d3bc15))
+* add feed archive page ([87b4000](https://github.com/msgbyte/tianji/commit/87b4000c4791a935a0f9247d1c219529105d0801))
+* add socket state ([e095a08](https://github.com/msgbyte/tianji/commit/e095a081b949880a088fd3e2512005d71d024769))
+* feishu add markdown syntax support ([33de808](https://github.com/msgbyte/tianji/commit/33de808f3e4e6a763fc36de96f24e01055907aba))
+
+
+### Document
+
+* update Chinese translation ([9fcc6dd](https://github.com/msgbyte/tianji/commit/9fcc6dda60a6496fb1909cdc5facd0ebb60e9448))
+
+
+### Others
+
+* improve feed event report style ([88f47db](https://github.com/msgbyte/tianji/commit/88f47db118968aa323b6ee0eac6b14e4fe9aa608))
+* update translations ([9966c12](https://github.com/msgbyte/tianji/commit/9966c1277c6bc8df74d9c3ca742b9e98c7577087))
+
+## [1.14.1](https://github.com/msgbyte/tianji/compare/v1.14.0...v1.14.1) (2024-08-29)
+
+
+### Others
+
+* update pnpm version ([b9f5582](https://github.com/msgbyte/tianji/commit/b9f5582a02afffaff5777c85126e91e243ef82aa))
+
+## [1.14.0](https://github.com/msgbyte/tianji/compare/v1.13.1...v1.14.0) (2024-08-29)
+
+
+### Features
+
+* add create workspace and switch workspace ([fac0838](https://github.com/msgbyte/tianji/commit/fac0838d8c7b14c7940170b733db0a33ca297b73))
+* add delete workspace endpoint ([6fecde0](https://github.com/msgbyte/tianji/commit/6fecde0caa422c25ddbb9ec564afb44031b761da))
+* add invite endpoint ([8c8b960](https://github.com/msgbyte/tianji/commit/8c8b960f61926aae415954dbef772e263d738ec5))
+* add invite user form ([e0e0449](https://github.com/msgbyte/tianji/commit/e0e044945f02451ad2b1db8041e91a738589cd5d))
+* add tick trpc endpoint ([7f33e2d](https://github.com/msgbyte/tianji/commit/7f33e2de0d0e0e1b4c2ff5d172f5d6c89e8dcd15))
+* add unstar feed ([446ddaf](https://github.com/msgbyte/tianji/commit/446ddafa0afb534e02f767457973a1594a190f8f))
+* add workspace page ([4918071](https://github.com/msgbyte/tianji/commit/491807165c7a4bd27b30961fdb3d525187d05ca3))
+
+
+### Bug Fixes
+
+* fix a style issue which workspace switch style broken with long name ([cbdb1c4](https://github.com/msgbyte/tianji/commit/cbdb1c4a079fcd19f03750dc3379f3e1aaaeb772))
+* fix some case(maybe) can not key problem ([b64ca8b](https://github.com/msgbyte/tianji/commit/b64ca8b300f2bcbbbcbdf95b4e0d9780c1f64b1b))
+* fix virtualize table loading and column style problem ([bb84661](https://github.com/msgbyte/tianji/commit/bb846616127e8ef823441b945390327a87b2f689))
+
+
+### Document
+
+* add private-policy page ([d136460](https://github.com/msgbyte/tianji/commit/d136460e39a69510e66952e76d42bca4016337a4))
+* update openapi files ([79a7a92](https://github.com/msgbyte/tianji/commit/79a7a923d247a2581cca5b0e912bcbe35a892851))
+* update website feed feature list ([ebd1e5e](https://github.com/msgbyte/tianji/commit/ebd1e5eb6648a424f078047125f31ce3a93bff03))
+
+
+### Others
+
+* add default error style problem ([3cc678f](https://github.com/msgbyte/tianji/commit/3cc678f09ec8d743f17b7b2f296475b2d37c8841))
+* fix ci problem ([f7e1c81](https://github.com/msgbyte/tianji/commit/f7e1c8114b38c740f37e69125bd31fb26e1c2a1f))
+* fix tsconfig problem in tsx ([40df49e](https://github.com/msgbyte/tianji/commit/40df49e1dbb5afda4a2d01b94e298e4f2dfaa2d5))
+* improve healthbar display, will responsive with container size ([3990b0a](https://github.com/msgbyte/tianji/commit/3990b0a872d963900f52a97e869e7f26227c8107))
+* update translation ([e983092](https://github.com/msgbyte/tianji/commit/e9830920378c71371946d526ef20335176cc8f18))
+* upgrade @radix-ui/react-scroll-area to resolve scroll problem ([b862dd7](https://github.com/msgbyte/tianji/commit/b862dd74273faa78c65de916dce0a8fdafe9e834))
+* upgrade package manager ([fa328fb](https://github.com/msgbyte/tianji/commit/fa328fb0bfe9ef47cce1d44ae16aee2628921e30))
+* workspace switcher style and submit form reset ([5f47831](https://github.com/msgbyte/tianji/commit/5f47831f8e3f8df48fd287f6c4a23cb65270c21b))
+
 ## [1.13.1](https://github.com/msgbyte/tianji/compare/v1.13.0...v1.13.1) (2024-08-16)
 
 

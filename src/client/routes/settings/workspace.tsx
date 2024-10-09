@@ -3,7 +3,11 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useTranslation } from '@i18next-toolkit/react';
 import { CommonWrapper } from '@/components/CommonWrapper';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useCurrentWorkspace } from '../../store/user';
+import {
+  useCurrentWorkspace,
+  useHasAdminPermission,
+  useUserStore,
+} from '../../store/user';
 import { CommonHeader } from '@/components/CommonHeader';
 import {
   Card,
@@ -37,6 +41,10 @@ import { Button } from '@/components/ui/button';
 import { useEventWithLoading } from '@/hooks/useEvent';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { AlertConfirm } from '@/components/AlertConfirm';
+import { ROLES } from '@tianji/shared';
+import { cn } from '@/utils/style';
+import { Separator } from '@/components/ui/separator';
 
 export const Route = createFileRoute('/settings/workspace')({
   beforeLoad: routeAuthBeforeLoad,
@@ -44,7 +52,7 @@ export const Route = createFileRoute('/settings/workspace')({
 });
 
 const inviteFormSchema = z.object({
-  email: z.string().email(),
+  emailOrId: z.string(),
 });
 
 type InviteFormValues = z.infer<typeof inviteFormSchema>;
@@ -54,27 +62,49 @@ const columnHelper = createColumnHelper<MemberInfo>();
 
 function PageComponent() {
   const { t } = useTranslation();
-  const { id: workspaceId, name } = useCurrentWorkspace();
+  const { id: workspaceId, name, role } = useCurrentWorkspace();
+  const hasAdminPermission = useHasAdminPermission();
   const { data: members = [], refetch: refetchMembers } =
     trpc.workspace.members.useQuery({
       workspaceId,
     });
+  const updateCurrentWorkspaceName = useUserStore(
+    (state) => state.updateCurrentWorkspaceName
+  );
   const form = useForm<InviteFormValues>({
     resolver: zodResolver(inviteFormSchema),
     defaultValues: {
-      email: '',
+      emailOrId: '',
     },
   });
   const inviteMutation = trpc.workspace.invite.useMutation({
     onSuccess: defaultSuccessHandler,
     onError: defaultErrorHandler,
   });
+  const renameWorkspaceMutation = trpc.workspace.rename.useMutation({
+    onSuccess: defaultSuccessHandler,
+    onError: defaultErrorHandler,
+  });
+  const deleteWorkspaceMutation = trpc.workspace.delete.useMutation({
+    onSuccess: defaultSuccessHandler,
+    onError: defaultErrorHandler,
+  });
 
-  const [handleInvite, isLoading] = useEventWithLoading(
+  const [renameWorkspaceName, setRenameWorkspaceName] = useState('');
+  const [handleRename, isRenameLoading] = useEventWithLoading(async () => {
+    await renameWorkspaceMutation.mutateAsync({
+      workspaceId,
+      name: renameWorkspaceName,
+    });
+
+    updateCurrentWorkspaceName(renameWorkspaceName);
+  });
+
+  const [handleInvite, isInviteLoading] = useEventWithLoading(
     async (values: InviteFormValues) => {
       await inviteMutation.mutateAsync({
         workspaceId,
-        targetUserEmail: values.email,
+        emailOrId: values.emailOrId,
       });
       form.reset();
 
@@ -123,6 +153,10 @@ function PageComponent() {
             </CardHeader>
             <CardContent>
               <div>
+                <span className="mr-2">{t('Current Role')}:</span>
+                <span className="font-semibold">{role}</span>
+              </div>
+              <div>
                 <span className="mr-2">{t('Workspace ID')}:</span>
                 <span>
                   <Typography.Text code={true} copyable={true}>
@@ -134,7 +168,10 @@ function PageComponent() {
           </Card>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleInvite)}>
+            <form
+              onSubmit={form.handleSubmit(handleInvite)}
+              className={cn(!hasAdminPermission && 'opacity-50')}
+            >
               <Card>
                 <CardHeader className="text-lg font-bold">
                   {t('Invite new members by email address')}
@@ -142,12 +179,15 @@ function PageComponent() {
                 <CardContent>
                   <FormField
                     control={form.control}
-                    name="email"
+                    name="emailOrId"
                     render={({ field }) => (
                       <FormItem className="max-w-[320px]">
                         <FormLabel />
                         <FormControl>
-                          <Input placeholder="jane@example.com" {...field} />
+                          <Input
+                            placeholder="jane@example.com or userId"
+                            {...field}
+                          />
                         </FormControl>
                         <FormDescription />
                         <FormMessage />
@@ -157,7 +197,11 @@ function PageComponent() {
                 </CardContent>
 
                 <CardFooter>
-                  <Button type="submit" loading={isLoading}>
+                  <Button
+                    type="submit"
+                    loading={isInviteLoading}
+                    disabled={!hasAdminPermission}
+                  >
                     {t('Invite')}
                   </Button>
                 </CardFooter>
@@ -173,6 +217,68 @@ function PageComponent() {
               <DataTable columns={columns} data={members} />
             </CardContent>
           </Card>
+
+          {role === ROLES.owner && (
+            <Card>
+              <CardHeader className="text-lg font-bold">
+                {t('Danger Zone')}
+              </CardHeader>
+              <CardContent>
+                <div>
+                  <div className="flex items-center gap-2 text-left">
+                    <Input
+                      className="w-60"
+                      placeholder={t('New Workspace Name')}
+                      value={renameWorkspaceName}
+                      onChange={(e) => setRenameWorkspaceName(e.target.value)}
+                    />
+
+                    <AlertConfirm
+                      title={'Confirm to rename this workspace?'}
+                      description={`${name} => ${renameWorkspaceName}`}
+                      onConfirm={handleRename}
+                    >
+                      <Button
+                        type="button"
+                        loading={isRenameLoading}
+                        disabled={
+                          !renameWorkspaceName || name === renameWorkspaceName
+                        }
+                      >
+                        {t('Rename')}
+                      </Button>
+                    </AlertConfirm>
+                  </div>
+
+                  <Separator className="my-4" />
+
+                  <AlertConfirm
+                    title={'Confirm to delete this workspace'}
+                    description={t(
+                      'All content in this workspace will be destory and can not recover.'
+                    )}
+                    onConfirm={async () => {
+                      await deleteWorkspaceMutation.mutateAsync({
+                        workspaceId,
+                      });
+
+                      setTimeout(() => {
+                        window.location.reload();
+                      }, 1000);
+                    }}
+                  >
+                    <Button
+                      type="button"
+                      loading={deleteWorkspaceMutation.isLoading}
+                      variant="destructive"
+                    >
+                      {t('Delete Workspace')}
+                    </Button>
+                  </AlertConfirm>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </ScrollArea>
     </CommonWrapper>

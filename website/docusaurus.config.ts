@@ -34,7 +34,7 @@ const config: Config = {
   // to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en', 'fr', 'de', 'ja', 'zh-Hans'],
   },
 
   presets: [
@@ -49,7 +49,7 @@ const config: Config = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           routeBasePath: '/docs',
-          editUrl: 'https://github.com/msgbyte/tianji/tree/main/website/',
+          editUrl: 'https://github.com/msgbyte/tianji/tree/master/website/',
         },
         theme: {
           customCss: [
@@ -57,6 +57,19 @@ const config: Config = {
             require.resolve('./src/css/custom.css'),
           ],
         },
+        // need .git file, not easy build in vercel with cli, ignore now
+        // sitemap: {
+        //   lastmod: 'date',
+        //   changefreq: 'weekly',
+        //   priority: 0.5,
+        //   ignorePatterns: ['/tags/**'],
+        //   filename: 'sitemap.xml',
+        //   createSitemapItems: async (params) => {
+        //     const { defaultCreateSitemapItems, ...rest } = params;
+        //     const items = await defaultCreateSitemapItems(rest);
+        //     return items.filter((item) => !item.url.includes('/page/'));
+        //   },
+        // },
       },
     ],
   ],
@@ -108,6 +121,10 @@ const config: Config = {
         {
           href: 'https://github.com/msgbyte/tianji',
           label: 'GitHub',
+          position: 'right',
+        },
+        {
+          type: 'localeDropdown',
           position: 'right',
         },
       ],
@@ -183,6 +200,11 @@ const config: Config = {
       async: true,
       defer: true,
       'data-website-id': 'clopxgjr6050tqn5dzxo7pjac',
+    },
+    {
+      src: 'https://plausible.io/js/script.outbound-links.js',
+      defer: true,
+      'data-domain': 'msgbyte.com',
     },
   ],
 };

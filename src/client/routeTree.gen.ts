@@ -13,10 +13,12 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as WebsiteImport } from './routes/website'
 import { Route as TelemetryImport } from './routes/telemetry'
+import { Route as SwitchWorkspaceImport } from './routes/switchWorkspace'
 import { Route as SurveyImport } from './routes/survey'
 import { Route as SettingsImport } from './routes/settings'
 import { Route as ServerImport } from './routes/server'
 import { Route as RegisterImport } from './routes/register'
+import { Route as PlaygroundImport } from './routes/playground'
 import { Route as PageImport } from './routes/page'
 import { Route as MonitorImport } from './routes/monitor'
 import { Route as LoginImport } from './routes/login'
@@ -36,6 +38,7 @@ import { Route as SettingsAuditLogImport } from './routes/settings/auditLog'
 import { Route as PageAddImport } from './routes/page/add'
 import { Route as PageSlugImport } from './routes/page/$slug'
 import { Route as MonitorAddImport } from './routes/monitor/add'
+import { Route as FeedPlaygroundImport } from './routes/feed_/playground'
 import { Route as FeedAddImport } from './routes/feed/add'
 import { Route as WebsiteWebsiteIdIndexImport } from './routes/website/$websiteId/index'
 import { Route as SurveySurveyIdIndexImport } from './routes/survey/$surveyId/index'
@@ -58,6 +61,11 @@ const TelemetryRoute = TelemetryImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const SwitchWorkspaceRoute = SwitchWorkspaceImport.update({
+  path: '/switchWorkspace',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const SurveyRoute = SurveyImport.update({
   path: '/survey',
   getParentRoute: () => rootRoute,
@@ -75,6 +83,11 @@ const ServerRoute = ServerImport.update({
 
 const RegisterRoute = RegisterImport.update({
   path: '/register',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PlaygroundRoute = PlaygroundImport.update({
+  path: '/playground',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -173,6 +186,11 @@ const MonitorAddRoute = MonitorAddImport.update({
   getParentRoute: () => MonitorRoute,
 } as any)
 
+const FeedPlaygroundRoute = FeedPlaygroundImport.update({
+  path: '/feed/playground',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const FeedAddRoute = FeedAddImport.update({
   path: '/add',
   getParentRoute: () => FeedRoute,
@@ -242,6 +260,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PageImport
       parentRoute: typeof rootRoute
     }
+    '/playground': {
+      preLoaderRoute: typeof PlaygroundImport
+      parentRoute: typeof rootRoute
+    }
     '/register': {
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
@@ -258,6 +280,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SurveyImport
       parentRoute: typeof rootRoute
     }
+    '/switchWorkspace': {
+      preLoaderRoute: typeof SwitchWorkspaceImport
+      parentRoute: typeof rootRoute
+    }
     '/telemetry': {
       preLoaderRoute: typeof TelemetryImport
       parentRoute: typeof rootRoute
@@ -269,6 +295,10 @@ declare module '@tanstack/react-router' {
     '/feed/add': {
       preLoaderRoute: typeof FeedAddImport
       parentRoute: typeof FeedImport
+    }
+    '/feed/playground': {
+      preLoaderRoute: typeof FeedPlaygroundImport
+      parentRoute: typeof rootRoute
     }
     '/monitor/add': {
       preLoaderRoute: typeof MonitorAddImport
@@ -377,6 +407,7 @@ export const routeTree = rootRoute.addChildren([
     MonitorMonitorIdIndexRoute,
   ]),
   PageRoute.addChildren([PageSlugRoute, PageAddRoute]),
+  PlaygroundRoute,
   RegisterRoute,
   ServerRoute,
   SettingsRoute.addChildren([
@@ -391,6 +422,7 @@ export const routeTree = rootRoute.addChildren([
     SurveySurveyIdEditRoute,
     SurveySurveyIdIndexRoute,
   ]),
+  SwitchWorkspaceRoute,
   TelemetryRoute.addChildren([TelemetryTelemetryIdRoute, TelemetryAddRoute]),
   WebsiteRoute.addChildren([
     WebsiteAddRoute,
@@ -398,6 +430,7 @@ export const routeTree = rootRoute.addChildren([
     WebsiteWebsiteIdConfigRoute,
     WebsiteWebsiteIdIndexRoute,
   ]),
+  FeedPlaygroundRoute,
   StatusSlugRoute,
 ])
 

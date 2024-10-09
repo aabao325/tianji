@@ -33,12 +33,7 @@ export const createUserSelect = {
   createdAt: true,
   updatedAt: true,
   deletedAt: true,
-  currentWorkspace: {
-    select: {
-      id: true,
-      name: true,
-    },
-  },
+  currentWorkspaceId: true,
   workspaces: {
     select: {
       role: true,
@@ -109,7 +104,7 @@ export async function createUser(username: string, password: string) {
   const user = await prisma.$transaction(async (p) => {
     const newWorkspace = await p.workspace.create({
       data: {
-        name: username,
+        name: username + "'s Personal Workspace",
       },
     });
 

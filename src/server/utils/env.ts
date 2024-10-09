@@ -15,9 +15,11 @@ export const env = {
   port: Number(process.env.PORT || 12345),
   auth: {
     provider: compact([
+      !checkEnvTrusty(process.env.DISABLE_ACCOUNT) && 'account',
       !!process.env.EMAIL_SERVER && 'email',
       !!process.env.AUTH_GITHUB_ID && 'github',
       !!process.env.AUTH_GOOGLE_ID && 'google',
+      !!process.env.AUTH_CUSTOM_ID && 'custom',
     ]),
     restrict: {
       email: process.env.AUTH_RESTRICT_EMAIL, // for example: @example.com
@@ -35,6 +37,14 @@ export const env = {
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
     },
+    custom: {
+      // Reference: https://authjs.dev/guides/configuring-oauth-providers
+      name: process.env.AUTH_CUSTOM_NAME || 'Custom',
+      type: process.env.AUTH_CUSTOM_TYPE || 'oidc', // or oauth
+      issuer: process.env.AUTH_CUSTOM_ISSUR,
+      clientId: process.env.AUTH_CUSTOM_ID,
+      clientSecret: process.env.AUTH_CUSTOM_SECRET,
+    },
   },
   allowRegister: checkEnvTrusty(process.env.ALLOW_REGISTER),
   allowOpenapi: checkEnvTrusty(process.env.ALLOW_OPENAPI ?? 'true'),
@@ -42,6 +52,7 @@ export const env = {
   sandboxMemoryLimit: process.env.SANDBOX_MEMORY_LIMIT
     ? Number(process.env.SANDBOX_MEMORY_LIMIT)
     : 16, // unit: MB
+  puppeteerExecutablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
   dbDebug: checkEnvTrusty(process.env.DB_DEBUG),
   amapToken: process.env.AMAP_TOKEN,
   mapboxToken: process.env.MAPBOX_TOKEN,

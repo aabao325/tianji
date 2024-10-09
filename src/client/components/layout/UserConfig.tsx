@@ -18,6 +18,7 @@ import { useEvent } from '@/hooks/useEvent';
 import { useSettingsStore } from '@/store/settings';
 import {
   setUserInfo,
+  useCurrentWorkspace,
   useCurrentWorkspaceId,
   useUserInfo,
   useUserStore,
@@ -29,6 +30,8 @@ import { version } from '@/utils/env';
 import React from 'react';
 import { LuMoreVertical } from 'react-icons/lu';
 import { trpc } from '@/api/trpc';
+import { useSocketConnected } from '@/api/socketio';
+import { cn } from '@/utils/style';
 
 interface UserConfigProps {
   isCollapsed: boolean;
@@ -39,6 +42,7 @@ export const UserConfig: React.FC<UserConfigProps> = React.memo((props) => {
   const navigate = useNavigate();
   const colorScheme = useSettingsStore((state) => state.colorScheme);
   const workspaceId = useCurrentWorkspaceId();
+  const currentWorkspace = useCurrentWorkspace();
   const workspaces = useUserStore((state) => {
     const userInfo = state.info;
     if (userInfo) {
@@ -46,7 +50,7 @@ export const UserConfig: React.FC<UserConfigProps> = React.memo((props) => {
         id: w.workspace.id,
         name: w.workspace.name,
         role: w.role,
-        current: userInfo.currentWorkspace?.id === w.workspace.id,
+        current: currentWorkspace.id === w.workspace.id,
       }));
     }
 
@@ -57,6 +61,7 @@ export const UserConfig: React.FC<UserConfigProps> = React.memo((props) => {
       setUserInfo(userInfo);
     },
   });
+  const socketConnected = useSocketConnected();
 
   const handleChangeColorSchema = useEvent((colorScheme) => {
     useSettingsStore.setState({
@@ -67,10 +72,21 @@ export const UserConfig: React.FC<UserConfigProps> = React.memo((props) => {
   const nickname = userInfo?.nickname ?? userInfo?.username ?? '';
 
   const avatar = (
-    <Avatar size={props.isCollapsed ? 'sm' : 'default'}>
-      <AvatarImage src={userInfo?.avatar ?? undefined} />
-      <AvatarFallback>{nickname.substring(0, 2).toUpperCase()}</AvatarFallback>
-    </Avatar>
+    <div className="relative">
+      <Avatar size={props.isCollapsed ? 'sm' : 'default'}>
+        {userInfo?.avatar && <AvatarImage src={userInfo.avatar} />}
+
+        <AvatarFallback delayMs={userInfo?.avatar ? undefined : 0}>
+          {nickname.substring(0, 2).toUpperCase()}
+        </AvatarFallback>
+      </Avatar>
+      <div
+        className={cn(
+          'absolute bottom-0 right-0 h-2 w-2 rounded-full border border-white border-opacity-50',
+          socketConnected ? 'bg-green-400' : 'bg-gray-400'
+        )}
+      />
+    </div>
   );
 
   const name = (
@@ -156,7 +172,7 @@ export const UserConfig: React.FC<UserConfigProps> = React.memo((props) => {
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
                 <DropdownMenuRadioGroup
-                  value={i18n.language}
+                  value={i18n.language ?? 'en'}
                   onValueChange={setLanguage}
                 >
                   {languages.map((language) => (

@@ -6,9 +6,44 @@ import { OPENAPI_TAG } from '../../../utils/const.js';
 import { createFeedEvent } from '../../../model/feed/event.js';
 import { tencentCloudAlarmSchema } from '../../../model/_schema/feed.js';
 import { logger } from '../../../utils/logger.js';
-import { get, map } from 'lodash-es';
+import { compact, fromPairs, get, map, uniqueId } from 'lodash-es';
+import { subscribeEventBus } from '../../../ws/shared.js';
 
 export const feedIntegrationRouter = router({
+  playground: publicProcedure
+    .meta(
+      buildFeedPublicOpenapi({
+        method: 'POST',
+        path: '/playground/{workspaceId}',
+        summary: 'webhook playground',
+      })
+    )
+    .input(
+      z
+        .object({
+          workspaceId: z.string(),
+        })
+        .passthrough()
+    )
+    .output(z.string())
+    .mutation(async ({ input, ctx }) => {
+      const headers = ctx.req.headers;
+      const body = ctx.req.body;
+      const method = ctx.req.method;
+      const url = ctx.req.originalUrl;
+      const workspaceId = input.workspaceId;
+
+      subscribeEventBus.emit('onReceivePlaygroundWebhookRequest', workspaceId, {
+        id: uniqueId('req#'),
+        headers,
+        body,
+        method,
+        url,
+        createdAt: Date.now(),
+      });
+
+      return 'success';
+    }),
   github: publicProcedure
     .meta(
       buildFeedPublicOpenapi({
@@ -60,13 +95,14 @@ export const feedIntegrationRouter = router({
         await createFeedEvent(workspaceId, {
           channelId: channelId,
           eventName: eventType,
-          eventContent: `[${pusherName}](mailto:${pusherEmail}) push commit **${commits}** to **${ref}** in [${fullName}](${repoUrl})`,
+          eventContent: `[${pusherName}](mailto:${pusherEmail}) push commit ${commits ? `**${commits}**` : ''} to **${ref}** in [${fullName}](${repoUrl})`,
           tags: [],
           source: 'github',
           senderId,
           senderName,
           important: false,
           url,
+          payload: data,
         });
 
         return 'ok';
@@ -91,6 +127,7 @@ export const feedIntegrationRouter = router({
             senderName,
             important: false,
             url,
+            payload: data,
           });
         } else if (action === 'deleted') {
           await createFeedEvent(workspaceId, {
@@ -103,13 +140,13 @@ export const feedIntegrationRouter = router({
             senderName,
             important: false,
             url,
+            payload: data,
           });
         }
 
         return 'ok';
       } else if (eventType === 'issues') {
         const action = get(data, 'action') as 'opened' | 'closed';
-        const starCount = get(data, 'repository.stargazers_count');
         const fullName = get(data, 'repository.full_name');
         const repoUrl = get(data, 'repository.html_url');
         const senderId = String(get(data, 'sender.id'));
@@ -138,11 +175,14 @@ export const feedIntegrationRouter = router({
             senderName,
             important: false,
             url,
+            payload: data,
           });
 
           return 'ok';
         }
       }
+
+      logUnknownIntegration('github', input);
 
       return 'Not supported yet';
     }),
@@ -208,6 +248,7 @@ export const feedIntegrationRouter = router({
           senderId: alarm.alarmObjInfo.appId,
           senderName: alarm.alarmPolicyInfo.policyName,
           important: alarm.alarmStatus === '1',
+          payload: data,
         });
 
         return 'ok';
@@ -229,10 +270,83 @@ export const feedIntegrationRouter = router({
           senderId: alarm.alarmObjInfo.appId,
           senderName: alarm.alarmPolicyInfo.policyName,
           important: alarm.alarmStatus === '1',
+          payload: data,
         });
 
         return 'ok';
       }
+
+      logUnknownIntegration('tencentCloudAlarm', input);
+
+      return 'Not supported yet';
+    }),
+  sentry: publicProcedure
+    .meta(
+      buildFeedPublicOpenapi({
+        method: 'POST',
+        path: '/{channelId}/sentry',
+        summary: 'integrate with sentry webhook',
+      })
+    )
+    .input(
+      z
+        .object({
+          channelId: z.string(),
+        })
+        .passthrough()
+    )
+    .output(z.string())
+    .mutation(async ({ input, ctx }) => {
+      const { channelId, ...data } = input;
+      const eventType = ctx.req.headers['sentry-hook-resource'];
+
+      const workspaceId = await prisma.feedChannel
+        .findFirst({
+          where: {
+            id: channelId,
+          },
+          select: {
+            workspaceId: true,
+          },
+        })
+        .then((res) => res?.workspaceId);
+
+      if (!workspaceId) {
+        throw new Error('Not found Workspace');
+      }
+
+      const action = get(data, 'action');
+
+      if (eventType === 'event_alert' && action === 'triggered') {
+        const title = get(data, 'data.event.title');
+        const message = get(data, 'data.event.message');
+        const tags = fromPairs<string>(get(data as any, 'data.event.tags'));
+        const url = String(get(data, 'data.event.web_url'));
+        const senderId = String(get(data, 'data.actor.id'));
+        const senderName = String(get(data, 'data.actor.name'));
+
+        await createFeedEvent(workspaceId, {
+          channelId: channelId,
+          eventName: 'alert',
+          eventContent: `${title} | ${message}`,
+          tags: compact([
+            tags['environment'],
+            tags['release'],
+            tags['browser'],
+            tags['os'],
+            tags['device'],
+          ]),
+          source: 'sentry',
+          senderId,
+          senderName,
+          important: false,
+          url,
+        });
+
+        return 'ok';
+      }
+
+      logUnknownIntegration('sentry', input);
 
       return 'Not supported yet';
     }),
@@ -247,4 +361,8 @@ export function buildFeedPublicOpenapi(meta: OpenApiMetaInfo): OpenApiMeta {
       path: `/feed${meta.path}`,
     },
   };
+}
+
+function logUnknownIntegration(source: string, input: any) {
+  logger.info(`[Feed Unknown Integration] ${source}: ${JSON.stringify(input)}`);
 }

@@ -6,6 +6,8 @@ on:
       - master
     paths:
       - "src/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
   workflow_dispatch:
 
 jobs:
@@ -21,7 +23,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 9.5.0
+          version: 9.7.1
           run_install: false
       - name: Get pnpm store directory
         shell: bash

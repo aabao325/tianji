@@ -13,7 +13,7 @@ But if your server not support dockerize, you can try to install by manual.
 You need:
 
 - [Node.js](https://nodejs.org/en/download/) 18.12+ / 20.4+
-- [pnpm](https://pnpm.io/) 9.x(9.5.0 better)
+- [pnpm](https://pnpm.io/) 9.x(9.7.1 better)
 - [Git](https://git-scm.com/downloads)
 - [postgresql](https://www.postgresql.org/)
 - [pm2](https://pm2.keymetrics.io/) - For running Tianji in the background
@@ -57,7 +57,29 @@ pnpm db:migrate:apply
 pm2 start ./dist/src/server/main.js --name tianji
 ```
 
-Default, `Tianji` will run on http://localhost:12345
+Default, `Tianji` will run on `http://localhost:12345`
+
+## Update Code to new Version
+
+```bash
+# Checkout new release/tags
+cd tianji
+git fetch --tags
+git checkout -q <version>
+
+# Update dependencies
+pnpm install
+
+# Build project
+pnpm build
+
+# Run db migrations
+cd src/server
+pnpm db:migrate:apply
+
+# Restart Server
+pm2 restart tianji
+```
 
 # Frequently Asked Questions
 

@@ -3,7 +3,7 @@ import {
   OpenApiMetaInfo,
   publicProcedure,
   router,
-  workspaceOwnerProcedure,
+  workspaceAdminProcedure,
   workspaceProcedure,
 } from '../../trpc.js';
 import { OPENAPI_TAG } from '../../../utils/const.js';
@@ -50,7 +50,11 @@ export const feedRouter = router({
         include: {
           _count: {
             select: {
-              events: true,
+              events: {
+                where: {
+                  archived: false,
+                },
+              },
             },
           },
         },
@@ -173,6 +177,7 @@ export const feedRouter = router({
         channelId: z.string(),
         limit: z.number().min(1).max(100).default(50),
         cursor: z.string().optional(),
+        archived: z.boolean().default(false),
       })
     )
     .output(
@@ -182,11 +187,27 @@ export const feedRouter = router({
       })
     )
     .query(async ({ input }) => {
-      const { channelId, cursor, limit } = input;
+      const { channelId, cursor, limit, archived } = input;
 
       const { items, nextCursor } = await fetchDataByCursor(prisma.feedEvent, {
         where: {
           channelId,
+          archived,
+        },
+        select: {
+          id: true,
+          channelId: true,
+          createdAt: true,
+          updatedAt: true,
+          eventName: true,
+          eventContent: true,
+          tags: true,
+          source: true,
+          senderId: true,
+          senderName: true,
+          url: true,
+          important: true,
+          archived: true,
         },
         limit,
         cursor,
@@ -197,7 +218,7 @@ export const feedRouter = router({
         nextCursor,
       };
     }),
-  createChannel: workspaceOwnerProcedure
+  createChannel: workspaceAdminProcedure
     .meta(
       buildFeedOpenapi({
         method: 'POST',
@@ -247,7 +268,7 @@ export const feedRouter = router({
         notificationIds: channel?.notifications.map((n) => n.id),
       };
     }),
-  deleteChannel: workspaceOwnerProcedure
+  deleteChannel: workspaceAdminProcedure
     .meta(
       buildFeedOpenapi({
         method: 'DELETE',
@@ -288,6 +309,7 @@ export const feedRouter = router({
         senderId: true,
         senderName: true,
         important: true,
+        payload: true,
       }).merge(
         z.object({
           channelId: z.string(),
@@ -305,7 +327,86 @@ export const feedRouter = router({
         },
       });
 
-      return event;
+      return event as z.infer<typeof FeedEventModelSchema>;
+    }),
+  archiveEvent: workspaceAdminProcedure
+    .meta(
+      buildFeedPublicOpenapi({
+        method: 'PATCH',
+        path: '/{channelId}/{eventId}/archive',
+      })
+    )
+    .input(
+      z.object({
+        channelId: z.string(),
+        eventId: z.string(),
+      })
+    )
+    .output(z.void())
+    .mutation(async ({ input }) => {
+      const { channelId, eventId } = input;
+
+      await prisma.feedEvent.update({
+        data: {
+          archived: true,
+        },
+        where: {
+          id: eventId,
+          channelId,
+        },
+      });
+    }),
+  unarchiveEvent: workspaceAdminProcedure
+    .meta(
+      buildFeedPublicOpenapi({
+        method: 'PATCH',
+        path: '/{channelId}/{eventId}/unarchive',
+      })
+    )
+    .input(
+      z.object({
+        channelId: z.string(),
+        eventId: z.string(),
+      })
+    )
+    .output(z.void())
+    .mutation(async ({ input }) => {
+      const { channelId, eventId } = input;
+
+      await prisma.feedEvent.update({
+        data: {
+          archived: false,
+        },
+        where: {
+          id: eventId,
+          channelId,
+        },
+      });
+    }),
+  clearAllArchivedEvents: workspaceAdminProcedure
+    .meta(
+      buildFeedPublicOpenapi({
+        method: 'PATCH',
+        path: '/{channelId}/clearAllArchivedEvents',
+      })
+    )
+    .input(
+      z.object({
+        channelId: z.string(),
+      })
+    )
+    .output(z.number())
+    .mutation(async ({ input }) => {
+      const { channelId } = input;
+
+      const res = await prisma.feedEvent.deleteMany({
+        where: {
+          channelId,
+          archived: true,
+        },
+      });
+
+      return res.count;
     }),
   integration: feedIntegrationRouter,
 });

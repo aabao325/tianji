@@ -70,7 +70,7 @@ export const MonitorListItem: React.FC<{
     <div
       className={clsx(
         className,
-        'mb-1 flex items-center rounded-lg bg-green-500 bg-opacity-0 px-4 py-3 hover:bg-opacity-10',
+        'mb-1 flex items-center overflow-hidden rounded-lg bg-green-500 bg-opacity-0 px-4 py-3 hover:bg-opacity-10',
         onClick && 'cursor-pointer'
       )}
       onClick={onClick}
@@ -87,7 +87,7 @@ export const MonitorListItem: React.FC<{
       </div>
 
       <div className="flex-1 pl-2">
-        <div className="text-base">{monitorName}</div>
+        <div className="text-nowrap text-base">{monitorName}</div>
         {/* <div>
               {monitor.tags.map((tag) => (
                 <span
@@ -108,8 +108,9 @@ export const MonitorListItem: React.FC<{
         </Tooltip>
       )}
 
-      <div className="flex items-center">
+      <div className="flex-shrink basis-[160px] items-center overflow-hidden px-1">
         <MonitorHealthBar
+          healthBarClassName="justify-end"
           workspaceId={workspaceId}
           monitorId={monitorId}
           monitorType={monitorType}

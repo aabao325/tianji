@@ -1,7 +1,8 @@
 import {
   OpenApiMetaInfo,
+  publicProcedure,
   router,
-  workspaceOwnerProcedure,
+  workspaceAdminProcedure,
   workspaceProcedure,
 } from '../trpc.js';
 import { z } from 'zod';
@@ -31,7 +32,11 @@ import {
   websiteStatsSchema,
 } from '../../model/_schema/filter.js';
 import dayjs from 'dayjs';
-import { WebsiteQueryFilters } from '../../utils/prisma.js';
+import { fetchDataByCursor, WebsiteQueryFilters } from '../../utils/prisma.js';
+import { WebsiteLighthouseReportStatus } from '@prisma/client';
+import { WebsiteLighthouseReportModelSchema } from '../../prisma/zod/websitelighthousereport.js';
+import { buildCursorResponseSchema } from '../../utils/schema.js';
+import { sendBuildLighthouseMessageQueue } from '../../mq/producer.js';
 
 const websiteNameSchema = z.string().max(100);
 const websiteDomainSchema = z.union([
@@ -488,7 +493,7 @@ export const websiteRouter = router({
 
       return [];
     }),
-  add: workspaceOwnerProcedure
+  add: workspaceAdminProcedure
     .meta({
       openapi: {
         method: 'POST',
@@ -517,7 +522,35 @@ export const websiteRouter = router({
 
       return website;
     }),
-  updateInfo: workspaceOwnerProcedure
+  delete: workspaceAdminProcedure
+    .meta({
+      openapi: {
+        method: 'DELETE',
+        tags: [OPENAPI_TAG.WEBSITE],
+        protect: true,
+        path: `/workspace/{workspaceId}/website/{websiteId}`,
+      },
+    })
+    .input(
+      z.object({
+        websiteId: z.string(),
+      })
+    )
+    .output(websiteInfoSchema)
+    .mutation(async ({ input }) => {
+      const { workspaceId, websiteId } = input;
+
+      const website = await prisma.website.delete({
+        where: {
+          id: websiteId,
+          workspaceId,
+        },
+      });
+
+      return website;
+    }),
+
+  updateInfo: workspaceAdminProcedure
     .meta(
       buildWebsiteOpenapi({
         method: 'PUT',
@@ -549,6 +582,123 @@ export const websiteRouter = router({
       });
 
       return websiteInfo;
+    }),
+  generateLighthouseReport: workspaceProcedure
+    .meta(
+      buildWebsiteOpenapi({
+        method: 'POST',
+        path: '/generateLighthouseReport',
+      })
+    )
+    .input(
+      z.object({
+        websiteId: z.string().cuid2(),
+        url: z.string().url(),
+      })
+    )
+    .output(z.string())
+    .mutation(async ({ input }) => {
+      const { workspaceId, websiteId, url } = input;
+
+      const report = await prisma.websiteLighthouseReport.create({
+        data: {
+          url,
+          websiteId,
+          status: WebsiteLighthouseReportStatus.Pending,
+          result: '',
+        },
+      });
+
+      await sendBuildLighthouseMessageQueue(
+        workspaceId,
+        websiteId,
+        report.id,
+        url
+      );
+
+      return 'success';
+    }),
+  getLighthouseReport: workspaceProcedure
+    .meta(
+      buildWebsiteOpenapi({
+        method: 'GET',
+        path: '/getLighthouseReport',
+      })
+    )
+    .input(
+      z.object({
+        websiteId: z.string().cuid2(),
+        limit: z.number().min(1).max(100).default(10),
+        cursor: z.string().optional(),
+      })
+    )
+    .output(
+      buildCursorResponseSchema(
+        WebsiteLighthouseReportModelSchema.pick({
+          id: true,
+          status: true,
+          url: true,
+          createdAt: true,
+        })
+      )
+    )
+    .query(async ({ input }) => {
+      const { websiteId, limit, cursor } = input;
+
+      const { items, nextCursor } = await fetchDataByCursor(
+        prisma.websiteLighthouseReport,
+        {
+          where: {
+            websiteId,
+          },
+          select: {
+            id: true,
+            status: true,
+            url: true,
+            createdAt: true,
+          },
+          limit,
+          cursor,
+        }
+      );
+
+      return {
+        items,
+        nextCursor,
+      };
+    }),
+  getLighthouseJSON: publicProcedure
+    .meta({
+      openapi: {
+        tags: [OPENAPI_TAG.WEBSITE],
+        protect: true,
+        method: 'GET',
+        path: '/lighthouse/{lighthouseId}',
+      },
+    })
+    .input(
+      z.object({
+        lighthouseId: z.string().cuid2(),
+      })
+    )
+    .output(z.record(z.string(), z.any()))
+    .query(async ({ input }) => {
+      const { lighthouseId } = input;
+
+      const res = await prisma.websiteLighthouseReport.findFirst({
+        where: {
+          id: lighthouseId,
+        },
+        select: {
+          result: true,
+        },
+      });
+
+      try {
+        return JSON.parse(res?.result ?? '{}');
+      } catch (err) {
+        return {};
+      }
     }),
 });
 

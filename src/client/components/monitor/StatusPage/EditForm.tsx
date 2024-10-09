@@ -1,26 +1,65 @@
-import { Switch, Divider, Form, Input, Typography } from 'antd';
 import React from 'react';
 import { MonitorPicker } from '../MonitorPicker';
-import { domainValidator, urlSlugValidator } from '../../../utils/validator';
 import { useTranslation } from '@i18next-toolkit/react';
 import { Button } from '@/components/ui/button';
 import { LuMinusCircle, LuPlus } from 'react-icons/lu';
 import { MarkdownEditor } from '@/components/MarkdownEditor';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEventWithLoading } from '@/hooks/useEvent';
+import { Input as AntdInput, Typography } from 'antd';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { domainRegex, slugRegex } from '@tianji/shared';
+import { useElementSize } from '@/hooks/useResizeObserver';
+import { Switch } from '@/components/ui/switch';
+import { Separator } from '@/components/ui/separator';
+import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
+import { CollapsibleTrigger } from '@radix-ui/react-collapsible';
+import { CaretSortIcon } from '@radix-ui/react-icons';
+import { DeprecatedBadge } from '@/components/DeprecatedBadge';
+import { MonitorStatusPageServiceList } from './ServiceList';
+import { bodySchema } from './schema';
 
-const { Text } = Typography;
+const Text = Typography.Text;
 
-export interface MonitorStatusPageEditFormValues {
-  title: string;
-  slug: string;
-  description: string;
-  monitorList: PrismaJson.MonitorStatusPageList;
-  domain: string;
-}
+const editFormSchema = z.object({
+  title: z.string(),
+  slug: z.string().regex(slugRegex),
+  description: z.string(),
+  domain: z
+    .string()
+    .regex(domainRegex, 'Invalid domain')
+    .or(z.literal(''))
+    .optional(),
+  body: bodySchema,
+
+  /**
+   * @deprecated
+   */
+  monitorList: z.array(
+    z.object({
+      id: z.string(),
+      showCurrent: z.boolean().default(false).optional(),
+    })
+  ),
+});
+
+export type MonitorStatusPageEditFormValues = z.infer<typeof editFormSchema>;
 
 interface MonitorStatusPageEditFormProps {
   isLoading?: boolean;
   initialValues?: Partial<MonitorStatusPageEditFormValues>;
-  onFinish: (values: MonitorStatusPageEditFormValues) => void;
+  onFinish: (values: MonitorStatusPageEditFormValues) => Promise<void>;
   onCancel?: () => void;
   saveButtonLabel?: string;
 }
@@ -28,143 +67,235 @@ interface MonitorStatusPageEditFormProps {
 export const MonitorStatusPageEditForm: React.FC<MonitorStatusPageEditFormProps> =
   React.memo((props) => {
     const { t } = useTranslation();
+    const { ref, width } = useElementSize();
+
+    const form = useForm<MonitorStatusPageEditFormValues>({
+      resolver: zodResolver(editFormSchema),
+      defaultValues: props.initialValues ?? {
+        title: '',
+        slug: '',
+        description: '',
+        domain: '',
+        monitorList: [],
+        body: { groups: [] },
+      },
+    });
+
+    const showDeprecatedMonitorList = props.initialValues
+      ? Array.isArray(props.initialValues.monitorList) &&
+        props.initialValues.monitorList.length > 0
+      : false;
+
+    const {
+      fields: oldMonitorFields,
+      append,
+      remove,
+    } = useFieldArray({
+      control: form.control,
+      name: 'monitorList',
+      keyName: 'key',
+    });
+
+    const [handleSubmit, isLoading] = useEventWithLoading(
+      async (values: MonitorStatusPageEditFormValues) => {
+        await props.onFinish(values);
+        form.reset();
+      }
+    );
 
     return (
-      <div>
-        <Form<MonitorStatusPageEditFormValues>
-          layout="vertical"
-          initialValues={props.initialValues}
-          onFinish={props.onFinish}
+      <Form {...form}>
+        <form
+          ref={ref}
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="flex flex-col space-y-2"
         >
-          <Form.Item
-            label={t('Title')}
+          {/* Title */}
+          <FormField
+            control={form.control}
             name="title"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('Title')}</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <Form.Item
-            label="Slug"
+          {/* Slug */}
+          <FormField
+            control={form.control}
             name="slug"
-            extra={
-              <div className="pt-2">
-                <div>
-                  {t('Accept characters')}: <Text code>a-z</Text>{' '}
-                  <Text code>0-9</Text> <Text code>-</Text>
-                </div>
-                <div>
-                  {t('No consecutive dashes')} <Text code>--</Text>
-                </div>
-              </div>
-            }
-            rules={[
-              {
-                required: true,
-              },
-              {
-                validator: urlSlugValidator,
-              },
-            ]}
-          >
-            <Input addonBefore={`${window.origin}/status/`} />
-          </Form.Item>
-
-          <Form.Item label={t('Description')} name="description">
-            <MarkdownEditorFormItem />
-          </Form.Item>
-
-          <Form.Item
-            label={t('Custom Domain')}
-            name="domain"
-            extra={
-              <div>
-                {t(
-                  'You can config your status page in your own domain, for example: status.example.com'
-                )}
-              </div>
-            }
-            rules={[
-              {
-                validator: domainValidator,
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.List name="monitorList">
-            {(fields, { add, remove }, { errors }) => {
-              return (
-                <>
-                  <Form.Item label={t('Monitors')}>
-                    <div className="mb-2 flex flex-col gap-2">
-                      {fields.map((field, index) => (
-                        // monitor item
-                        <>
-                          {index !== 0 && <Divider className="my-0.5" />}
-
-                          <div key={field.key} className="flex flex-col gap-1">
-                            <Form.Item
-                              name={[field.name, 'id']}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: t('Please select monitor'),
-                                },
-                              ]}
-                              noStyle={true}
-                            >
-                              <MonitorPicker />
-                            </Form.Item>
-
-                            <div className="item-center flex">
-                              <div className="flex flex-1 items-center">
-                                <Form.Item
-                                  name={[field.name, 'showCurrent']}
-                                  valuePropName="checked"
-                                  noStyle={true}
-                                >
-                                  <Switch size="small" />
-                                </Form.Item>
-
-                                <span className="ml-1 align-middle text-sm">
-                                  {t('Show Latest Value')}
-                                </span>
-                              </div>
-
-                              <LuMinusCircle
-                                className="mt-1.5 cursor-pointer text-lg"
-                                onClick={() => remove(field.name)}
-                              />
-                            </div>
-                          </div>
-                        </>
-                      ))}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('Slug')}</FormLabel>
+                <FormControl>
+                  <AntdInput
+                    {...field}
+                    addonBefore={
+                      width < 280 ? '/status/' : `${window.origin}/status/`
+                    }
+                  />
+                </FormControl>
+                <FormDescription>
+                  <div className="pt-2">
+                    <div>
+                      {t('Accept characters')}: <Text code>a-z</Text>{' '}
+                      <Text code>0-9</Text> <Text code>-</Text>
                     </div>
+                    <div>
+                      {t('No consecutive dashes')} <Text code>--</Text>
+                    </div>
+                  </div>
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-                    <Button
-                      variant="dashed"
-                      onClick={() => add()}
-                      style={{ width: '60%' }}
-                      Icon={LuPlus}
-                    >
-                      {t('Add Monitor')}
-                    </Button>
+          <Collapsible>
+            <CollapsibleTrigger className="flex w-full items-center justify-between">
+              <span className="text-sm">{t('Advanced')}</span>
+              <CaretSortIcon className="h-4 w-4" />
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              {/* Description */}
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel optional={true}>{t('Description')}</FormLabel>
+                    <FormControl>
+                      <MarkdownEditorFormItem {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                    <Form.ErrorList errors={errors} />
-                  </Form.Item>
-                </>
-              );
-            }}
-          </Form.List>
+              {/* Custom Domain */}
+              <FormField
+                control={form.control}
+                name="domain"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel optional={true}>{t('Custom Domain')}</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      <div>
+                        {t(
+                          'You can config your status page in your own domain, for example: status.example.com'
+                        )}
+                      </div>
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CollapsibleContent>
+          </Collapsible>
 
-          <div className="flex gap-4">
-            <Button type="submit" loading={props.isLoading}>
+          {/* Body */}
+          <FormField
+            control={form.control}
+            name="body.groups"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('Body')}</FormLabel>
+                <FormControl>
+                  <MonitorStatusPageServiceList
+                    {...field}
+                    value={field.value ?? []}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* MonitorList */}
+          {showDeprecatedMonitorList && (
+            <FormField
+              control={form.control}
+              name="monitorList"
+              render={() => (
+                <FormItem className="opacity-50">
+                  <FormLabel>
+                    {t('Monitor List')}
+                    <DeprecatedBadge tip={t('Please use Body field')} />
+                  </FormLabel>
+                  {oldMonitorFields.map((field, i) => (
+                    <>
+                      {i !== 0 && <Separator />}
+
+                      <div key={field.key} className="mb-2 flex flex-col gap-2">
+                        <Controller
+                          control={form.control}
+                          name={`monitorList.${i}.id`}
+                          render={({ field }) => (
+                            <MonitorPicker
+                              {...field}
+                              value={field.value}
+                              onValueChange={field.onChange}
+                            />
+                          )}
+                        />
+
+                        <div className="flex flex-1 items-center">
+                          <Controller
+                            control={form.control}
+                            name={`monitorList.${i}.showCurrent`}
+                            render={({ field }) => (
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            )}
+                          />
+
+                          <span className="ml-1 flex-1 align-middle text-sm">
+                            {t('Show Latest Value')}
+                          </span>
+
+                          <LuMinusCircle
+                            className="cursor-pointer text-lg"
+                            onClick={() => remove(i)}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ))}
+
+                  <FormMessage />
+
+                  <Button
+                    variant="dashed"
+                    type="button"
+                    onClick={() =>
+                      append({
+                        id: '',
+                        showCurrent: false,
+                      })
+                    }
+                    style={{ width: '60%' }}
+                    Icon={LuPlus}
+                  >
+                    {t('Add Monitor')}
+                  </Button>
+                </FormItem>
+              )}
+            />
+          )}
+
+          <div className="!mt-8 flex justify-end gap-2">
+            <Button type="submit" loading={isLoading}>
               {props.saveButtonLabel ?? t('Save')}
             </Button>
 
@@ -174,8 +305,8 @@ export const MonitorStatusPageEditForm: React.FC<MonitorStatusPageEditFormProps>
               </Button>
             )}
           </div>
-        </Form>
-      </div>
+        </form>
+      </Form>
     );
   });
 MonitorStatusPageEditForm.displayName = 'MonitorStatusPageEditForm';

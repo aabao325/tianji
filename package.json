@@ -1,7 +1,7 @@
 {
   "name": "tianji",
   "private": true,
-  "version": "1.13.1",
+  "version": "1.15.7",
   "type": "module",
   "scripts": {
     "dev": "concurrently --kill-others npm:dev:server npm:dev:web",
@@ -49,7 +49,10 @@
   "packageManager": "pnpm@9.7.1",
   "pnpm": {
     "overrides": {
+      "@auth/core": "0.34.1",
       "dayjs": "1.11.10",
+      "esbuild": "0.24.0",
+      "postman-code-generators": "1.8.0",
       "typescript": "5.5.4"
     },
     "patchedDependencies": {

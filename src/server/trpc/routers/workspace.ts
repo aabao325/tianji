@@ -3,6 +3,7 @@ import {
   protectProedure,
   publicProcedure,
   router,
+  workspaceAdminProcedure,
   workspaceOwnerProcedure,
   workspaceProcedure,
 } from '../trpc.js';
@@ -11,6 +12,7 @@ import { prisma } from '../../model/_client.js';
 import {
   userInfoSchema,
   workspaceDashboardLayoutSchema,
+  workspaceSchema,
 } from '../../model/_schema/index.js';
 import { Prisma } from '@prisma/client';
 import { OPENAPI_TAG } from '../../utils/const.js';
@@ -23,6 +25,7 @@ import {
   leaveWorkspace,
 } from '../../model/user.js';
 import { WorkspacesOnUsersModelSchema } from '../../prisma/zod/workspacesonusers.js';
+import { monitorManager } from '../../model/monitor/index.js';
 
 export const workspaceRouter = router({
   create: protectProedure
@@ -34,11 +37,7 @@ export const workspaceRouter = router({
     )
     .input(
       z.object({
-        name: z
-          .string()
-          .max(60)
-          .min(4)
-          .regex(slugRegex, { message: 'no a valid name' }),
+        name: z.string().max(60).min(4),
       })
     )
     .output(userInfoSchema)
@@ -104,7 +103,7 @@ export const workspaceRouter = router({
           id: workspaceId,
           users: {
             some: {
-              userId,
+              userId, // make sure is member of this workspace
             },
           },
         },
@@ -126,6 +125,33 @@ export const workspaceRouter = router({
 
       return userInfo;
     }),
+  rename: workspaceOwnerProcedure
+    .meta(
+      buildWorkspaceOpenapi({
+        method: 'PATCH',
+        path: '/rename',
+      })
+    )
+    .input(
+      z.object({
+        name: z.string().max(60).min(4),
+      })
+    )
+    .output(workspaceSchema)
+    .mutation(async ({ input }) => {
+      const { workspaceId, name } = input;
+
+      const workspace = await prisma.workspace.update({
+        where: {
+          id: workspaceId,
+        },
+        data: {
+          name,
+        },
+      });
+
+      return workspace;
+    }),
   delete: workspaceOwnerProcedure
     .meta(
       buildWorkspaceOpenapi({
@@ -142,6 +168,19 @@ export const workspaceRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { workspaceId } = input;
       const userId = ctx.user.id;
+
+      const monitors = await prisma.monitor.findMany({
+        where: {
+          workspaceId,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      await Promise.all(
+        monitors.map((m) => monitorManager.delete(workspaceId, m.id))
+      );
 
       await prisma.workspace.delete({
         where: {
@@ -197,7 +236,7 @@ export const workspaceRouter = router({
 
       return list;
     }),
-  invite: workspaceOwnerProcedure
+  invite: workspaceAdminProcedure
     .meta(
       buildWorkspaceOpenapi({
         method: 'POST',
@@ -206,15 +245,22 @@ export const workspaceRouter = router({
     )
     .input(
       z.object({
-        targetUserEmail: z.string(),
+        emailOrId: z.string(),
       })
     )
     .output(z.void())
     .mutation(async ({ input }) => {
-      const { targetUserEmail, workspaceId } = input;
-      const targetUser = await prisma.user.findUnique({
+      const { emailOrId, workspaceId } = input;
+      const targetUser = await prisma.user.findFirst({
         where: {
-          email: targetUserEmail,
+          OR: [
+            {
+              email: emailOrId,
+            },
+            {
+              id: emailOrId,
+            },
+          ],
         },
       });
 

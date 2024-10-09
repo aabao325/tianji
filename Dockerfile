@@ -7,11 +7,27 @@ COPY ./reporter/ ./reporter/
 RUN apt update
 RUN cd reporter && go build .
 
-# # Base ------------------------------
-FROM node:20-alpine AS base
+# Base ------------------------------
+# The current Chromium version in Alpine 3.20 is causing timeout issues with Puppeteer. Downgrading to Alpine 3.19 fixes the issue. See #11640, #12637, #12189
+FROM node:20-alpine3.19 AS base
 
-RUN npm install -g pnpm@9.5.0
+RUN npm install -g pnpm@9.7.1
+
+# For apprise
 RUN apk add --update --no-cache python3 py3-pip g++ make
+
+# For puppeteer
+RUN apk upgrade --no-cache --available \
+    && apk add --no-cache \
+      chromium-swiftshader \
+      ttf-freefont \
+      font-noto-emoji \
+    && apk add --no-cache \
+      --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community \
+      font-wqy-zenhei
+
+# For zeromq
+RUN apk add --update --no-cache curl cmake
 
 # Tianji frontend ------------------------------
 FROM base AS static
@@ -22,15 +38,21 @@ ARG VERSION
 
 COPY . .
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --filter @tianji/client... --config.dedupe-peer-dependents=false --frozen-lockfile
 
 ENV VITE_VERSION=$VERSION
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 RUN pnpm build:static
 
 # Tianji server ------------------------------
 FROM base AS app
 WORKDIR /app/tianji
+
+# We don't need the standalone Chromium in alpine.
+ENV PUPPETEER_SKIP_DOWNLOAD=true
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 COPY . .
 
