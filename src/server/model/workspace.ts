@@ -1,6 +1,7 @@
 import { prisma } from './_client.js';
 import { parseWebsiteFilters } from '../utils/prisma.js';
-import { DEFAULT_RESET_DATE, EVENT_TYPE } from '../utils/const.js';
+import { DEFAULT_RESET_DATE } from '../utils/const.js';
+import { buildQueryWithCache } from '../cache/index.js';
 
 export async function getWorkspaceUser(workspaceId: string, userId: string) {
   const info = await prisma.workspacesOnUsers.findFirst({
@@ -47,20 +48,6 @@ export async function getWorkspaceWebsites(workspaceId: string) {
   return workspace?.websites ?? [];
 }
 
-export async function deleteWorkspaceWebsite(
-  workspaceId: string,
-  websiteId: string
-) {
-  const website = await prisma.website.delete({
-    where: {
-      id: websiteId,
-      workspaceId,
-    },
-  });
-
-  return website;
-}
-
 export async function getWorkspaceWebsiteDateRange(websiteId: string) {
   const { params } = await parseWebsiteFilters(websiteId, {
     startDate: new Date(DEFAULT_RESET_DATE),
@@ -86,3 +73,101 @@ export async function getWorkspaceWebsiteDateRange(websiteId: string) {
     min: res._min.createdAt,
   };
 }
+
+export async function getWorkspaceServiceCount(workspaceId: string) {
+  const [
+    website,
+    application,
+    monitor,
+    telemetry,
+    page,
+    survey,
+    feed,
+    shortLink,
+    aiGateway,
+    aiRouter,
+    functionWorker,
+  ] = await Promise.all([
+    prisma.website.count({
+      where: {
+        workspaceId,
+      },
+    }),
+    prisma.application.count({
+      where: {
+        workspaceId,
+      },
+    }),
+    prisma.monitor.count({
+      where: {
+        workspaceId,
+      },
+    }),
+    prisma.telemetry.count({
+      where: {
+        workspaceId,
+      },
+    }),
+    prisma.monitorStatusPage.count({
+      where: {
+        workspaceId,
+      },
+    }),
+    prisma.survey.count({
+      where: {
+        workspaceId,
+      },
+    }),
+    prisma.feedChannel.count({
+      where: {
+        workspaceId,
+      },
+    }),
+    prisma.shortLink.count({
+      where: {
+        workspaceId,
+        deletedAt: null,
+      },
+    }),
+    prisma.aIGateway.count({
+      where: {
+        workspaceId,
+      },
+    }),
+    prisma.aIRouter.count({
+      where: {
+        workspaceId,
+      },
+    }),
+    prisma.functionWorker.count({
+      where: {
+        workspaceId,
+      },
+    }),
+  ]);
+
+  return {
+    website,
+    application,
+    monitor,
+    telemetry,
+    page,
+    survey,
+    feed,
+    shortLink,
+    aiGateway,
+    aiRouter,
+    functionWorker,
+  };
+}
+
+export const { get: getWorkspaceSettings, del: clearWorkspaceSettingsCache } =
+  buildQueryWithCache('workspaceSettings', async (workspaceId: string) => {
+    const workspace = await prisma.workspace.findUnique({
+      where: {
+        id: workspaceId,
+      },
+    });
+
+    return workspace?.settings ?? {};
+  });

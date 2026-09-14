@@ -1,0 +1,140 @@
+import ivm from 'isolated-vm';
+import { buildSandbox, environmentScript } from './sandbox.js';
+import { env } from '../env.js';
+import { runCodeInVM2 } from './sandbox-vm2.js';
+import { logger } from '../logger.js';
+import { transformTypescriptCode } from './utils.js';
+
+if (env.sandbox.useVM2) {
+  logger.warn(
+    '[Monitor] Using VM2 for code execution, which this is not recommended for production use.'
+  );
+}
+
+export interface VMExecutionResult {
+  logger: any[][];
+  result: any;
+  error?: any;
+  usage: number;
+  cpuTime?: number;
+  memoryUsage?: ivm.HeapStatistics;
+}
+
+export interface IVMExecutionResult extends VMExecutionResult {
+  cpuTime: number;
+  memoryUsage: ivm.HeapStatistics;
+}
+
+export async function runCodeInVM(
+  _code: string
+): Promise<VMExecutionResult> {
+  const code = `;(async () => {${_code}})();`;
+
+  try {
+    // Try to use VM2 first if enabled via environment variable
+    if (env.sandbox.useVM2) {
+      try {
+        const ret = await runCodeInVM2(code);
+        return ret;
+      } catch (err) {
+        logger.error(
+          '[Monitor] VM2 execution failed, falling back to isolated-vm:',
+          err
+        );
+        throw err;
+      }
+    } else {
+      // Use isolated-vm
+      try {
+        const ret = await runCodeInIVM(code);
+        return ret;
+      } catch (err) {
+        logger.error('[Monitor] isolated-vm execution failed:', err);
+        throw err;
+      }
+    }
+  } catch (err) {
+    logger.error('[Monitor] Code execution failed:', err);
+    throw err;
+  }
+}
+
+/**
+ * Only run code with isolated-vm
+ */
+export async function runCodeInIVM(
+  _code: string,
+  globals: Record<string, any> = {}
+): Promise<IVMExecutionResult> {
+  const start = Date.now();
+  // const transformedCode = await transformTypescriptCode(_code);
+  let sourceCode = _code;
+
+  if (env.enableFunctionWorkerTypescriptSupport) {
+    sourceCode = await transformTypescriptCode(sourceCode);
+  }
+
+  // avoid end comment with line break
+  const code = `${environmentScript}
+
+${sourceCode}`;
+
+  const isolate = new ivm.Isolate({ memoryLimit: env.sandbox.memoryLimit });
+  const logger: any[][] = [];
+
+  let res: any;
+  let err: any;
+  let context: ivm.Context | undefined;
+  let script: ivm.Script | undefined;
+
+  try {
+    context = await isolate.createContext();
+    script = await isolate.compileScript(code);
+
+    buildSandbox(context, {
+      globals,
+      console: {
+        log: (...args: any[]) => {
+          logger.push(['log', Date.now(), ...args]);
+        },
+        warn: (...args: any[]) => {
+          logger.push(['warn', Date.now(), ...args]);
+        },
+        error: (...args: any[]) => {
+          logger.push(['error', Date.now(), ...args]);
+        },
+      },
+    });
+
+    try {
+      res = await script.run(context, {
+        promise: true,
+        copy: true,
+        timeout: env.sandbox.timeout,
+      });
+    } catch (e) {
+      console.trace(e);
+      err = e;
+    }
+
+    const cpuTime = Number(isolate.cpuTime); // unit: ns
+    const memoryUsage = await isolate.getHeapStatistics(); // unit: bytes
+
+    return {
+      logger,
+      result: res,
+      error: err,
+      usage: Date.now() - start,
+      cpuTime,
+      memoryUsage,
+    };
+  } finally {
+    try {
+      context?.release();
+    } catch {}
+    try {
+      script?.release();
+    } catch {}
+    isolate.dispose();
+  }
+}

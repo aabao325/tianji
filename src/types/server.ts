@@ -1,10 +1,12 @@
+import { type IncomingHttpHeaders } from 'http';
+
 export interface ServerStatusInfo {
   workspaceId: string;
   name: string;
   hostname: string;
   timeout: number;
   updatedAt: number;
-  payload: ServerStatusInfoPayload;
+  payload: ServerStatusInfoPayload & ServerStatusRequestContext;
 }
 
 export interface ServerStatusInfoPayload {
@@ -22,8 +24,23 @@ export interface ServerStatusInfoPayload {
   network_in: number;
   network_out: number;
 
+  top_cpu_processes?: ProcessInfo[];
+  top_memory_processes?: ProcessInfo[];
+
   // docker info
   docker?: ServerStatusDockerContainerPayload[];
+}
+
+export interface ServerStatusRequestContext {
+  country?: string;
+  ip?: string;
+}
+
+export interface ProcessInfo {
+  pid: number;
+  name: string;
+  cpu: number;
+  memory: number;
 }
 
 export interface ServerStatusDockerContainerPayload {
@@ -51,4 +68,13 @@ export interface ServerStatusDockerContainerPort {
   PrivatePort: number;
   PublicPort: number;
   Type: 'tcp' | 'udp';
+}
+
+export interface PlaygroundWebhookRequestPayload {
+  id: string;
+  url: string;
+  method: string;
+  headers: IncomingHttpHeaders;
+  body: string;
+  createdAt: number;
 }

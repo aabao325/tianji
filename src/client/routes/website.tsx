@@ -5,7 +5,7 @@ import { CommonWrapper } from '@/components/CommonWrapper';
 import { Button } from '@/components/ui/button';
 import { useEvent } from '@/hooks/useEvent';
 import { Layout } from '@/components/layout';
-import { useCurrentWorkspaceId } from '@/store/user';
+import { useCurrentWorkspaceId, useHasAdminPermission } from '@/store/user';
 import { routeAuthBeforeLoad } from '@/utils/route';
 import { cn } from '@/utils/style';
 import { useTranslation } from '@i18next-toolkit/react';
@@ -16,6 +16,7 @@ import {
 } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { LuEye, LuPlus } from 'react-icons/lu';
+import { InsightsStoreProvider } from '@/store/insights';
 
 export const Route = createFileRoute('/website')({
   beforeLoad: routeAuthBeforeLoad,
@@ -24,6 +25,7 @@ export const Route = createFileRoute('/website')({
 
 function WebsiteComponent() {
   const workspaceId = useCurrentWorkspaceId();
+  const hasAdminPermission = useHasAdminPermission();
   const { t } = useTranslation();
   const { data = [], isLoading } = trpc.website.all.useQuery({
     workspaceId,
@@ -65,46 +67,54 @@ function WebsiteComponent() {
   });
 
   return (
-    <Layout
-      list={
-        <CommonWrapper
-          header={
-            <CommonHeader
-              title={t('Website')}
-              actions={
-                <div className="space-x-2">
-                  <Button
-                    className={cn(
-                      pathname === '/website/overview' && '!bg-muted'
+    // Temporarily add InsightsStoreProvider to resolve conflict issues
+    <InsightsStoreProvider>
+      <Layout
+        list={
+          <CommonWrapper
+            header={
+              <CommonHeader
+                title={t('Website')}
+                actions={
+                  <div className="space-x-2">
+                    <Button
+                      className={cn(
+                        pathname === '/website/overview' && '!bg-muted'
+                      )}
+                      variant="outline"
+                      Icon={LuEye}
+                      onClick={handleClickOverview}
+                    >
+                      {t('Overview')}
+                    </Button>
+
+                    {hasAdminPermission && (
+                      <Button
+                        className={cn(
+                          pathname === '/website/add' && '!bg-muted'
+                        )}
+                        variant="outline"
+                        size="icon"
+                        Icon={LuPlus}
+                        onClick={handleClickAdd}
+                      />
                     )}
-                    variant="outline"
-                    Icon={LuEye}
-                    onClick={handleClickOverview}
-                  >
-                    {t('Overview')}
-                  </Button>
-                  <Button
-                    className={cn(pathname === '/website/add' && '!bg-muted')}
-                    variant="outline"
-                    size="icon"
-                    Icon={LuPlus}
-                    onClick={handleClickAdd}
-                  />
-                </div>
-              }
+                  </div>
+                }
+              />
+            }
+          >
+            <CommonList
+              hasSearch={true}
+              items={items}
+              isLoading={isLoading}
+              emptyDescription={t(
+                'Not any website has been added, you can add your website and integrate with Tianji to get more information.'
+              )}
             />
-          }
-        >
-          <CommonList
-            hasSearch={true}
-            items={items}
-            isLoading={isLoading}
-            emptyDescription={t(
-              'Not any website has been added, you can add your website and integrate with Tianji to get more information.'
-            )}
-          />
-        </CommonWrapper>
-      }
-    />
+          </CommonWrapper>
+        }
+      />
+    </InsightsStoreProvider>
   );
 }

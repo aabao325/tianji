@@ -1,7 +1,20 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { TanStackRouterVite } from '@tanstack/router-vite-plugin';
+
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+// @ts-ignore
+import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
+const dirname =
+  typeof __dirname !== 'undefined'
+    ? __dirname
+    : path.dirname(fileURLToPath(import.meta.url));
+const esbuildTarget = 'esnext';
+
+// More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,7 +28,13 @@ export default defineConfig({
     }),
   ],
   build: {
+    target: esbuildTarget,
     outDir: '../server/public',
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: esbuildTarget,
+    },
   },
   resolve: {
     alias: {
@@ -24,7 +43,7 @@ export default defineConfig({
   },
   clearScreen: false,
   server: {
-    // host: '0.0.0.0',
+    host: '127.0.0.1',
     proxy: {
       '/socket.io': {
         target: 'ws://localhost:12345',
@@ -34,7 +53,22 @@ export default defineConfig({
       '/trpc': {
         target: 'http://localhost:12345',
       },
+      '/open': {
+        target: 'http://localhost:12345',
+      },
+      '/lh': {
+        target: 'http://localhost:12345',
+      },
+      '/api/insights/': {
+        target: 'http://localhost:12345',
+      },
       '/api/auth/': {
+        target: 'http://localhost:12345',
+      },
+      '/api/ai/': {
+        target: 'http://localhost:12345',
+      },
+      '/api/ai-router/': {
         target: 'http://localhost:12345',
       },
       '/api/workspace': {
@@ -43,6 +77,51 @@ export default defineConfig({
       '/api/website/send': {
         target: 'http://localhost:12345',
       },
+      '/api/page': {
+        target: 'http://localhost:12345',
+      },
+      '/api/push': {
+        target: 'http://localhost:12345',
+      },
+      '/api/worker': {
+        target: 'http://localhost:12345',
+      },
+      '/s/': {
+        target: 'http://localhost:12345',
+      },
+      '^/monitor/.*/badge\\.svg(\\?.*)?$': {
+        target: 'http://localhost:12345',
+      },
     },
+  },
+  test: {
+    environment: 'jsdom',
+    setupFiles: './vitest.setup.ts',
+    workspace: [
+      {
+        extends: true,
+        plugins: [
+          // The plugin will run tests for the stories defined in your Storybook config
+          // See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
+          storybookTest({
+            configDir: path.join(dirname, '.storybook'),
+          }),
+        ],
+        test: {
+          name: 'storybook',
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: 'playwright',
+            instances: [
+              {
+                browser: 'chromium',
+              },
+            ],
+          },
+          setupFiles: ['.storybook/vitest.setup.ts'],
+        },
+      },
+    ],
   },
 });

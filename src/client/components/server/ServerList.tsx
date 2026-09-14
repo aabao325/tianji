@@ -4,10 +4,15 @@ import { useTranslation } from '@i18next-toolkit/react';
 import { useIntervalUpdate } from '@/hooks/useIntervalUpdate';
 import { useServerMap } from './useServerMap';
 import { isServerOnline } from '@tianji/shared';
-import { max } from 'lodash-es';
+import { max, orderBy } from 'lodash-es';
 import { ServerStatusInfo } from '../../../types';
 import { Badge } from 'antd';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import {
+  SimpleTooltip,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '../ui/tooltip';
 import dayjs from 'dayjs';
 import { filesize } from 'filesize';
 import prettyMilliseconds from 'pretty-ms';
@@ -16,6 +21,7 @@ import { ScrollArea, ScrollBar } from '../ui/scroll-area';
 import { ServerRowExpendView } from './ServerRowExpendView';
 import { FaDocker } from 'react-icons/fa';
 import { ColorizedText } from './ColorizedText';
+import { CountryName } from '../CountryName';
 
 const columnHelper = createColumnHelper<ServerStatusInfo>();
 
@@ -30,15 +36,13 @@ export const ServerList: React.FC<ServerListProps> = React.memo((props) => {
 
   const dataSource = useMemo(
     () =>
-      Object.values(serverMap)
-        .sort((info) => (isServerOnline(info) ? -1 : 1))
-        .filter((info) => {
-          if (hideOfflineServer) {
-            return isServerOnline(info);
-          }
+      orderBy(Object.values(serverMap), 'name', 'asc').filter((info) => {
+        if (hideOfflineServer) {
+          return isServerOnline(info);
+        }
 
-          return true;
-        }), // make online server is up and offline is down
+        return true;
+      }), // make online server is up and offline is down
     [serverMap, inc, hideOfflineServer]
   );
   const lastUpdatedAt = max(dataSource.map((d) => d.updatedAt));
@@ -88,14 +92,26 @@ export const ServerList: React.FC<ServerListProps> = React.memo((props) => {
         header: t('Host Name'),
         size: 150,
       }),
+      columnHelper.display({
+        header: t('IP'),
+        size: 150,
+        cell: (props) =>
+          props.row.original.payload.country ? (
+            <SimpleTooltip content={props.row.original.payload.ip}>
+              <CountryName country={props.row.original.payload.country} />
+            </SimpleTooltip>
+          ) : (
+            <span>{props.row.original.payload.ip}</span>
+          ),
+      }),
       columnHelper.accessor('payload.uptime', {
         header: t('Uptime'),
         size: 150,
         cell: (props) => prettyMilliseconds(Number(props.getValue()) * 1000),
       }),
       columnHelper.accessor('payload.load', {
-        header: t('Load'),
-        size: 70,
+        header: t('CPU Load'),
+        size: 85,
       }),
       columnHelper.display({
         header: t('Network'),
@@ -118,8 +134,8 @@ export const ServerList: React.FC<ServerListProps> = React.memo((props) => {
         ),
       }),
       columnHelper.accessor('payload.cpu', {
-        header: 'CPU',
-        size: 80,
+        header: t('CPU Usage'),
+        size: 100,
         cell: (props) => (
           <ColorizedText percent={props.getValue() / 100}>
             {props.getValue()}%

@@ -13,12 +13,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useCurrentWorkspaceId } from '@/store/user';
+import { useCurrentWorkspaceId, useHasAdminPermission } from '@/store/user';
 import { routeAuthBeforeLoad } from '@/utils/route';
 import { useTranslation } from '@i18next-toolkit/react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { pick } from 'lodash-es';
-import { LuCopy, LuMoreVertical } from 'react-icons/lu';
+import { LuCodeXml, LuCopy, LuEllipsisVertical } from 'react-icons/lu';
+import { useState } from 'react';
+import { PushMonitorUsageModal } from '@/components/monitor/PushMonitorUsageModal';
 
 export const Route = createFileRoute('/monitor/$monitorId/')({
   beforeLoad: routeAuthBeforeLoad,
@@ -34,6 +36,8 @@ function MonitorDetailComponent() {
   });
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const hasAdminPermission = useHasAdminPermission();
+  const [showPushUsage, setShowPushUsage] = useState(false);
 
   if (!monitorId) {
     return <ErrorTip />;
@@ -53,35 +57,53 @@ function MonitorDetailComponent() {
         <CommonHeader
           title={monitor.name}
           actions={
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild={true} className="cursor-pointer">
-                <Button variant="outline" size="icon" className="shrink-0">
-                  <LuMoreVertical />
-                </Button>
-              </DropdownMenuTrigger>
-
-              <DropdownMenuContent>
-                <DropdownMenuItem
-                  onClick={() =>
-                    navigate({
-                      to: '/monitor/add',
-                      search: pick(monitor, [
-                        'name',
-                        'type',
-                        'notifications',
-                        'interval',
-                        'maxRetries',
-                        'trendingMode',
-                        'payload',
-                      ]),
-                    })
-                  }
+            <div className="flex items-center gap-2">
+              {monitor.type === 'push' && (
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="shrink-0"
+                  onClick={() => setShowPushUsage(true)}
                 >
-                  <LuCopy className="mr-2" />
-                  {t('Duplicate')}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <LuCodeXml />
+                </Button>
+              )}
+
+              {hasAdminPermission && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    asChild={true}
+                    className="cursor-pointer"
+                  >
+                    <Button variant="outline" size="icon" className="shrink-0">
+                      <LuEllipsisVertical />
+                    </Button>
+                  </DropdownMenuTrigger>
+
+                  <DropdownMenuContent>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        navigate({
+                          to: '/monitor/add',
+                          search: pick(monitor, [
+                            'name',
+                            'type',
+                            'notifications',
+                            'interval',
+                            'maxRetries',
+                            'trendingMode',
+                            'payload',
+                          ]),
+                        })
+                      }
+                    >
+                      <LuCopy className="mr-2" />
+                      {t('Duplicate')}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
           }
         />
       }
@@ -89,6 +111,14 @@ function MonitorDetailComponent() {
       <ScrollArea className="h-full overflow-hidden p-4">
         <MonitorInfo monitorId={monitor.id} />
       </ScrollArea>
+
+      {monitor.type === 'push' && (
+        <PushMonitorUsageModal
+          monitorId={monitorId}
+          open={showPushUsage}
+          onChangeOpen={setShowPushUsage}
+        />
+      )}
     </CommonWrapper>
   );
 }

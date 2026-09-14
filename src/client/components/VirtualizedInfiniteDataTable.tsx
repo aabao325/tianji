@@ -1,6 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-
-//3 TanStack Libraries!!!
 import {
   ColumnDef,
   flexRender,
@@ -8,7 +6,6 @@ import {
   Row,
   useReactTable,
 } from '@tanstack/react-table';
-import { InfiniteData } from '@tanstack/react-query';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import {
   TableBody,
@@ -18,30 +15,38 @@ import {
   TableRow,
 } from './ui/table';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { useTranslation } from '@i18next-toolkit/react';
+import { cn } from '@/utils/style';
+import { LoadingView } from './LoadingView';
 
 interface VirtualizedInfiniteDataTableProps<TData> {
+  selectedIndex?: number;
   columns: ColumnDef<TData, any>[];
-  data: InfiniteData<{ items: TData[] }> | undefined;
+  data: TData[];
   onFetchNextPage: () => void;
   isFetching: boolean;
   isLoading: boolean;
   hasNextPage: boolean | undefined;
+  allowWrap?: boolean;
 }
 
 export function VirtualizedInfiniteDataTable<TData>(
   props: VirtualizedInfiniteDataTableProps<TData>
 ) {
-  const { columns, data, onFetchNextPage, isFetching, isLoading, hasNextPage } =
-    props;
+  const {
+    selectedIndex,
+    columns,
+    data,
+    onFetchNextPage,
+    isFetching,
+    isLoading,
+    hasNextPage,
+    allowWrap = false,
+  } = props;
+  const { t } = useTranslation();
 
   //we need a reference to the scrolling element for logic down below
   const tableContainerRef = useRef<HTMLDivElement>(null);
-
-  //flatten the array of arrays from the useInfiniteQuery hook
-  const flatData = useMemo(
-    () => data?.pages?.flatMap((page) => page.items) ?? [],
-    [data]
-  );
 
   //called on scroll and possibly on mount to fetch more data as the user scrolls and reaches bottom of table
   const fetchMoreOnBottomReached = useCallback(
@@ -67,7 +72,7 @@ export function VirtualizedInfiniteDataTable<TData>(
   }, [fetchMoreOnBottomReached]);
 
   const table = useReactTable({
-    data: flatData,
+    data,
     columns,
     columnResizeMode: 'onChange',
     getCoreRowModel: getCoreRowModel(),
@@ -103,11 +108,12 @@ export function VirtualizedInfiniteDataTable<TData>(
       colSizes[`--col-${header.column.id}-size`] = header.column.getSize();
     }
     return colSizes;
-  }, [table.getState().columnSizingInfo, table.getState().columnSizing]);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    columns,
+    table.getState().columnSizingInfo,
+    table.getState().columnSizing,
+  ]);
 
   return (
     <div
@@ -115,112 +121,135 @@ export function VirtualizedInfiniteDataTable<TData>(
       onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
       ref={tableContainerRef}
     >
-      {/* Even though we're still using sematic table tags, we must use CSS grid and flexbox for dynamic row heights */}
-      <table style={{ display: 'grid' }}>
-        <TableHeader
-          className="sticky top-0 z-10 grid"
+      <LoadingView isLoading={isLoading}>
+        {/* Even though we're still using sematic table tags, we must use CSS grid and flexbox for dynamic row heights */}
+        <table
           style={{
+            display: 'grid',
             ...columnSizeVars,
           }}
         >
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow
-              key={headerGroup.id}
-              className="bg-background flex w-full"
-            >
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead
-                    key={header.id}
-                    className="relative overflow-hidden text-ellipsis text-nowrap pt-2.5"
-                    style={{
-                      width: `calc(var(--header-${header?.id}-size) * 1px)`,
-                    }}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-
-                    <div
-                      {...{
-                        onDoubleClick: () => header.column.resetSize(),
-                        onMouseDown: header.getResizeHandler(),
-                        onTouchStart: header.getResizeHandler(),
-                        className: `resizer ${
-                          header.column.getIsResizing() ? 'isResizing' : ''
-                        }`,
-                      }}
-                    />
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody
-          className="relative grid"
-          style={{
-            height: `${rowVirtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
-          }}
-        >
-          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-            const row = rows[virtualRow.index] as Row<TData>;
-            return (
+          <TableHeader className="sticky top-0 z-10 grid">
+            {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
-                data-index={virtualRow.index} //needed for dynamic row height measurement
-                ref={(node) => rowVirtualizer.measureElement(node)} //measure dynamic row height
-                key={row.id}
-                className="absolute flex w-full"
-                style={{
-                  transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
-                }}
+                key={headerGroup.id}
+                className="bg-background hover:bg-background flex w-full"
               >
-                {row.getVisibleCells().map((cell) => {
-                  const content = flexRender(
-                    cell.column.columnDef.cell,
-                    cell.getContext()
-                  );
-                  const value = cell.getValue();
-                  const useSystemTooltip =
-                    typeof value === 'string' || typeof value === 'number';
-
+                {headerGroup.headers.map((header) => {
                   return (
-                    <TableCell
-                      key={cell.id}
-                      className="flex"
+                    <TableHead
+                      key={header.id}
+                      className="relative overflow-hidden text-ellipsis text-nowrap pt-2.5"
                       style={{
-                        width: cell.column.getSize(),
+                        width: `calc(var(--header-${header?.id}-size) * 1px)`,
                       }}
                     >
-                      {useSystemTooltip ? (
-                        <div
-                          className="w-full cursor-default overflow-hidden text-ellipsis whitespace-nowrap text-left"
-                          title={String(value)}
-                        >
-                          {content}
-                        </div>
-                      ) : (
-                        <Tooltip>
-                          <TooltipTrigger asChild={true}>
-                            <div className="w-full cursor-default overflow-hidden text-ellipsis whitespace-nowrap text-left">
-                              {content}
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>{content}</TooltipContent>
-                        </Tooltip>
-                      )}
-                    </TableCell>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+
+                      <div
+                        {...{
+                          onDoubleClick: () => header.column.resetSize(),
+                          onMouseDown: header.getResizeHandler(),
+                          onTouchStart: header.getResizeHandler(),
+                          className: `resizer ${
+                            header.column.getIsResizing() ? 'isResizing' : ''
+                          }`,
+                        }}
+                      />
+                    </TableHead>
                   );
                 })}
               </TableRow>
-            );
-          })}
-        </TableBody>
-      </table>
-      {isFetching && <div>Fetching More...</div>}
+            ))}
+          </TableHeader>
+          <TableBody
+            className="relative grid"
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
+            }}
+          >
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+              const row = rows[virtualRow.index] as Row<TData>;
+              return (
+                <TableRow
+                  data-index={virtualRow.index} //needed for dynamic row height measurement
+                  ref={(node) => rowVirtualizer.measureElement(node)} //measure dynamic row height
+                  key={row.id}
+                  className="absolute flex w-full"
+                  style={{
+                    transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
+                  }}
+                >
+                  {row.getVisibleCells().map((cell) => {
+                    const content = flexRender(
+                      cell.column.columnDef.cell,
+                      cell.getContext()
+                    );
+                    const value = cell.getValue();
+                    const useSystemTooltip =
+                      typeof value === 'string' || typeof value === 'number';
+
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        className={cn(
+                          'flex transition-colors',
+                          selectedIndex === virtualRow.index &&
+                            'bg-zinc-200 dark:bg-zinc-700'
+                        )}
+                        style={{
+                          width: cell.column.getSize(),
+                        }}
+                      >
+                        {useSystemTooltip ? (
+                          <div
+                            className={cn(
+                              'w-full cursor-default text-left',
+                              allowWrap
+                                ? 'break-words'
+                                : 'overflow-hidden text-ellipsis whitespace-nowrap'
+                            )}
+                            title={allowWrap ? undefined : String(value)}
+                          >
+                            {content}
+                          </div>
+                        ) : (
+                          <Tooltip>
+                            <TooltipTrigger asChild={true}>
+                              <div
+                                className={cn(
+                                  'w-full cursor-default text-left',
+                                  allowWrap
+                                    ? 'break-words'
+                                    : 'overflow-hidden text-ellipsis whitespace-nowrap'
+                                )}
+                              >
+                                {content}
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent>{content}</TooltipContent>
+                          </Tooltip>
+                        )}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </table>
+
+        {isFetching && (
+          <div className="w-full text-center text-sm">
+            {t('Fetching More...')}
+          </div>
+        )}
+      </LoadingView>
     </div>
   );
 }

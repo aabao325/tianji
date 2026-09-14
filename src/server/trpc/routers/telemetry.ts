@@ -2,7 +2,7 @@ import { z } from 'zod';
 import {
   OpenApiMetaInfo,
   router,
-  workspaceOwnerProcedure,
+  workspaceAdminProcedure,
   workspaceProcedure,
 } from '../trpc.js';
 import {
@@ -13,7 +13,7 @@ import {
 } from '../../utils/const.js';
 import { prisma } from '../../model/_client.js';
 import { TelemetryModelSchema } from '../../prisma/zod/index.js';
-import { OpenApiMeta } from 'trpc-openapi';
+import { OpenApiMeta } from 'trpc-to-openapi';
 import {
   baseFilterSchema,
   baseStatsSchema,
@@ -26,6 +26,7 @@ import {
   getTelemetrySessionMetrics,
   getTelemetryStats,
   getTelemetryUrlMetrics,
+  delTelemetryCache,
 } from '../../model/telemetry.js';
 import { BaseQueryFilters } from '../../utils/prisma.js';
 import dayjs from 'dayjs';
@@ -36,6 +37,7 @@ export const telemetryRouter = router({
       buildTelemetryOpenapi({
         method: 'GET',
         path: '/all',
+        summary: 'Get all telemetry',
       })
     )
     .output(z.array(TelemetryModelSchema))
@@ -58,6 +60,7 @@ export const telemetryRouter = router({
       buildTelemetryOpenapi({
         method: 'GET',
         path: '/info',
+        summary: 'Get telemetry info',
       })
     )
     .input(
@@ -83,6 +86,7 @@ export const telemetryRouter = router({
       buildTelemetryOpenapi({
         method: 'GET',
         path: '/allEventCount',
+        summary: 'Get all event count',
       })
     )
     .output(z.record(z.string(), z.number()))
@@ -110,6 +114,7 @@ export const telemetryRouter = router({
       buildTelemetryOpenapi({
         method: 'GET',
         path: '/eventCount',
+        summary: 'Get event count',
       })
     )
     .input(
@@ -130,11 +135,12 @@ export const telemetryRouter = router({
 
       return count;
     }),
-  upsert: workspaceOwnerProcedure
+  upsert: workspaceAdminProcedure
     .meta(
       buildTelemetryOpenapi({
         method: 'POST',
         path: '/upsert',
+        summary: 'Upsert telemetry',
       })
     )
     .input(
@@ -148,7 +154,7 @@ export const telemetryRouter = router({
       const { workspaceId, telemetryId, name } = input;
 
       if (telemetryId) {
-        return prisma.telemetry.update({
+        const telemetry = await prisma.telemetry.update({
           where: {
             id: telemetryId,
             workspaceId,
@@ -157,6 +163,10 @@ export const telemetryRouter = router({
             name,
           },
         });
+
+        await delTelemetryCache(telemetryId);
+
+        return telemetry;
       } else {
         return prisma.telemetry.create({
           data: {
@@ -166,11 +176,12 @@ export const telemetryRouter = router({
         });
       }
     }),
-  delete: workspaceOwnerProcedure
+  delete: workspaceAdminProcedure
     .meta(
       buildTelemetryOpenapi({
         method: 'POST',
         path: '/delete',
+        summary: 'Delete telemetry',
       })
     )
     .input(
@@ -182,18 +193,23 @@ export const telemetryRouter = router({
     .mutation(async ({ input }) => {
       const { workspaceId, telemetryId } = input;
 
-      return prisma.telemetry.delete({
+      const telemetry = await prisma.telemetry.delete({
         where: {
           id: telemetryId,
           workspaceId,
         },
       });
+
+      await delTelemetryCache(telemetryId);
+
+      return telemetry;
     }),
   pageviews: workspaceProcedure
     .meta(
       buildTelemetryOpenapi({
         method: 'GET',
         path: '/pageviews',
+        summary: 'Get pageviews',
       })
     )
     .input(
@@ -255,6 +271,7 @@ export const telemetryRouter = router({
       buildTelemetryOpenapi({
         method: 'GET',
         path: '/metrics',
+        summary: 'Get metrics',
       })
     )
     .input(
@@ -342,6 +359,7 @@ export const telemetryRouter = router({
       buildTelemetryOpenapi({
         method: 'GET',
         path: '/stats',
+        summary: 'Get stats',
       })
     )
     .input(

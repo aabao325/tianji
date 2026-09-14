@@ -8,7 +8,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/api/authjs/useAuth';
 import { useEventWithLoading } from '@/hooks/useEvent';
-import { LuGithub } from 'react-icons/lu';
+import { LuGithub, LuLayers } from 'react-icons/lu';
+import { compact } from 'lodash-es';
+import { toast } from 'sonner';
+import { DotPatternBackground } from '@/components/DotPatternBackground';
+import { useTheme } from '@/store/settings';
 
 export const Route = createFileRoute('/login')({
   validateSearch: z.object({
@@ -29,23 +33,139 @@ function LoginComponent() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const search = Route.useSearch();
+  const theme = useTheme();
 
-  const { loginWithPassword, loginWithOAuth } = useAuth();
+  const { loginWithPassword, loginWithEmail, loginWithOAuth } = useAuth();
 
-  const [handleLogin, loading] = useEventWithLoading(async (values: any) => {
-    const userInfo = await loginWithPassword(values.username, values.password);
+  const [handleLoginWithAccount, isAccountLoading] = useEventWithLoading(
+    async (values: any) => {
+      const userInfo = await loginWithPassword(
+        values.username,
+        values.password
+      );
 
-    setUserInfo(userInfo);
+      setUserInfo(userInfo);
 
-    navigate({
-      to: search.redirect ?? '/',
-      replace: true,
-    });
-  });
-  const { allowRegister, authProvider } = useGlobalConfig();
+      navigate({
+        to: search.redirect ?? '/',
+        replace: true,
+      });
+    }
+  );
+  const [handleLoginWithEmail, isEmailLoading] = useEventWithLoading(
+    async (values: any) => {
+      const url = await loginWithEmail(values.email, search.redirect);
+
+      if (url) {
+        window.location.replace(url);
+      } else {
+        toast.success('Email has been sent');
+      }
+    }
+  );
+  const { allowRegister, authProvider, customAuthProviderIcon } =
+    useGlobalConfig();
+
+  const mainAuthProvider = authProvider.includes('email') ? (
+    <Form
+      layout="vertical"
+      disabled={isEmailLoading}
+      onFinish={handleLoginWithEmail}
+    >
+      <Form.Item label={t('Email')} name="email" rules={[{ required: true }]}>
+        <Input type="email" />
+      </Form.Item>
+      <Form.Item>
+        <Button
+          size="lg"
+          type="submit"
+          className="w-full"
+          loading={isEmailLoading}
+        >
+          {t('Login')}
+        </Button>
+      </Form.Item>
+    </Form>
+  ) : authProvider.includes('account') ? (
+    <Form
+      layout="vertical"
+      disabled={isAccountLoading}
+      onFinish={handleLoginWithAccount}
+    >
+      <Form.Item
+        label={t('Username')}
+        name="username"
+        rules={[{ required: true }]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        label={t('Password')}
+        name="password"
+        rules={[{ required: true }]}
+      >
+        <Input type="password" />
+      </Form.Item>
+      <Form.Item>
+        <Button
+          size="lg"
+          type="submit"
+          className="w-full"
+          loading={isAccountLoading}
+        >
+          {t('Login')}
+        </Button>
+      </Form.Item>
+
+      {allowRegister && (
+        <Form.Item>
+          <Button
+            variant="secondary"
+            size="lg"
+            type="button"
+            className="w-full"
+            onClick={() => {
+              navigate({
+                to: '/register',
+              });
+            }}
+          >
+            {t('Register')}
+          </Button>
+        </Form.Item>
+      )}
+    </Form>
+  ) : null;
+
+  const extraAuthProviderEl = compact([
+    authProvider.includes('github') && (
+      <Button
+        variant="secondary"
+        className="h-12 w-12 p-3"
+        onClick={() => loginWithOAuth('github', search.redirect)}
+      >
+        <LuGithub size={24} />
+      </Button>
+    ),
+    authProvider.includes('custom') && (
+      <Button
+        variant="secondary"
+        className="h-12 w-12 p-3"
+        onClick={() => loginWithOAuth('custom', search.redirect)}
+      >
+        {customAuthProviderIcon ? (
+          <img src={customAuthProviderIcon} className="h-6 w-6" />
+        ) : (
+          <LuLayers size={24} />
+        )}
+      </Button>
+    ),
+  ]);
 
   return (
-    <div className="flex h-full w-full items-center justify-center dark:bg-gray-900">
+    <div className="flex h-full w-full items-center justify-center">
+      {theme === 'dark' && <DotPatternBackground />}
+
       <div className="w-80 -translate-y-1/4">
         <div className="text-center">
           <img className="m-auto h-24 w-24" src="/icon.svg" />
@@ -53,63 +173,19 @@ function LoginComponent() {
         <Typography.Title className="text-center" level={2}>
           Tianji
         </Typography.Title>
-        <Form layout="vertical" disabled={loading} onFinish={handleLogin}>
-          <Form.Item
-            label={t('Username')}
-            name="username"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label={t('Password')}
-            name="password"
-            rules={[{ required: true }]}
-          >
-            <Input type="password" />
-          </Form.Item>
-          <Form.Item>
-            <Button
-              size="lg"
-              type="submit"
-              className="w-full"
-              loading={loading}
-            >
-              {t('Login')}
-            </Button>
-          </Form.Item>
 
-          {allowRegister && (
-            <Form.Item>
-              <Button
-                variant="secondary"
-                size="lg"
-                type="button"
-                className="w-full"
-                onClick={() => {
-                  navigate({
-                    to: '/register',
-                  });
-                }}
-              >
-                {t('Register')}
-              </Button>
-            </Form.Item>
-          )}
-        </Form>
+        {mainAuthProvider}
 
-        {authProvider.length > 0 && (
+        {extraAuthProviderEl.length > 0 && (
           <>
-            <Divider>{t('Or')}</Divider>
+            {mainAuthProvider ? (
+              <Divider>{t('Or')}</Divider>
+            ) : (
+              <Divider>{t('Use Third Party Auth to Login')}</Divider>
+            )}
 
-            <div className="flex justify-center">
-              <Button
-                variant="secondary"
-                className="h-12 w-12 p-3"
-                onClick={() => loginWithOAuth('github')}
-              >
-                <LuGithub size={24} />
-              </Button>
+            <div className="flex justify-center gap-2">
+              {extraAuthProviderEl}
             </div>
           </>
         )}

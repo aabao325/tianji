@@ -7,9 +7,12 @@ import {
   loggerLink,
   splitLink,
   TRPCClientErrorLike,
+  unstable_httpBatchStreamLink,
+  createTRPCClientProxy,
 } from '@trpc/client';
 import { message } from 'antd';
 import { isDev } from '../utils/env';
+import { getUserTimezone } from './model/user';
 
 export { getQueryKey };
 
@@ -19,35 +22,64 @@ export type AppRouterInput = inferRouterInputs<AppRouter>;
 export type AppRouterOutput = inferRouterOutputs<AppRouter>;
 
 const url = '/trpc';
+const sensitiveOperationPaths = new Set([
+  'aiGateway.testConnection',
+  'worker.testCode',
+  'worker.upsert',
+]);
 
 function headers() {
-  return {};
+  const timezone = getUserTimezone();
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+
+  return {
+    timezone,
+    origin,
+  };
 }
 
 export const trpcClient = trpc.createClient({
   links: [
     loggerLink({
-      enabled: (opts) =>
-        (isDev && typeof window !== 'undefined') ||
-        (opts.direction === 'down' && opts.result instanceof Error),
+      enabled: (opts) => {
+        const { path } = opts as typeof opts & { path: string };
+
+        return (
+          !sensitiveOperationPaths.has(path) &&
+          ((isDev && typeof window !== 'undefined') ||
+            (opts.direction === 'down' && opts.result instanceof Error))
+        );
+      },
     }),
     splitLink({
       condition(op) {
-        // check for context property `skipBatch`
-        return op.context.skipBatch === true;
+        return op.context.stream === true;
       },
-      true: httpLink({
-        url,
+      true: unstable_httpBatchStreamLink({
+        url: url,
         headers,
       }),
-      // when condition is false, use batching
-      false: httpBatchLink({
-        url,
-        headers,
+      false: splitLink({
+        condition(op) {
+          // check for context property `skipBatch`
+          return op.context.skipBatch === true;
+        },
+        true: httpLink({
+          url,
+          headers,
+        }),
+        // when condition is false, use batching
+        false: httpBatchLink({
+          url,
+          headers,
+          maxURLLength: 2083,
+        }),
       }),
     }),
   ],
 });
+
+// export const trpcClientProxy = createTRPCClientProxy<AppRouter>(trpcClient);
 
 /**
  * @usage

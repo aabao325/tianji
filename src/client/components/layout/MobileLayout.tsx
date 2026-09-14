@@ -1,12 +1,13 @@
 import React from 'react';
 import {
-  LuActivitySquare,
-  LuAreaChart,
-  LuFilePieChart,
+  LuSquareActivity,
+  LuChartArea,
+  LuFileChartPie,
   LuMonitorDot,
-  LuMoreVertical,
+  LuEllipsisVertical,
   LuServer,
   LuWifi,
+  LuLink,
 } from 'react-icons/lu';
 import { useTranslation } from '@i18next-toolkit/react';
 import { IconType } from 'react-icons';
@@ -18,6 +19,7 @@ import { UserConfig } from './UserConfig';
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 import { MobileLayoutMenu } from './Menu';
 import { RiSurveyLine } from 'react-icons/ri';
+import { WorkspacePauseTip } from '../workspace/WorkspacePauseTip';
 
 export const MobileLayout: React.FC<LayoutProps> = React.memo((props) => {
   const { t } = useTranslation();
@@ -38,6 +40,8 @@ export const MobileLayout: React.FC<LayoutProps> = React.memo((props) => {
 
       <Separator />
 
+      <WorkspacePauseTip />
+
       <div className="flex-1 overflow-hidden">
         {props.children ?? <Outlet />}
       </div>
@@ -48,7 +52,7 @@ export const MobileLayout: React.FC<LayoutProps> = React.memo((props) => {
         <div className="flex justify-between">
           <MobileNavItem
             title={t('Website')}
-            icon={LuAreaChart}
+            icon={LuChartArea}
             to="/website"
           />
           <MobileNavItem
@@ -57,12 +61,12 @@ export const MobileLayout: React.FC<LayoutProps> = React.memo((props) => {
             to="/monitor"
           />
           <MobileNavItem title={t('Servers')} icon={LuServer} to="/server" />
-          <MobileNavItem title={t('Pages')} icon={LuFilePieChart} to="/page" />
+          <MobileNavItem title={t('Pages')} icon={LuFileChartPie} to="/page" />
 
           <Drawer>
             <DrawerTrigger asChild>
               <div className="text-muted-foreground flex-1 rounded-lg p-1 text-center">
-                <LuMoreVertical size={24} className="m-auto mb-1" />
+                <LuEllipsisVertical size={24} className="m-auto mb-1" />
                 <div className={cn('text-sm font-semibold')}>{t('More')}</div>
               </div>
             </DrawerTrigger>
@@ -82,8 +86,14 @@ export const MobileLayout: React.FC<LayoutProps> = React.memo((props) => {
                 />
                 <MobileNavItem
                   title={t('Feed')}
-                  icon={LuActivitySquare}
+                  icon={LuSquareActivity}
                   to="/feed"
+                  extraModal={true}
+                />
+                <MobileNavItem
+                  title={t('Short Link')}
+                  icon={LuLink}
+                  to="/shortlink"
                   extraModal={true}
                 />
               </div>

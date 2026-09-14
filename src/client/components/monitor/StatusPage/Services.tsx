@@ -11,8 +11,12 @@ interface StatusPageServicesProps {
   monitorList: {
     id: string;
     showCurrent?: boolean;
+    showDetail?: boolean;
   }[];
 }
+/**
+ * @deprecated
+ */
 export const StatusPageServices: React.FC<StatusPageServicesProps> = React.memo(
   (props) => {
     const { t } = useTranslation();

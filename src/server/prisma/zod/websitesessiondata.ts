@@ -1,11 +1,27 @@
 import * as z from "zod"
 import * as imports from "./schemas/index.js"
+import { Decimal } from "decimal.js"
 import { CompleteWebsite, RelatedWebsiteModelSchema, CompleteWebsiteSession, RelatedWebsiteSessionModelSchema } from "./index.js"
+
+// Helper schema for Decimal fields
+z
+  .instanceof(Decimal)
+  .or(z.string())
+  .or(z.number())
+  .refine((value) => {
+    try {
+      return new Decimal(value)
+    } catch (error) {
+      return false
+    }
+  })
+  .transform((value) => new Decimal(value))
 
 export const WebsiteSessionDataModelSchema = z.object({
   id: z.string(),
   websiteId: z.string(),
   sessionId: z.string(),
+  key: z.string(),
   stringValue: z.string().nullish(),
   numberValue: z.number().nullish(),
   dateValue: z.date().nullish(),

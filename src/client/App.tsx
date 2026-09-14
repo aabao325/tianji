@@ -14,6 +14,8 @@ import { TooltipProvider } from './components/ui/tooltip';
 import { Toaster } from './components/ui/sonner';
 import { DefaultError } from './components/DefaultError';
 import { useAntdTheme } from './hooks/useTheme';
+import { recordPageView } from './utils/tracker';
+import { useThemeInit } from './store/settings';
 
 const router = createRouter({
   routeTree,
@@ -22,6 +24,10 @@ const router = createRouter({
   },
   defaultNotFoundComponent: DefaultNotFound,
   defaultErrorComponent: DefaultError,
+});
+
+router.subscribe('onLoad', (state) => {
+  recordPageView();
 });
 
 // Register the router instance for type safety
@@ -52,6 +58,8 @@ AppRouter.displayName = 'AppRouter';
 export const App: React.FC = React.memo(() => {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const theme = useAntdTheme();
+
+  useThemeInit();
 
   return (
     <div ref={rootRef} className="App">

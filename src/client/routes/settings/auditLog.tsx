@@ -2,8 +2,6 @@ import { routeAuthBeforeLoad } from '@/utils/route';
 import { createFileRoute } from '@tanstack/react-router';
 import { useTranslation } from '@i18next-toolkit/react';
 import { CommonWrapper } from '@/components/CommonWrapper';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Empty, List } from 'antd';
 import { useMemo, useRef } from 'react';
 import { trpc } from '../../api/trpc';
 import { useCurrentWorkspaceId } from '../../store/user';
@@ -69,7 +67,11 @@ function PageComponent() {
   });
 
   return (
-    <CommonWrapper header={<CommonHeader title={t('Audit Log')} />}>
+    <CommonWrapper
+      header={
+        <CommonHeader title={t('Audit Log')} />
+      }
+    >
       <div className="h-full overflow-hidden p-4">
         <SimpleVirtualList
           allData={allData}

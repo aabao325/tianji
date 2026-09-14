@@ -1,12 +1,13 @@
 import { Prisma } from '@prisma/client';
 import dayjs from 'dayjs';
-import { loadWebsite } from '../model/website.js';
+import { loadWebsite } from '../model/website/index.js';
 import { maxDate } from './common.js';
 import { FILTER_COLUMNS, OPERATORS, SESSION_COLUMNS } from './const.js';
 import { loadTelemetry } from '../model/telemetry.js';
 import { get } from 'lodash-es';
+import { assertQuotedSqlIdentifierPath } from './sql.js';
 
-const POSTGRESQL_DATE_FORMATS = {
+export const POSTGRESQL_DATE_FORMATS = {
   minute: 'YYYY-MM-DD HH24:MI:00',
   hour: 'YYYY-MM-DD HH24:00:00',
   day: 'YYYY-MM-DD',
@@ -14,11 +15,14 @@ const POSTGRESQL_DATE_FORMATS = {
   year: 'YYYY-01-01',
 };
 
-export interface BaseQueryFilters {
-  startDate?: Date;
-  endDate?: Date;
+export interface QueryOptions {
   timezone?: string;
   unit?: keyof typeof POSTGRESQL_DATE_FORMATS;
+}
+
+export interface BaseQueryFilters extends QueryOptions {
+  startDate?: Date;
+  endDate?: Date;
   url?: string;
   country?: string;
   region?: string;
@@ -40,6 +44,21 @@ export interface WebsiteQueryFilters extends BaseQueryFilters {
 export interface QueryOptions {
   joinSession?: boolean;
   columns?: { [key: string]: string };
+}
+
+export function unwrapSQL(sql: Prisma.Sql) {
+  const unwrapSqlText = sql.text.replace(/\$(\d+)/g, (match, group1) => {
+    const index = parseInt(group1, 10) - 1;
+    return `'${sql.values[index]}'`;
+  });
+
+  return unwrapSqlText;
+}
+
+export function printSQL(sql: Prisma.Sql) {
+  const unwrapSqlText = unwrapSQL(sql);
+
+  console.log(unwrapSqlText);
 }
 
 export async function parseWebsiteFilters(
@@ -75,6 +94,9 @@ export async function parseWebsiteFilters(
       ).toISOString(),
       endDate: filters.endDate
         ? dayjs(filters.endDate).toISOString()
+        : undefined,
+      resetDate: website.resetAt
+        ? dayjs(website.resetAt).toISOString()
         : undefined,
       websiteDomain,
     },
@@ -198,14 +220,17 @@ export function getDateQuery(
   unit: keyof typeof POSTGRESQL_DATE_FORMATS,
   timezone?: string
 ) {
-  if (timezone) {
-    return Prisma.sql([
-      `to_char(date_trunc('${unit}', ${field} at time zone '${timezone}'), '${POSTGRESQL_DATE_FORMATS[unit]}')`,
-    ]);
+  if (!(unit in POSTGRESQL_DATE_FORMATS)) {
+    throw new Error(`Invalid date unit: ${unit}`);
   }
-  return Prisma.sql([
-    `to_char(date_trunc('${unit}', ${field}), '${POSTGRESQL_DATE_FORMATS[unit]}')`,
-  ]);
+
+  const safeField = Prisma.raw(assertQuotedSqlIdentifierPath(field));
+  const format = POSTGRESQL_DATE_FORMATS[unit];
+
+  if (timezone) {
+    return Prisma.sql`to_char(date_trunc(${unit}, ${safeField} at time zone ${timezone}), ${format})`;
+  }
+  return Prisma.sql`to_char(date_trunc(${unit}, ${safeField}), ${format})`;
 }
 
 export function getTimestampIntervalQuery(field: string) {
@@ -225,6 +250,12 @@ type ExtractFindManyWhereType<
     findMany: (args?: any) => Prisma.PrismaPromise<any>;
   },
 > = NonNullable<Parameters<T['findMany']>[0]>['where'];
+
+type ExtractFindManySelectType<
+  T extends {
+    findMany: (args?: any) => Prisma.PrismaPromise<any>;
+  },
+> = NonNullable<Parameters<T['findMany']>[0]>['select'];
 
 /**
  * @example
@@ -249,16 +280,25 @@ export async function fetchDataByCursor<
   options: {
     // where: Record<string, any>;
     where: ExtractFindManyWhereType<Model>;
+    select?: ExtractFindManySelectType<Model>;
     limit: number;
     cursor: CursorType;
     cursorName?: string;
     order?: 'asc' | 'desc';
   }
 ) {
-  const { where, limit, cursor, cursorName = 'id', order = 'desc' } = options;
+  const {
+    where,
+    limit,
+    cursor,
+    select,
+    cursorName = 'id',
+    order = 'desc',
+  } = options;
   const items: ExtractFindManyReturnType<Model['findMany']> =
     await fetchModel.findMany({
       where,
+      select,
       take: limit + 1,
       cursor: cursor
         ? {

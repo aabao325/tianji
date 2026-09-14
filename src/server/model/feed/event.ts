@@ -2,7 +2,6 @@ import { FeedChannelNotifyFrequency, FeedEvent, Prisma } from '@prisma/client';
 import { subscribeEventBus } from '../../ws/shared.js';
 import { prisma } from '../_client.js';
 import { serializeJSON } from '../../utils/json.js';
-import { buildQueryWithCache } from '../../cache/index.js';
 import { sendNotification } from '../notification/index.js';
 import { ContentToken, token } from '../notification/token/index.js';
 import { logger } from '../../utils/logger.js';
@@ -12,26 +11,8 @@ import {
 } from '../../prisma/zod/index.js';
 import dayjs from 'dayjs';
 import { z } from 'zod';
-
-const { get: getFeedEventNotify, del: delFeedEventNotifyCache } =
-  buildQueryWithCache(async (channelId: string) => {
-    const channel = await prisma.feedChannel.findFirst({
-      where: {
-        id: channelId,
-      },
-      include: {
-        notifications: true,
-      },
-    });
-
-    if (!channel) {
-      return null;
-    }
-
-    return channel;
-  });
-
-export { delFeedEventNotifyCache };
+import { compact } from 'lodash-es';
+import { getFeedEventNotify } from './shared.js';
 
 /**
  * create feed event
@@ -68,36 +49,35 @@ export async function sendFeedEventsNotify(
   },
   events: FeedEvent[]
 ) {
-  let frequencyToken = token.paragraph('Range: Every Event');
+  let frequencyText = 'Single Event';
   if (channel.notifyFrequency === FeedChannelNotifyFrequency.day) {
-    frequencyToken = token.paragraph(
-      `Range: Daily | ${dayjs().subtract(1, 'day').toISOString()} - ${dayjs().toISOString()}`
-    );
+    frequencyText = `Daily | ${dayjs().subtract(1, 'day').toISOString()} - ${dayjs().toISOString()}`;
   } else if (channel.notifyFrequency === FeedChannelNotifyFrequency.week) {
-    frequencyToken = token.paragraph(
-      `Range: Weekly | ${dayjs().subtract(1, 'week').toISOString()} - ${dayjs().toISOString()}`
-    );
+    frequencyText = `Weekly | ${dayjs().subtract(1, 'week').toISOString()} - ${dayjs().toISOString()}`;
   } else if (channel.notifyFrequency === FeedChannelNotifyFrequency.month) {
-    frequencyToken = token.paragraph(
-      `Range: Monthly | ${dayjs().subtract(1, 'month').toISOString()} - ${dayjs().toISOString()}`
-    );
+    frequencyText = `Monthly | ${dayjs().subtract(1, 'month').toISOString()} - ${dayjs().toISOString()}`;
   }
 
   const eventTokens: ContentToken[] = [
-    token.title('Feed Report from Channel: ' + channel.name, 2),
-    frequencyToken,
     token.list(
       events.map((event) =>
-        token.text(
-          `[${event.source}:${event.eventName}] ${event.senderName ?? ''}: ${event.eventContent}`
-        )
+        compact([
+          token.text(
+            `[${event.source}:${event.eventName}] ${event.eventContent}`
+          ),
+          event.url && token.url(event.url, '[→]'),
+        ])
       )
     ),
   ];
 
   await Promise.all(
     channel.notifications.map((notification) =>
-      sendNotification(notification, 'Feed Report', eventTokens).catch((err) =>
+      sendNotification(
+        notification,
+        `Feed Report from Channel: ${channel.name} | ${frequencyText}`,
+        eventTokens
+      ).catch((err) =>
         logger.error(
           '[Notification] sendFeedEventsNotify',
           channel.id,

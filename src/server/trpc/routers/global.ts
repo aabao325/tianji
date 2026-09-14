@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { publicProcedure, router } from '../trpc.js';
 import { OPENAPI_TAG } from '../../utils/const.js';
 import { env } from '../../utils/env.js';
+import dayjs from 'dayjs';
 
 export const globalRouter = router({
   config: publicProcedure
@@ -10,6 +11,7 @@ export const globalRouter = router({
         method: 'GET',
         path: '/global/config',
         tags: [OPENAPI_TAG.GLOBAL],
+        summary: 'Get global config',
         description: 'Get Tianji system global config',
       },
     })
@@ -23,10 +25,25 @@ export const globalRouter = router({
         alphaMode: z.boolean(),
         disableAnonymousTelemetry: z.boolean(),
         customTrackerScriptName: z.string().optional(),
+        serverTimezone: z.string().optional(),
         authProvider: z.array(z.string()),
+        customAuthProviderIcon: z.string().optional(),
+        smtpAvailable: z.boolean(),
+        enableBilling: z.boolean(),
+        ai: z.object({
+          enable: z.boolean(),
+          contextWindow: z.number(),
+        }),
+        enableFunctionWorker: z.boolean(),
+        observability: z.object({
+          tianji: z.object({
+            baseUrl: z.string().optional(),
+            websiteId: z.string().optional(),
+          }),
+        }),
       })
     )
-    .query(async ({ input }) => {
+    .query(async () => {
       return {
         allowRegister: env.allowRegister,
         websiteId: env.websiteId,
@@ -35,7 +52,17 @@ export const globalRouter = router({
         alphaMode: env.alphaMode,
         disableAnonymousTelemetry: env.disableAnonymousTelemetry,
         customTrackerScriptName: env.customTrackerScriptName,
+        serverTimezone: dayjs.tz.guess(),
         authProvider: env.auth.provider,
+        customAuthProviderIcon: env.auth.custom.icon,
+        smtpAvailable: env.smtp.enable,
+        enableBilling: env.billing.enable,
+        ai: {
+          enable: env.openai.enable,
+          contextWindow: env.openai.contextWindow,
+        },
+        enableFunctionWorker: env.enableFunctionWorker,
+        observability: env.observability,
       };
     }),
 });

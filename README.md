@@ -27,25 +27,25 @@ It's good to specialize in one thing, if we are experts in related abilities we 
 
 - [x] website analysis
 - [x] monitor
+  - [x] support passive reception of results
 - [x] server status
 - [x] problem notification
 - [x] telemetry
 - [x] openapi
 - [x] website
-- [ ] team collaboration
-- [ ] utm track
+- [x] team collaboration
+- [x] utm track
 - [x] waitlist
 - [x] survey
   - [ ] survey page
-- [ ] lighthouse report
-- [ ] hooks
-- [ ] links
+- [x] lighthouse report
+- [x] hooks
 - [x] helm install support
   - [x] allow install from public
-- [ ] improve monitor reporter usage
+- [x] improve monitor reporter usage
   - [x] uninstall guide
-  - [ ] download from server
-  - [ ] custom params guide
+  - [x] download from server
+  - [x] custom params guide
 
 ## Preview
 
@@ -61,13 +61,41 @@ It's good to specialize in one thing, if we are experts in related abilities we 
 
 ![](./website/static/img/preview/6.png)
 
+## Setup
+
+### Docker Compose
+
+Run the included Compose stack from the repository root:
+
+```bash
+docker compose up -d
+```
+
+This starts both the `tianji` application and its `postgres` database. The application is available at `http://localhost:12345` by default.
+
+### Environment
+
+For local source development, create the server environment file before starting the dev server:
+
+```bash
+cp .env.example src/server/.env
+```
+
+At minimum, configure `DATABASE_URL` with the PostgreSQL connection string used by the server, for example:
+
+```ini
+DATABASE_URL="postgresql://tianji:tianji@localhost:5432/tianji?schema=public"
+```
+
+`OPENAPI_KEY` is only needed for the translation auto-generation command below.
+
 ## Translation
 
 ### Add a new translation
 
 modify those file:
 - `src/client/i18next-toolkit.config.cjs` in this file, edit country code
-- `src/client/utils/constants.ts` in this file, add for display
+- `src/client/utils/i18n.ts` in this file, add for display
 
 Then, run below code to auto generate
 
@@ -92,8 +120,12 @@ And its inspired by `umami` license which under `MIT` and `uptime-kuma` which un
 
 ### One-Click Deployment
 
+[![Deploy on Hostinger](https://assets.hostinger.com/vps/deploy.svg)](https://www.hostinger.com/vps/docker-hosting?compose_url=https://github.com/msgbyte/tianji/)
+
 [![Deploy on Sealos](https://cdn.jsdelivr.net/gh/labring-actions/templates@main/Deploy-on-Sealos.svg)](https://cloud.sealos.io/?openapp=system-template%3FtemplateName%3Dtianji)
 
 [![Deploy to RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploylobe.svg)](https://repocloud.io/details/?app_id=270)
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/msgbyte/tianji)
+
+[![Run on ClawCloud](https://raw.githubusercontent.com/ClawCloud/Run-Template/refs/heads/main/Run-on-ClawCloud.svg)](https://template.run.claw.cloud/?referralCode=TNW6NVWTLHPQ&openapp=system-fastdeploy%3FtemplateName%3Dtianji)

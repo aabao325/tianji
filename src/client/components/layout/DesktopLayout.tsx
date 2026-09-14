@@ -1,11 +1,17 @@
 import * as React from 'react';
 import {
-  LuActivitySquare,
-  LuAreaChart,
-  LuFilePieChart,
+  LuSquareActivity,
+  LuChartArea,
+  LuCompass,
+  LuFileChartPie,
   LuMonitorDot,
   LuServer,
   LuWifi,
+  LuTabletSmartphone,
+  LuBrainCircuit,
+  LuSquareFunction,
+  LuLink,
+  LuRoute,
 } from 'react-icons/lu';
 import {
   ResizableHandle,
@@ -20,13 +26,19 @@ import { WorkspaceSwitcher } from '@/components/WorkspaceSwitcher';
 import { UserConfig } from './UserConfig';
 import { Outlet } from '@tanstack/react-router';
 import { trpc } from '@/api/trpc';
-import { useUserStore } from '@/store/user';
+import { useCurrentWorkspaceId } from '@/store/user';
 import { LayoutProps } from './types';
 import { useTranslation } from '@i18next-toolkit/react';
 import { CommandPanel } from '@/components/CommandPanel';
 import { RiSurveyLine } from 'react-icons/ri';
+import { WorkspacePauseTip } from '../workspace/WorkspacePauseTip';
+import { FreeTierTip } from '../FreeTierTip';
+import { DevContainer } from '../DevContainer';
+import { AIPanel } from '../ai/AIPanel';
+import { compact } from 'lodash-es';
+import { useGlobalConfig } from '@/hooks/useConfig';
 
-const defaultLayout: [number, number, number] = [265, 440, 655];
+const defaultLayout: [number, number, number] = [15, 25, 60];
 
 export const DesktopLayout: React.FC<LayoutProps> = React.memo((props) => {
   const [layout = defaultLayout, setLayout] = useLocalStorageState(
@@ -39,7 +51,7 @@ export const DesktopLayout: React.FC<LayoutProps> = React.memo((props) => {
       defaultValue: false,
     }
   );
-  const workspaceId = useUserStore((state) => state.info?.currentWorkspace?.id);
+  const workspaceId = useCurrentWorkspaceId();
   const { data: serviceCount } = trpc.workspace.getServiceCount.useQuery(
     {
       workspaceId: workspaceId!,
@@ -49,6 +61,7 @@ export const DesktopLayout: React.FC<LayoutProps> = React.memo((props) => {
     }
   );
   const { t } = useTranslation();
+  const { alphaMode, enableFunctionWorker } = useGlobalConfig();
 
   const navbar = (
     <>
@@ -65,14 +78,35 @@ export const DesktopLayout: React.FC<LayoutProps> = React.memo((props) => {
         <CommandPanel isCollapsed={isCollapsed} />
       </div>
       <Separator />
+
+      <DevContainer>
+        <Nav
+          isCollapsed={isCollapsed}
+          links={[
+            {
+              title: t('Insights'),
+              icon: LuCompass,
+              to: '/insights',
+            },
+          ]}
+        />
+        <Separator />
+      </DevContainer>
+
       <Nav
         isCollapsed={isCollapsed}
-        links={[
+        links={compact([
           {
             title: t('Website'),
             label: String(serviceCount?.website ?? ''),
-            icon: LuAreaChart,
+            icon: LuChartArea,
             to: '/website',
+          },
+          {
+            title: t('Application'),
+            label: String(serviceCount?.application ?? ''),
+            icon: LuTabletSmartphone,
+            to: '/application',
           },
           {
             title: t('Monitor'),
@@ -95,7 +129,7 @@ export const DesktopLayout: React.FC<LayoutProps> = React.memo((props) => {
           {
             title: t('Pages'),
             label: String(serviceCount?.page ?? ''),
-            icon: LuFilePieChart,
+            icon: LuFileChartPie,
             to: '/page',
           },
           {
@@ -107,13 +141,45 @@ export const DesktopLayout: React.FC<LayoutProps> = React.memo((props) => {
           {
             title: t('Feed'),
             label: String(serviceCount?.feed ?? ''),
-            icon: LuActivitySquare,
+            icon: LuSquareActivity,
             to: '/feed',
           },
-        ]}
+          {
+            title: t('Short Link'),
+            label: String(serviceCount?.shortLink ?? ''),
+            icon: LuLink,
+            to: '/shortlink',
+          },
+          {
+            title: t('AI Gateway'),
+            label: String(serviceCount?.aiGateway ?? ''),
+            icon: LuBrainCircuit,
+            to: '/aiGateway',
+          },
+          {
+            title: t('AI Router'),
+            label: String(serviceCount?.aiRouter ?? ''),
+            icon: LuRoute,
+            to: '/aiRouter',
+          },
+          alphaMode &&
+            enableFunctionWorker && {
+              title: t('Function'),
+              label: String(serviceCount?.functionWorker ?? ''),
+              icon: LuSquareFunction,
+              to: '/worker',
+            },
+        ])}
       />
+
       <Separator />
+
       <div className="flex-1" />
+
+      <div className="p-2">
+        <FreeTierTip isCollapsed={isCollapsed} />
+      </div>
+
       <Separator />
 
       <div className={cn(isCollapsed && 'm-auto')}>
@@ -123,57 +189,63 @@ export const DesktopLayout: React.FC<LayoutProps> = React.memo((props) => {
   );
 
   return (
-    <ResizablePanelGroup
-      direction="horizontal"
-      onLayout={(sizes: number[]) => {
-        if (sizes.length === 3) {
-          setLayout(sizes as typeof defaultLayout);
-        } else if (sizes.length === 2) {
-          const listSize = layout[1];
-          const rest = 100 - sizes[0] - listSize;
-          setLayout([sizes[0], listSize, rest]);
-        }
-      }}
-      className="h-full items-stretch"
-    >
-      <ResizablePanel
-        defaultSize={layout[0]}
-        collapsedSize={1}
-        collapsible={true}
-        minSize={10}
-        maxSize={20}
-        onCollapse={() => {
-          setIsCollapsed(true);
+    <div className="flex h-full w-full flex-col">
+      <WorkspacePauseTip />
+      <AIPanel />
+
+      <ResizablePanelGroup
+        className="flex-1 items-stretch"
+        direction="horizontal"
+        onLayout={(sizes: number[]) => {
+          if (sizes.length === 3) {
+            setLayout(sizes as typeof defaultLayout);
+          } else if (sizes.length === 2) {
+            const listSize = layout[1];
+            const rest = 100 - sizes[0] - listSize;
+            setLayout([sizes[0], listSize, rest]);
+          }
         }}
-        onExpand={() => {
-          setIsCollapsed(false);
-        }}
-        className={cn(
-          'flex flex-col',
-          isCollapsed && 'min-w-[50px] transition-all duration-300 ease-in-out'
+      >
+        <ResizablePanel
+          defaultSize={layout[0]}
+          collapsedSize={1}
+          collapsible={true}
+          minSize={10}
+          maxSize={20}
+          onCollapse={() => {
+            setIsCollapsed(true);
+          }}
+          onExpand={() => {
+            setIsCollapsed(false);
+          }}
+          className={cn(
+            'flex flex-col',
+            isCollapsed &&
+              'min-w-[50px] transition-all duration-300 ease-in-out'
+          )}
+        >
+          {navbar}
+        </ResizablePanel>
+
+        {props.list && (
+          <>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={layout[1]} minSize={20}>
+              <div className="h-full overflow-hidden">{props.list}</div>
+            </ResizablePanel>
+          </>
         )}
-      >
-        {navbar}
-      </ResizablePanel>
 
-      {props.list && (
-        <>
-          <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={layout[1]} minSize={25}>
-            <div className="h-full overflow-hidden">{props.list}</div>
-          </ResizablePanel>
-        </>
-      )}
-
-      <ResizableHandle withHandle />
-      <ResizablePanel
-        defaultSize={props.list ? layout[2] : layout[1] + layout[2]}
-      >
-        <div className="h-full overflow-hidden">
-          {props.children ?? <Outlet />}
-        </div>
-      </ResizablePanel>
-    </ResizablePanelGroup>
+        <ResizableHandle withHandle />
+        <ResizablePanel
+          defaultSize={props.list ? layout[2] : layout[1] + layout[2]}
+        >
+          <div className="h-full overflow-hidden">
+            {props.children ?? <Outlet />}
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
+    </div>
   );
 });
 DesktopLayout.displayName = 'DesktopLayout';

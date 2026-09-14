@@ -30,6 +30,10 @@ const buttonVariants = cva(
         sm: 'h-8 rounded-md px-3 text-xs',
         lg: 'h-10 rounded-md px-8',
         icon: 'h-9 w-9',
+        'icon-sm': 'size-8 text-sm',
+      },
+      iconType: {
+        right: 'flex-row-reverse',
       },
     },
     defaultVariants: {
@@ -56,6 +60,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       asChild = false,
       loading = false,
       Icon,
+      iconType,
       ...props
     },
     ref
@@ -63,7 +68,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : 'button';
 
     const icon = Icon ? (
-      <Icon className={cn(props.children ? 'mr-1' : '')} />
+      <Icon
+        className={cn({
+          'mr-1': props.children && iconType !== 'right',
+          'ml-1': iconType === 'right',
+        })}
+      />
     ) : undefined;
     const children = (
       <>
@@ -74,10 +84,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(buttonVariants({ variant, size, iconType, className }))}
         ref={ref}
-        disabled={loading}
         {...props}
+        disabled={props.disabled || loading}
         children={children}
       />
     );

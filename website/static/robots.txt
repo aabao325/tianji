@@ -1,0 +1,18 @@
+User-Agent: *
+Allow: /
+Disallow: /_next/
+Disallow: /static/
+Disallow: /404
+Disallow: /500
+Disallow: /*.json$
+
+User-Agent: Googlebot
+Allow: /
+Disallow: /_next/
+Disallow: /static/
+Disallow: /404
+Disallow: /500
+Disallow: /*.json$
+
+LLM-Content: https://tianji.dev/llms.txt
+LLM-Full-Content: https://tianji.dev/llms-full.txt

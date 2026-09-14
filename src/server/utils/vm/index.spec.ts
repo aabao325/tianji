@@ -1,0 +1,273 @@
+import { describe, test, expect } from 'vitest';
+import { runCodeInIVM } from './index.js';
+import { createSandboxProxy } from './sandbox.js';
+
+describe('runCodeInIVM', () => {
+  test('should execute simple code and return result', async () => {
+    const code = '(async () => { return 1 + 1; })()';
+    const result = await runCodeInIVM(code);
+
+    expect(result.result).toBe(2);
+    expect(result.error).toBeUndefined();
+    expect(result.usage).toBeGreaterThan(0);
+  });
+
+  test('should handle console.log calls', async () => {
+    const code = `
+      (async () => {
+        console.log('Hello');
+        console.log('World');
+        return 'done';
+      })()
+    `;
+    const result = await runCodeInIVM(code);
+
+    expect(result.logger).toHaveLength(2);
+    expect(result.logger[0][0]).toBe('log');
+    expect(result.logger[0][2]).toBe('Hello');
+    expect(result.logger[1][0]).toBe('log');
+    expect(result.logger[1][2]).toBe('World');
+    expect(result.result).toBe('done');
+  });
+
+  test('should handle console.warn and console.error', async () => {
+    const code = `
+      (async () => {
+        console.warn('Warning message');
+        console.error('Error message');
+        return true;
+      })()
+    `;
+    const result = await runCodeInIVM(code);
+
+    expect(result.logger).toHaveLength(2);
+    expect(result.logger[0][0]).toBe('warn');
+    expect(result.logger[0][2]).toBe('Warning message');
+    expect(result.logger[1][0]).toBe('error');
+    expect(result.logger[1][2]).toBe('Error message');
+    expect(result.result).toBe(true);
+  });
+
+  test('should handle async code execution', async () => {
+    const code = `
+      (async () => {
+        const result = await Promise.resolve(42);
+        return result * 2;
+      })()
+    `;
+    const result = await runCodeInIVM(code);
+
+    expect(result.result).toBe(84);
+    expect(result.error).toBeUndefined();
+  });
+
+  test('should catch and return errors', async () => {
+    const code = `
+      (async () => {
+        throw new Error('Test error');
+      })()
+    `;
+    const result = await runCodeInIVM(code);
+
+    expect(result.result).toBeUndefined();
+    expect(result.error).toBeDefined();
+    expect(result.error.message).toContain('Test error');
+  });
+
+  test('should handle variables and operations', async () => {
+    const code = `
+      (async () => {
+        const a = 10;
+        const b = 20;
+        const sum = a + b;
+        return sum;
+      })()
+    `;
+    const result = await runCodeInIVM(code);
+
+    expect(result.result).toBe(30);
+  });
+
+  test('should handle string operations', async () => {
+    const code = `
+      (async () => {
+        const greeting = 'Hello';
+        const name = 'World';
+        return greeting + ' ' + name;
+      })()
+    `;
+    const result = await runCodeInIVM(code);
+
+    expect(result.result).toBe('Hello World');
+  });
+
+  test('should handle array operations', async () => {
+    const code = `
+      (async () => {
+        const numbers = [1, 2, 3, 4, 5];
+        const doubled = numbers.map(n => n * 2);
+        return doubled;
+      })()
+    `;
+    const result = await runCodeInIVM(code);
+
+    expect(result.result).toEqual([2, 4, 6, 8, 10]);
+  });
+
+  test('should handle object operations', async () => {
+    const code = `
+      (async () => {
+        const person = {
+          name: 'John',
+          age: 30
+        };
+        return person;
+      })()
+    `;
+    const result = await runCodeInIVM(code);
+
+    expect(result.result).toEqual({
+      name: 'John',
+      age: 30,
+    });
+  });
+
+  test('should collect resource metrics without exposing isolate handles', async () => {
+    const code = '(async () => { return "cleanup test"; })()';
+    const result = await runCodeInIVM(code);
+
+    expect(result.result).toBe('cleanup test');
+    expect(result).not.toHaveProperty('isolate');
+    expect(result.cpuTime).toEqual(expect.any(Number));
+    expect(result.cpuTime).toBeGreaterThanOrEqual(0);
+    expect(result.memoryUsage).toEqual(
+      expect.objectContaining({
+        used_heap_size: expect.any(Number),
+      })
+    );
+  });
+
+  test('should expose provided globals to sandbox code without embedding them in source', async () => {
+    const payload = {
+      data: 'x'.repeat(50_000),
+    };
+    const code = '(async () => { return __requestPayload.data.length; })()';
+    const result = await runCodeInIVM(code, {
+      __requestPayload: payload,
+    });
+
+    expect(result.result).toBe(50_000);
+    expect(result.error).toBeUndefined();
+  });
+
+  test('calls async methods through a sandbox proxy', async () => {
+    const host = createSandboxProxy({
+      get: async (key: string) => ({ key, value: 42 }),
+    });
+    const result = await runCodeInIVM(
+      `(async () => reproxy(__host).get('answer'))()`,
+      { __host: host }
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(result.result).toEqual({ key: 'answer', value: 42 });
+  });
+
+  test('propagates sanitized async proxy rejections', async () => {
+    const host = createSandboxProxy({
+      get: async () => {
+        throw new Error('WORKER_KV_UNAVAILABLE');
+      },
+    });
+    const result = await runCodeInIVM(
+      `(async () => reproxy(__host).get('answer'))()`,
+      { __host: host }
+    );
+
+    expect(String(result.error)).toContain('WORKER_KV_UNAVAILABLE');
+  });
+
+  test('should track execution time', async () => {
+    const code = `
+      (async () => {
+        // Simulate some work
+        let sum = 0;
+        for (let i = 0; i < 1000; i++) {
+          sum += i;
+        }
+        return sum;
+      })()
+    `;
+    const result = await runCodeInIVM(code);
+
+    expect(result.usage).toBeGreaterThanOrEqual(0);
+    expect(result.result).toBe(499500); // sum of 0 to 999
+  });
+
+  test('should handle empty return', async () => {
+    const code = `
+      (async () => {
+        console.log('No explicit return');
+      })()
+    `;
+    const result = await runCodeInIVM(code);
+
+    expect(result.result).toBeUndefined();
+    expect(result.error).toBeUndefined();
+  });
+
+  test('should handle multiple console calls with different types', async () => {
+    const code = `
+      (async () => {
+        console.log('string', 123, true, { key: 'value' });
+        return 'complete';
+      })()
+    `;
+    const result = await runCodeInIVM(code);
+
+    expect(result.logger[0][0]).toBe('log');
+    expect(result.logger[0][2]).toBe('string');
+    expect(result.logger[0][3]).toBe(123);
+    expect(result.logger[0][4]).toBe(true);
+    expect(result.logger[0][5]).toEqual({ key: 'value' });
+    expect(result.result).toBe('complete');
+  });
+
+  test('should safely format non-cloneable console arguments', async () => {
+    const code = `
+      (async () => {
+        async function task() {}
+        const circular = { task };
+        circular.self = circular;
+        console.log(task, circular);
+        return 'complete';
+      })()
+    `;
+    const result = await runCodeInIVM(code);
+
+    expect(result.error).toBeUndefined();
+    expect(result.result).toBe('complete');
+    expect(result.logger[0]).toEqual([
+      'log',
+      expect.any(Number),
+      '[AsyncFunction: task]',
+      { task: '[AsyncFunction: task]', self: '[Circular]' },
+    ]);
+  });
+
+  test.runIf(process.env.ENABLE_FUNCTION_WORKER_TYPESCRIPT_SUPPORT === 'true')(
+    'should support typescript code',
+    async () => {
+      const code = `
+      (async () => {
+        const a: number = 1;
+        const b: number = 2;
+
+        return a + b;
+      })()
+    `;
+      const result = await runCodeInIVM(code);
+      expect(result.result).toBe(3);
+    }
+  );
+});

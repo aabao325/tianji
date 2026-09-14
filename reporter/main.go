@@ -23,11 +23,13 @@ type ReportData struct {
 
 var (
 	Mode        = flag.String("mode", "http", "The send mode of report data, you can select: 'http' or 'udp', default is 'http'")
-	Url         = flag.String("url", "", "The http url of tianji, for example: https://tianji.msgbyte.com")
+	Url         = flag.String("url", "", "The http url of tianji, for example: https://tianji.dev")
 	WorkspaceId = flag.String("workspace", "", "The workspace id for tianji, this should be a uuid")
 	Name        = flag.String("name", "", "The identification name for this machine")
 	Interval    = flag.Int("interval", 5.0, "Input the INTERVAL, seconed")
 	IsVnstat    = flag.Bool("vnstat", false, "Use vnstat for traffic statistics, linux only")
+	Verbose     = flag.Bool("verbose", false, "Enable verbose logging to show full payload content")
+	Silent      = flag.Bool("silent", false, "Enable silent mode to suppress success logs")
 )
 
 var version = "1.0.0"
@@ -59,29 +61,34 @@ func main() {
 
 	interval := *Interval
 
-	ticker := time.Tick(time.Duration(interval) * time.Second)
+	ticker := time.NewTicker(time.Duration(interval) * time.Second)
+	defer ticker.Stop()
+
+	httpClient := &http.Client{}
 
 	log.Println("Start reporting...")
 	log.Println("Mode:", *Mode)
 	log.Println("Version:", version)
 
 	for {
-		log.Println("Sending report data to:", parsedURL.String())
+		if !*Silent {
+			log.Println("Sending report data to:", parsedURL.String())
+		}
 		payload := ReportData{
 			WorkspaceId: *WorkspaceId,
 			Name:        name,
 			Hostname:    hostname,
-			Timeout:     interval * 5,
+			Timeout:     interval * 10,
 			Payload:     utils.GetReportDataPaylod(interval, *IsVnstat),
 		}
 
 		if *Mode == "udp" {
 			sendUDPPack(*parsedURL, payload)
 		} else {
-			sendHTTPRequest(*parsedURL, payload)
+			sendHTTPRequest(*parsedURL, payload, httpClient)
 		}
 
-		<-ticker
+		<-ticker.C
 	}
 }
 
@@ -106,10 +113,17 @@ func sendUDPPack(url url.URL, payload ReportData) {
 
 	// serialized message
 	jsonData, err := jsoniter.Marshal(payload)
-	log.Printf("[Report] %s\n", jsonData)
 	if err != nil {
 		log.Println("Error encoding JSON:", err)
 		return
+	}
+
+	if !*Silent {
+		if *Verbose {
+			log.Printf("[Report] %s\n", jsonData)
+		} else {
+			log.Printf("[Report] Payload length: %d bytes\n", len(jsonData))
+		}
 	}
 
 	// Send message
@@ -119,19 +133,28 @@ func sendUDPPack(url url.URL, payload ReportData) {
 		return
 	}
 
-	log.Println("Message sent successfully!")
+	if !*Silent {
+		log.Println("Message sent successfully!")
+	}
 }
 
 /**
  * Send HTTP Request to report server data
  */
-func sendHTTPRequest(_url url.URL, payload ReportData) {
+func sendHTTPRequest(_url url.URL, payload ReportData, client *http.Client) {
 	jsonData, err := jsoniter.Marshal(payload)
 	if err != nil {
 		log.Println("Error encoding JSON:", err)
 		return
 	}
-	log.Printf("[Report] %s\n", jsonData)
+
+	if !*Silent {
+		if *Verbose {
+			log.Printf("[Report] %s\n", jsonData)
+		} else {
+			log.Printf("[Report] Payload length: %d bytes\n", len(jsonData))
+		}
+	}
 
 	reportUrl, err := url.JoinPath(_url.String(), "/serverStatus/report")
 	if err != nil {
@@ -148,7 +171,6 @@ func sendHTTPRequest(_url url.URL, payload ReportData) {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("x-tianji-report-version", version)
 
-	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Println("Send request error:", err)
@@ -165,5 +187,7 @@ func sendHTTPRequest(_url url.URL, payload ReportData) {
 		return
 	}
 
-	log.Println("Response:", body)
+	if !*Silent {
+		log.Println("Response:", body)
+	}
 }

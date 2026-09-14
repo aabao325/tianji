@@ -1,5 +1,5 @@
 import { Button, Empty, Select, SelectProps } from 'antd';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { trpc } from '../../api/trpc';
 import { useCurrentWorkspaceId } from '../../store/user';
 import { ColorTag } from '../ColorTag';
@@ -8,6 +8,10 @@ import { useTranslation } from '@i18next-toolkit/react';
 import { useNavigate } from '@tanstack/react-router';
 
 interface NotificationPickerProps extends SelectProps<string[]> {}
+
+/**
+ * @deprecated Use NotificationPickerV2 instead
+ */
 export const NotificationPicker: React.FC<NotificationPickerProps> = React.memo(
   (props) => {
     const { t } = useTranslation();
@@ -16,6 +20,21 @@ export const NotificationPicker: React.FC<NotificationPickerProps> = React.memo(
     const { data: allNotification = [] } = trpc.notification.all.useQuery({
       workspaceId,
     });
+
+    const options = useMemo(
+      () =>
+        allNotification.map((notification) => ({
+          label: (
+            <div>
+              <ColorTag label={notification.type} />
+              {notification.name}
+            </div>
+          ),
+          value: notification.id,
+          desc: notification.name,
+        })),
+      [allNotification]
+    );
 
     return (
       <Select
@@ -39,14 +58,9 @@ export const NotificationPicker: React.FC<NotificationPickerProps> = React.memo(
           />
         }
         {...props}
-      >
-        {allNotification.map((m) => (
-          <Select.Option key={m.id} value={m.id}>
-            <ColorTag label={m.type} />
-            {m.name}
-          </Select.Option>
-        ))}
-      </Select>
+        options={options}
+        optionFilterProp="desc"
+      />
     );
   }
 );

@@ -1,8 +1,35 @@
 import { z } from 'zod';
-import { OpenApiMetaInfo, router, workspaceProcedure } from '../trpc.js';
+import {
+  OpenApiMetaInfo,
+  router,
+  workspaceOwnerProcedure,
+  workspaceProcedure,
+} from '../trpc.js';
 import { OPENAPI_TAG } from '../../utils/const.js';
 import { prisma } from '../../model/_client.js';
-import { OpenApiMeta } from 'trpc-openapi';
+import { OpenApiMeta } from 'trpc-to-openapi';
+import {
+  cancelSubscription,
+  changeSubscription,
+  createCheckoutBilling,
+  createCreditCheckout,
+  getTierNameByvariantId,
+  listCreditPacks,
+  SubscriptionTierType,
+} from '../../model/billing/index.js';
+import {
+  getWorkspaceCredit,
+  getWorkspaceCreditBills,
+} from '../../model/billing/credit.js';
+import { LemonSqueezySubscriptionModelSchema } from '../../prisma/zod/lemonsqueezysubscription.js';
+import {
+  getWorkspaceTier,
+  getWorkspaceUsage,
+} from '../../model/billing/workspace.js';
+import { getTierLimit, TierLimitSchema } from '../../model/billing/limit.js';
+import { WorkspaceSubscriptionTier } from '@prisma/client';
+import { env } from '../../utils/env.js';
+import { WorkspaceBillModelSchema } from '../../prisma/zod/workspacebill.js';
 
 export const billingRouter = router({
   usage: workspaceProcedure
@@ -10,6 +37,7 @@ export const billingRouter = router({
       buildBillingOpenapi({
         method: 'GET',
         path: '/usage',
+        summary: 'Get usage',
         description: 'get workspace usage',
       })
     )
@@ -31,30 +59,233 @@ export const billingRouter = router({
     .query(async ({ input }) => {
       const { workspaceId, startAt, endAt } = input;
 
-      const res = await prisma.workspaceDailyUsage.aggregate({
+      return getWorkspaceUsage(workspaceId, startAt, endAt);
+    }),
+  limit: workspaceProcedure
+    .meta(
+      buildBillingOpenapi({
+        method: 'GET',
+        path: '/limit',
+        summary: 'Get limit',
+        description: 'get workspace subscription limit',
+      })
+    )
+    .output(TierLimitSchema)
+    .query(async ({ input }) => {
+      const { workspaceId } = input;
+      const tier = await getWorkspaceTier(workspaceId);
+
+      return getTierLimit(tier);
+    }),
+  currentTier: workspaceProcedure
+    .meta(
+      buildBillingOpenapi({
+        method: 'GET',
+        path: '/currentTier',
+        summary: 'Get current tier',
+        description: 'get workspace current tier',
+      })
+    )
+    .output(z.nativeEnum(WorkspaceSubscriptionTier))
+    .query(({ input }) => {
+      const { workspaceId } = input;
+
+      return getWorkspaceTier(workspaceId);
+    }),
+  currentSubscription: workspaceProcedure
+    .meta(
+      buildBillingOpenapi({
+        method: 'GET',
+        path: '/currentSubscription',
+        summary: 'Get subscription',
+        description: 'get workspace current subscription',
+      })
+    )
+    .output(
+      LemonSqueezySubscriptionModelSchema.merge(
+        z.object({
+          tier: z.string(),
+        })
+      ).nullable()
+    )
+    .query(async ({ input }) => {
+      const { workspaceId } = input;
+
+      const res = await prisma.lemonSqueezySubscription.findUnique({
         where: {
           workspaceId,
-          date: {
-            gte: new Date(startAt),
-            lte: new Date(endAt),
-          },
-        },
-        _sum: {
-          websiteAcceptedCount: true,
-          websiteEventCount: true,
-          monitorExecutionCount: true,
-          surveyCount: true,
-          feedEventCount: true,
         },
       });
 
-      return {
-        websiteAcceptedCount: res._sum.websiteAcceptedCount ?? 0,
-        websiteEventCount: res._sum.websiteEventCount ?? 0,
-        monitorExecutionCount: res._sum.monitorExecutionCount ?? 0,
-        surveyCount: res._sum.surveyCount ?? 0,
-        feedEventCount: res._sum.feedEventCount ?? 0,
-      };
+      if (!res) {
+        return null;
+      }
+
+      return { ...res, tier: getTierNameByvariantId(res.variantId) };
+    }),
+  checkout: workspaceOwnerProcedure
+    .input(
+      z.object({
+        tier: z.enum(['free', 'pro', 'team']),
+        redirectUrl: z.string().optional(),
+      })
+    )
+    .output(
+      z.object({
+        url: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { workspaceId, redirectUrl } = input;
+      const userId = ctx.user.id;
+      const checkout = await createCheckoutBilling(
+        workspaceId,
+        userId,
+        input.tier,
+        redirectUrl
+      );
+
+      const url = checkout.attributes.url;
+
+      return { url };
+    }),
+  changePlan: workspaceOwnerProcedure
+    .input(
+      z.object({
+        tier: z.string(),
+      })
+    )
+    .output(z.string())
+    .mutation(async ({ input }) => {
+      const { workspaceId } = input;
+
+      const subscription = await changeSubscription(
+        workspaceId,
+        input.tier as SubscriptionTierType
+      );
+
+      return subscription.id;
+    }),
+  cancelSubscription: workspaceOwnerProcedure
+    .output(z.string())
+    .mutation(async ({ input }) => {
+      const { workspaceId } = input;
+      const subscription = await cancelSubscription(workspaceId);
+
+      return subscription.id;
+    }),
+  credit: workspaceProcedure
+    .meta(
+      buildBillingOpenapi({
+        method: 'GET',
+        path: '/credit',
+        summary: 'Get credit',
+        description: 'get workspace credit balance',
+      })
+    )
+    .output(
+      z.object({
+        credit: z.number(),
+      })
+    )
+    .query(async ({ input }) => {
+      const { workspaceId } = input;
+      const credit = await getWorkspaceCredit(workspaceId);
+
+      return { credit };
+    }),
+  creditBills: workspaceProcedure
+    .meta(
+      buildBillingOpenapi({
+        method: 'GET',
+        path: '/credit/bills',
+        summary: 'Get credit bills',
+        description: 'list workspace credit bills',
+      })
+    )
+    .input(
+      z.object({
+        workspaceId: z.string().cuid2(),
+        page: z.number().int().min(1).default(1),
+        pageSize: z.number().int().min(1).max(100).default(10),
+      })
+    )
+    .output(
+      z.object({
+        list: WorkspaceBillModelSchema.pick({
+          id: true,
+          workspaceId: true,
+          type: true,
+          amount: true,
+          createdAt: true,
+        }).array(),
+        total: z.number(),
+        page: z.number(),
+        pageSize: z.number(),
+      })
+    )
+    .query(async ({ input }) => {
+      const { workspaceId, page, pageSize } = input;
+
+      return getWorkspaceCreditBills(workspaceId, { page, pageSize });
+    }),
+  creditPacks: workspaceProcedure
+    .meta(
+      buildBillingOpenapi({
+        method: 'GET',
+        path: '/credit/packs',
+        summary: 'Get credit packs',
+        description: 'list available credit packs',
+      })
+    )
+    .output(
+      z
+        .object({
+          id: z.string(),
+          name: z.string(),
+          variantId: z.string(),
+          credit: z.number(),
+          price: z.number(),
+          currency: z.string(),
+        })
+        .array()
+    )
+    .query(async () => {
+      const packs = await listCreditPacks();
+
+      return packs.map((pack) => ({
+        ...pack,
+        currency: pack.currency ?? env.billing.lemonSqueezy.credit.currency,
+      }));
+    }),
+  creditCheckout: workspaceOwnerProcedure
+    .meta(
+      buildBillingOpenapi({
+        method: 'POST',
+        path: '/credit/checkout',
+        summary: 'Checkout credit',
+        description: 'create credit checkout session',
+      })
+    )
+    .input(
+      z.object({
+        packId: z.string(),
+        redirectUrl: z.string().optional(),
+      })
+    )
+    .output(z.object({ url: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { workspaceId } = input;
+      const userId = ctx.user.id;
+
+      const checkout = await createCreditCheckout(
+        workspaceId,
+        userId,
+        input.packId,
+        input.redirectUrl
+      );
+
+      return { url: checkout.attributes.url };
     }),
 });
 

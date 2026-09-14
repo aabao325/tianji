@@ -1,0 +1,81 @@
+import { Router } from 'express';
+import { param, validate } from '../middleware/validate.js';
+import { execStoredWorker, getWorker } from '../model/worker/index.js';
+import { logger } from '../utils/logger.js';
+import { env } from '../utils/env.js';
+import { FunctionWorkerVisibility } from '@prisma/client';
+
+export const workerRouter = Router();
+
+/**
+ * Execute a worker by ID
+ */
+workerRouter.all(
+  '/:workspaceId/:workerId',
+  validate(param('workspaceId').isString(), param('workerId').isString()),
+  async (req, res) => {
+    if (!env.enableFunctionWorker) {
+      return res.status(500).json({
+        success: false,
+        error: 'Function worker is not enabled',
+      });
+    }
+
+    try {
+      const { workspaceId, workerId } = req.params;
+      const requestPayload = {
+        ...req.query,
+        ...req.body,
+      };
+
+      const worker = await getWorker(workerId, workspaceId);
+
+      if (!worker) {
+        return res.status(404).json({
+          success: false,
+          error: 'Worker not found or does not belong to this workspace',
+        });
+      }
+
+      if (!worker.active) {
+        return res.status(400).json({
+          success: false,
+          error: 'Worker is not active',
+        });
+      }
+
+      if (worker.visibility === FunctionWorkerVisibility.Private) {
+        return res.status(403).json({
+          success: false,
+          error: 'Worker is private',
+        });
+      }
+
+      // Execute the worker
+      const execution = await execStoredWorker(worker, requestPayload, {
+          type: 'http',
+          request: {
+            method: req.method,
+            url: req.url,
+            headers: { ...req.headers },
+          },
+      });
+
+      const response = execution.responsePayload;
+
+      if (typeof response === 'object') {
+        res.status(200).json(response);
+      } else if (typeof response === 'number') {
+        res.status(200).send(String(response));
+      } else {
+        res.status(200).send(response);
+      }
+    } catch (error) {
+      logger.error('Worker execution error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Internal server error during worker execution',
+      });
+    }
+  }
+);

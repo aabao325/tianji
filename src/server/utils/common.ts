@@ -1,6 +1,6 @@
 import { v4, v5, validate } from 'uuid';
 import crypto from 'crypto';
-import { DATA_TYPE } from './const.js';
+import { DATA_TYPE, DATETIME_REGEX } from './const.js';
 import { DynamicDataType } from './types.js';
 import dayjs from 'dayjs';
 import minMax from 'dayjs/plugin/minMax.js';
@@ -48,6 +48,13 @@ export function hashUuid(...args: string[]) {
   return v5(hash(...args), v5.DNS);
 }
 
+export function sha512(input: string) {
+  return hash(input);
+}
+
+export function sha256(input: string) {
+  return crypto.createHash('sha256').update(input).digest('hex');
+}
 /**
  * generate hash with md5
  * which use in unimportant scene
@@ -138,14 +145,15 @@ function createKey(
 function getDataType(value: any): string {
   let type: string = typeof value;
 
-  if (
-    (type === 'string' && isValidDate(value)) ||
-    isValidDate(dayjs(value).toISOString())
-  ) {
+  if (type === 'string' && isValidDateValue(value)) {
     type = 'date';
   }
 
   return type;
+}
+
+function isValidDateValue(value: string) {
+  return typeof value === 'string' && DATETIME_REGEX.test(value);
 }
 
 /**
@@ -166,7 +174,7 @@ export function parseToken(token: string, secret = jwtSecret) {
 }
 
 export function maxDate(...args: any[]) {
-  return dayjs.max(args.filter((n) => dayjs(n).isValid()));
+  return dayjs.max(args.map((n) => dayjs(n)).filter((n) => n.isValid()));
 }
 
 export async function parseDateRange({
@@ -250,4 +258,24 @@ export function numify(num: number): string {
 
 export function generateETag(data: string) {
   return `"${md5(data)}"`;
+}
+
+export function stringifyDateType(dataType: number) {
+  if (dataType === DATA_TYPE.string) {
+    return 'string' as const;
+  }
+  if (dataType === DATA_TYPE.number) {
+    return 'number' as const;
+  }
+  if (dataType === DATA_TYPE.boolean) {
+    return 'boolean' as const;
+  }
+  if (dataType === DATA_TYPE.date) {
+    return 'date' as const;
+  }
+  if (dataType === DATA_TYPE.array) {
+    return 'array' as const;
+  }
+
+  return 'string' as const;
 }

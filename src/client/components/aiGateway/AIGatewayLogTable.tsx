@@ -1,0 +1,130 @@
+import { trpc } from '@/api/trpc';
+import { useCurrentWorkspaceId } from '@/store/user';
+import React, { useMemo, useState } from 'react';
+import { VirtualizedInfiniteDataTable } from '../VirtualizedInfiniteDataTable';
+import { useAIGatewayLogColumns } from './useAIGatewayLogColumns';
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '../ui/sheet';
+import { useTranslation } from '@i18next-toolkit/react';
+import { ScrollArea } from '../ui/scroll-area';
+import { Button } from '../ui/button';
+import { Empty } from 'antd';
+import { useEvent } from '@/hooks/useEvent';
+import { AIGatewayLogDetail } from './AIGatewayLogDetail';
+
+interface AIGatewayLogTableProps {
+  gatewayId: string;
+  logId?: string;
+}
+export const AIGatewayLogTable: React.FC<AIGatewayLogTableProps> = React.memo(
+  (props) => {
+    const { gatewayId, logId } = props;
+    const workspaceId = useCurrentWorkspaceId();
+    const { t } = useTranslation();
+
+    const {
+      data: resultList,
+      hasNextPage,
+      fetchNextPage,
+      isFetching,
+      isLoading,
+    } = trpc.aiGateway.logs.useInfiniteQuery(
+      {
+        workspaceId,
+        gatewayId,
+        logId,
+      },
+      {
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      }
+    );
+
+    const [selectedIndex, setSelectedIndex] = useState(-1);
+
+    const handleRowSelect = useEvent((index: number) => {
+      setSelectedIndex(selectedIndex === index ? -1 : index);
+    });
+
+    const { columns } = useAIGatewayLogColumns(handleRowSelect);
+
+    // Flatten data for table display
+    const flatData = useMemo(
+      () => resultList?.pages?.flatMap((page) => page.items) ?? [],
+      [resultList]
+    );
+
+    const selectedItem = selectedIndex >= 0 ? flatData[selectedIndex] : null;
+
+    return (
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <VirtualizedInfiniteDataTable
+          columns={columns}
+          data={flatData}
+          onFetchNextPage={fetchNextPage}
+          isFetching={isFetching}
+          isLoading={isLoading}
+          hasNextPage={hasNextPage}
+        />
+
+        <Sheet
+          open={Boolean(selectedItem)}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSelectedIndex(-1);
+            }
+          }}
+        >
+          <SheetContent className="flex flex-col">
+            <SheetHeader>
+              <SheetTitle>
+                {t('Detail')} {selectedIndex >= 0 && `#${selectedIndex + 1}`}
+              </SheetTitle>
+            </SheetHeader>
+
+            <ScrollArea className="flex-1 py-4 pr-2">
+              {selectedItem ? (
+                <AIGatewayLogDetail item={selectedItem} />
+              ) : (
+                <Empty />
+              )}
+            </ScrollArea>
+
+            <SheetFooter>
+              <Button
+                variant="outline"
+                disabled={selectedIndex === 0}
+                onClick={() => {
+                  setSelectedIndex((prev) => prev - 1);
+                }}
+              >
+                {t('Prev')}
+              </Button>
+              <Button
+                disabled={selectedIndex === flatData.length - 1 && !hasNextPage}
+                loading={isFetching || isLoading}
+                onClick={() => {
+                  if (selectedIndex < flatData.length - 1) {
+                    setSelectedIndex((prev) => prev + 1);
+                  } else {
+                    // fetch next page
+                    fetchNextPage().then(() => {
+                      setSelectedIndex((prev) => prev + 1);
+                    });
+                  }
+                }}
+              >
+                {t('Next')}
+              </Button>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
+      </div>
+    );
+  }
+);
+AIGatewayLogTable.displayName = 'AIGatewayLogTable';

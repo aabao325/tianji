@@ -6,7 +6,7 @@ import { CompleteSurvey, RelatedSurveyModelSchema } from "./index.js"
 type Literal = boolean | number | string
 type Json = Literal | { [key: string]: Json } | Json[]
 const literalSchema = z.union([z.string(), z.number(), z.boolean()])
-const jsonSchema: z.ZodSchema<Json> = z.lazy(() => z.union([literalSchema, z.array(jsonSchema), z.record(jsonSchema)]))
+const jsonSchema: z.ZodSchema<Json> = z.lazy(() => z.union([literalSchema, z.array(jsonSchema), z.record(z.string(), jsonSchema)]))
 
 export const SurveyResultModelSchema = z.object({
   id: z.string(),
@@ -28,6 +28,8 @@ export const SurveyResultModelSchema = z.object({
   longitude: z.number().nullish(),
   latitude: z.number().nullish(),
   accuracyRadius: z.number().int().nullish(),
+  aiCategory: z.string().nullish(),
+  aiTranslation: z.string().nullish(),
 })
 
 export interface CompleteSurveyResult extends z.infer<typeof SurveyResultModelSchema> {

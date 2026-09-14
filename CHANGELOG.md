@@ -1,5 +1,3383 @@
 
 
+## [1.32.37](https://github.com/msgbyte/tianji/compare/v1.32.36...v1.32.37) (2026-09-14)
+
+### Features
+
+* **ai-gateway:** add Gemini CLI and API examples ([e6e334f](https://github.com/msgbyte/tianji/commit/e6e334fadb356947ec6f0ffa3146adde32b7a020))
+* **ai-gateway:** add native Gemini relay support ([379ccad](https://github.com/msgbyte/tianji/commit/379ccad1071e5b0711245f160cd106232d4c63dc))
+
+### Document
+
+* document Gemini support and English-first conventions ([3d7dcbe](https://github.com/msgbyte/tianji/commit/3d7dcbee79f98925f4ada701bbe9a282fbb1eea7))
+
+## [1.32.36](https://github.com/msgbyte/tianji/compare/v1.32.35...v1.32.36) (2026-09-08)
+
+### Features
+
+* **ai-gateway:** allow custom observer latency thresholds ([c7f404f](https://github.com/msgbyte/tianji/commit/c7f404fffa3f519edb8c0d57697ee3fe9fe58e05))
+
+### Bug Fixes
+
+* **ai-gateway:** render observer reference images ([be57d59](https://github.com/msgbyte/tianji/commit/be57d595fefb10f379f9ae3d681110113b663b0f))
+* **auth:** configure GitHub OAuth issuer ([1b8f505](https://github.com/msgbyte/tianji/commit/1b8f505b4a60c68574291a1b1d0b7cbf57e9ec66))
+
+## [1.32.35](https://github.com/msgbyte/tianji/compare/v1.32.34...v1.32.35) (2026-09-05)
+
+### Features
+
+* **ai-gateway:** improve observer log display ([5f85cb9](https://github.com/msgbyte/tianji/commit/5f85cb944b7dd89b163e7aec1bebf89692ffebe7))
+
+### Bug Fixes
+
+* **ui:** isolate nested image previews and select dropdowns ([9ed1a21](https://github.com/msgbyte/tianji/commit/9ed1a21f64565b90ca87341c0d6d52e3163a3876))
+
+### Others
+
+* **i18n:** update translations and translation tooling ([10ef57e](https://github.com/msgbyte/tianji/commit/10ef57e6597b9c354fbeed8ce28697dadf9ecba8))
+
+## [1.32.34](https://github.com/msgbyte/tianji/compare/v1.32.33...v1.32.34) (2026-09-04)
+
+### Bug Fixes
+
+* **ai-gateway:** parse serialized observer dates ([6b16623](https://github.com/msgbyte/tianji/commit/6b16623649d0117e68d34b29187188fb5a4c8336))
+
+## [1.32.33](https://github.com/msgbyte/tianji/compare/v1.32.32...v1.32.33) (2026-09-03)
+
+### Features
+
+* **ai-gateway:** forward session id upstream ([08f40da](https://github.com/msgbyte/tianji/commit/08f40da6d094336e7c09d489622d2f627097ce0f))
+* **ai-gateway:** improve log payload views ([e3dd453](https://github.com/msgbyte/tianji/commit/e3dd453a639f0dcb1192109819539dc22e2f567d))
+* **aiGateway:** add live log observer ([#289](https://github.com/msgbyte/tianji/issues/289)) ([e9eaef5](https://github.com/msgbyte/tianji/commit/e9eaef5a42c7813149aa85f15683ca7db75e5f77))
+* **audit-log:** add workspace mutation auditing ([#288](https://github.com/msgbyte/tianji/issues/288)) ([b58fb86](https://github.com/msgbyte/tianji/commit/b58fb86de96d7277809b9171bcaeda9c11115e46))
+
+## [1.32.32](https://github.com/msgbyte/tianji/compare/v1.32.31...v1.32.32) (2026-09-02)
+
+### Features
+
+* **ai-gateway:** expose tool calls and image previews ([509e41f](https://github.com/msgbyte/tianji/commit/509e41fcffc8d8f3099bb5d5159854c09ee35759))
+
+## [1.32.31](https://github.com/msgbyte/tianji/compare/v1.32.30...v1.32.31) (2026-09-01)
+
+### Features
+
+* **website:** migrate visitor map to OpenFreeMap ([aa88484](https://github.com/msgbyte/tianji/commit/aa88484b953479a6ca900bc0b94a90e0334343b4))
+
+### Others
+
+* **client:** use published tianji SDK packages ([18c15e8](https://github.com/msgbyte/tianji/commit/18c15e86c4a6a98ce268e3f6dcbc7a68a00c8eb5))
+
+## [1.32.30](https://github.com/msgbyte/tianji/compare/v1.32.29...v1.32.30) (2026-08-31)
+
+### Features
+
+* **sdk:** track identified website users ([06b6725](https://github.com/msgbyte/tianji/commit/06b672523ef804d495f29d94cf435369f5f11928))
+* **website:** add distinct visitor identity storage ([c7c8bab](https://github.com/msgbyte/tianji/commit/c7c8bab12e39ba6686085bcb3cbc81fe6b2313b1))
+* **website:** support identified visitor analytics ([b0102d3](https://github.com/msgbyte/tianji/commit/b0102d31041614e862a1a822d1349a66b86fc250))
+
+### Others
+
+* **sdk:** bump client package versions ([1d78557](https://github.com/msgbyte/tianji/commit/1d785576d7ba270dae1f4e93ec128563c8161d08))
+
+## [1.32.29](https://github.com/msgbyte/tianji/compare/v1.32.28...v1.32.29) (2026-08-30)
+
+### Features
+
+* **website:** add retention chart menu ([224007c](https://github.com/msgbyte/tianji/commit/224007c1119de13fa9b9b44ef9abb54ce7179da1))
+* **website:** add visitor retention report ([609945a](https://github.com/msgbyte/tianji/commit/609945af2e9f89847bea72c6a46ecb61b2943bfd))
+
+### Bug Fixes
+
+* **gateway:** preserve responses websocket upgrades ([cca2319](https://github.com/msgbyte/tianji/commit/cca23198d96a0b04f5d8f894774355987dd100dd))
+* **insights:** initialize warehouse event queries ([e079983](https://github.com/msgbyte/tianji/commit/e07998373082c0f5594ed7e3bc175bff40332691))
+* **insights:** use website session id for event queries ([bfa31e5](https://github.com/msgbyte/tianji/commit/bfa31e578c2b25e30540f2dc5aed6a77650d0107))
+* **workspace:** restore invitation warning tooltip ([9e5a470](https://github.com/msgbyte/tianji/commit/9e5a4702c38f389058cae19c8edb1cc8a20d2342))
+
+## [1.32.28](https://github.com/msgbyte/tianji/compare/v1.32.27...v1.32.28) (2026-08-28)
+
+### Bug Fixes
+
+* **server:** add typescript runtime dependency ([4f94775](https://github.com/msgbyte/tianji/commit/4f94775adefb491e2bee2f776b3ee064c67db717))
+
+## [1.32.27](https://github.com/msgbyte/tianji/compare/v1.32.26...v1.32.27) (2026-08-28)
+
+### Bug Fixes
+
+* **ci:** sync ws dependency specifier ([b8afe5d](https://github.com/msgbyte/tianji/commit/b8afe5d1993a9fa60e96db47b9e4e64a1d101292))
+
+## [1.32.26](https://github.com/msgbyte/tianji/compare/v1.32.25...v1.32.26) (2026-08-28)
+
+### Features
+
+* **ai-gateway:** decompose request payload ([3710c23](https://github.com/msgbyte/tianji/commit/3710c237216aab2de5f6bff248fb40361c05c94a))
+* **ai-gateway:** support responses websocket ([3f37e05](https://github.com/msgbyte/tianji/commit/3f37e05d2f27231e43554256e60524326afd536e))
+* **worker:** add shared modules for function workers ([#285](https://github.com/msgbyte/tianji/issues/285)) ([1a7907f](https://github.com/msgbyte/tianji/commit/1a7907ffb281db76570f2f12469267db431263c6))
+
+## [1.32.25](https://github.com/msgbyte/tianji/compare/v1.32.24...v1.32.25) (2026-08-20)
+
+### Features
+
+* **worker:** add owner-based worker editing ([#284](https://github.com/msgbyte/tianji/issues/284)) ([9da345d](https://github.com/msgbyte/tianji/commit/9da345d40388b8accc9fb0b2c68d59b1b91cd4b9))
+
+## [1.32.24](https://github.com/msgbyte/tianji/compare/v1.32.23...v1.32.24) (2026-08-16)
+
+### Features
+
+* **worker:** support module worker syntax ([ce32bab](https://github.com/msgbyte/tianji/commit/ce32bab58236c10061720786b1130c2d60426f3f))
+
+### Bug Fixes
+
+* **worker:** restore revision rollback action ([be9f814](https://github.com/msgbyte/tianji/commit/be9f814727f4b05a08f26eac6af5af163d81e6ba))
+
+### Document
+
+* **worker:** add user and agent guides ([68277c7](https://github.com/msgbyte/tianji/commit/68277c7e5c93b95ed2b9117173284c997657fc4d))
+
+## [1.32.23](https://github.com/msgbyte/tianji/compare/v1.32.22...v1.32.23) (2026-08-14)
+
+### Features
+
+* **worker:** add function environment variables ([#281](https://github.com/msgbyte/tianji/issues/281)) ([4bbd91d](https://github.com/msgbyte/tianji/commit/4bbd91dae42cebaf3a94651356e5f2935c8a786a))
+* **worker:** add scoped worker kv cache ([#282](https://github.com/msgbyte/tianji/issues/282)) ([1667784](https://github.com/msgbyte/tianji/commit/1667784a3cd5ab12813a1587edbda8c5f286ea2f))
+
+### Bug Fixes
+
+* **website:** prefer clickhouse for overview visitors ([4687d5b](https://github.com/msgbyte/tianji/commit/4687d5bf0f0a20a801cff95280f1aa5e38465992))
+
+## [1.32.22](https://github.com/msgbyte/tianji/compare/v1.32.21...v1.32.22) (2026-08-13)
+
+### Features
+
+* **survey:** remember advanced mode preference ([c0b9117](https://github.com/msgbyte/tianji/commit/c0b9117a48678888a495858d4aae4539d0d92b41))
+
+### Bug Fixes
+
+* **website:** show unique visitors in overview ([3ef2123](https://github.com/msgbyte/tianji/commit/3ef21237f8c2501b3d65e5b7906b929a2af04b68))
+
+### Others
+
+* **ai-gateway:** update llm model pricing ([836d205](https://github.com/msgbyte/tianji/commit/836d205f3af22afe6d64cf4e66f954e2f0838dd5))
+
+## [1.32.21](https://github.com/msgbyte/tianji/compare/v1.32.20...v1.32.21) (2026-08-05)
+
+### Bug Fixes
+
+* **authorization:** scope feed and warehouse operations by workspace ([#278](https://github.com/msgbyte/tianji/issues/278)) ([22567b4](https://github.com/msgbyte/tianji/commit/22567b4b0e1ba89bf572f171b8109be1d14d0fc6))
+* **i18n:** translate client interface copy ([a9ba3fb](https://github.com/msgbyte/tianji/commit/a9ba3fbbd389f11e5574dfe285c034e57e2a3bb1))
+* **insights:** bind ClickHouse timezone parameters ([#277](https://github.com/msgbyte/tianji/issues/277)) ([44e3ec0](https://github.com/msgbyte/tianji/commit/44e3ec09bf3fe0d11321d392e3bb3ddb9e7b18db))
+* **website:** count sidebar page views ([15a51f4](https://github.com/msgbyte/tianji/commit/15a51f42654a94506b90bfe2e765a3d1315ebf7e))
+
+### Others
+
+* **i18n:** update translation catalogs ([71af96f](https://github.com/msgbyte/tianji/commit/71af96f30eea021bb85acf20dca827145242d1a8))
+* **tracker:** increase website batch window ([604915e](https://github.com/msgbyte/tianji/commit/604915efd9bdbc9fb00ff57c374606ca22a3e185))
+
+## [1.32.20](https://github.com/msgbyte/tianji/compare/v1.32.19...v1.32.20) (2026-08-02)
+
+### Bug Fixes
+
+* **ci:** publish multi-arch images by digest ([1546705](https://github.com/msgbyte/tianji/commit/1546705b0843d99894a8cf0cd67616ab3e5c69a3))
+
+## [1.32.19](https://github.com/msgbyte/tianji/compare/v1.32.18...v1.32.19) (2026-08-02)
+
+### Bug Fixes
+
+* **ci:** build arm64 image natively ([04e6e1e](https://github.com/msgbyte/tianji/commit/04e6e1e34f7b119cdfc8a9d6dab70306a11a4166))
+
+## [1.32.18](https://github.com/msgbyte/tianji/compare/v1.32.17...v1.32.18) (2026-07-31)
+
+### Features
+
+* **worker:** synchronize cron lifecycle across instances ([#276](https://github.com/msgbyte/tianji/issues/276)) ([031f76a](https://github.com/msgbyte/tianji/commit/031f76a7cb6c5b70509c6bcd36a7972fc3f60558))
+
+### Others
+
+* **ai-gateway:** update llm model pricing ([0b2929d](https://github.com/msgbyte/tianji/commit/0b2929d31375223d4caed3b895c49ffec586e27e))
+
+## [1.32.17](https://github.com/msgbyte/tianji/compare/v1.32.16...v1.32.17) (2026-07-26)
+
+### Features
+
+* **ai-gateway:** add connectivity testing ([#271](https://github.com/msgbyte/tianji/issues/271)) ([47884d4](https://github.com/msgbyte/tianji/commit/47884d423017a45cc33ab2625187a7abdf487a33))
+* **ai-gateway:** add duplicate gateway action ([#272](https://github.com/msgbyte/tianji/issues/272)) ([410fd20](https://github.com/msgbyte/tianji/commit/410fd2015ff5f82ad2b1bc45fe0d789ed3ed2082))
+* **ai-gateway:** group actions under more menu ([#274](https://github.com/msgbyte/tianji/issues/274)) ([1069628](https://github.com/msgbyte/tianji/commit/1069628a344ce56cdf084574301e61618db41550))
+* **analytics:** show user names in usage charts ([#269](https://github.com/msgbyte/tianji/issues/269)) ([c11a4c0](https://github.com/msgbyte/tianji/commit/c11a4c0c8f773da99af387b5024e002057e844ff))
+* **i18n:** add client translation workflow script ([67314bb](https://github.com/msgbyte/tianji/commit/67314bb7a805c1cb7978035a48d72268ffa274df))
+* **monitor:** add optional redis lifecycle sync ([2dcac83](https://github.com/msgbyte/tianji/commit/2dcac83ffe769494f1d716b3c8a9ef66cbf643bb))
+
+### Bug Fixes
+
+* **ai-gateway:** sync summary stats with selected date range ([#273](https://github.com/msgbyte/tianji/issues/273)) ([c1eca44](https://github.com/msgbyte/tianji/commit/c1eca44841e2d810c9fe53af7e6238a17cc1c936))
+
+### Document
+
+* **i18n:** design translation wrapper script ([b4e60a3](https://github.com/msgbyte/tianji/commit/b4e60a32e11b3522b5170e473cf7f20d06b818fc))
+* **readme:** add docker compose setup instructions ([#270](https://github.com/msgbyte/tianji/issues/270)) ([1d65fa9](https://github.com/msgbyte/tianji/commit/1d65fa9e385635a127b19f7e7487f90affe9625a))
+
+### Others
+
+* update llm model data ([db569f6](https://github.com/msgbyte/tianji/commit/db569f6780a41edf41fab09b666f5fb02ce8b721))
+
+## [1.32.16](https://github.com/msgbyte/tianji/compare/v1.32.15...v1.32.16) (2026-07-01)
+
+### Bug Fixes
+
+* **website:** log session lookup failures ([9d5430d](https://github.com/msgbyte/tianji/commit/9d5430d7469836b293ec71db201e854cc8261d9c))
+
+## [1.32.15](https://github.com/msgbyte/tianji/compare/v1.32.14...v1.32.15) (2026-07-01)
+
+### Features
+
+* **ai-router:** show gateway log details from router logs ([0450a5b](https://github.com/msgbyte/tianji/commit/0450a5bba83c4e6c45b393927419719253418969))
+
+## [1.32.14](https://github.com/msgbyte/tianji/compare/v1.32.13...v1.32.14) (2026-06-30)
+
+### Bug Fixes
+
+* **ai-router:** handle stream error failover ([b82b3f3](https://github.com/msgbyte/tianji/commit/b82b3f3da426509bd7fb25a3128f8630e718dda5))
+
+## [1.32.13](https://github.com/msgbyte/tianji/compare/v1.32.12...v1.32.13) (2026-06-30)
+
+### Bug Fixes
+
+* **website:** handle stale event sessions ([a249e79](https://github.com/msgbyte/tianji/commit/a249e79cfc2aef82143f0ff387c030bf9e8fcd35))
+
+## [1.32.12](https://github.com/msgbyte/tianji/compare/v1.32.11...v1.32.12) (2026-06-29)
+
+### Bug Fixes
+
+* **prisma:** avoid json array type generation bug ([f2780f5](https://github.com/msgbyte/tianji/commit/f2780f55a597a73fda3c960121750cbac248edff))
+* **website:** guard tweet entity arrays ([5151796](https://github.com/msgbyte/tianji/commit/51517964ebba66fafbff5ff3a9df3cae2a38821c))
+* **website:** remove deleted homepage tweet ([0c50a04](https://github.com/msgbyte/tianji/commit/0c50a04c8fbb2ee9982614b2a38f41be839dca53))
+* **website:** return 404 for unknown website events ([8b9092e](https://github.com/msgbyte/tianji/commit/8b9092e7f677c361a09b54af828c7949d3e00d57))
+
+## [1.32.11](https://github.com/msgbyte/tianji/compare/v1.32.10...v1.32.11) (2026-06-28)
+
+### Features
+
+* **application:** add pie chart segment details ([64ec9cb](https://github.com/msgbyte/tianji/commit/64ec9cb6bc77ccd3f0a98e5cb2bc6da7afd0dbf1))
+* **worker:** add request payload metrics and controls ([b35fe6a](https://github.com/msgbyte/tianji/commit/b35fe6a8df09f5667b2ae5b5a148e9962bb94d49))
+
+### Bug Fixes
+
+* **ai-router:** normalize router log attempt errors ([f600d39](https://github.com/msgbyte/tianji/commit/f600d39204b608abbda32e00d08c688b674f714f))
+* **worker:** show loading before hourly stats resolve ([6b2abf9](https://github.com/msgbyte/tianji/commit/6b2abf9626c53670e5e34d1510abca09dd64ff7b))
+
+## [1.32.10](https://github.com/msgbyte/tianji/compare/v1.32.9...v1.32.10) (2026-06-25)
+
+### Bug Fixes
+
+* **worker:** avoid embedding payload in vm source ([af68fe0](https://github.com/msgbyte/tianji/commit/af68fe0aea1d094f7c4ae3b76526170e6170a97c))
+
+## [1.32.9](https://github.com/msgbyte/tianji/compare/v1.32.8...v1.32.9) (2026-06-25)
+
+### Features
+
+* **ai-router:** fail over empty content responses ([bb98bef](https://github.com/msgbyte/tianji/commit/bb98befb2a2bf8a7c05c961903b3a92054969109))
+
+### Bug Fixes
+
+* **ai-router:** avoid replaying empty content failures ([df685cd](https://github.com/msgbyte/tianji/commit/df685cd4edeb398e70c438c6ae3436c93c0fbd1c))
+* **ai-router:** ignore empty tool calls ([9f76b45](https://github.com/msgbyte/tianji/commit/9f76b45d85be93bfe440ac772cecd7575dc00db5))
+
+### Document
+
+* **ai-router:** explain empty content failover ([0158467](https://github.com/msgbyte/tianji/commit/01584679e4284cfcbde834f280a0431bf9fca8f5))
+
+## [1.32.8](https://github.com/msgbyte/tianji/compare/v1.32.7...v1.32.8) (2026-06-25)
+
+### Features
+
+* **ai-router:** add empty content route option ([b8a69fe](https://github.com/msgbyte/tianji/commit/b8a69fe54459077538a3bb97c9c649662148b2d7))
+* **ai-router:** persist empty content failover setting ([f5d8321](https://github.com/msgbyte/tianji/commit/f5d8321a1687e97a92dfcf45c5f4539fc72d05ad))
+
+### Bug Fixes
+
+* **server:** release runtime resources ([0ae65b3](https://github.com/msgbyte/tianji/commit/0ae65b39a603b98b240160f9baf5f034473d89b4))
+
+### Document
+
+* **ai-router:** add empty content failover design ([8b45dd9](https://github.com/msgbyte/tianji/commit/8b45dd9005f495803d05d750fb44fa82d5cc54b3))
+
+## [1.32.7](https://github.com/msgbyte/tianji/compare/v1.32.6...v1.32.7) (2026-06-23)
+
+### Bug Fixes
+
+* **billing:** delay free tier quota tip ([de2d097](https://github.com/msgbyte/tianji/commit/de2d0974036af7876b83122427341641358752fb))
+* **docker:** downgrade node alpine base for hub scan ([ba5230c](https://github.com/msgbyte/tianji/commit/ba5230c21ab105cedee781255531c650e106eab3))
+
+## [1.32.6](https://github.com/msgbyte/tianji/compare/v1.32.5...v1.32.6) (2026-06-21)
+
+### Bug Fixes
+
+* **ai-gateway:** flush stream keepalive headers ([49ec99b](https://github.com/msgbyte/tianji/commit/49ec99be9833176eb9b9911761db88a2249e9d94))
+
+## [1.32.5](https://github.com/msgbyte/tianji/compare/v1.32.4...v1.32.5) (2026-06-21)
+
+### Bug Fixes
+
+* **ai-router:** add stream keepalive pings ([8f52442](https://github.com/msgbyte/tianji/commit/8f52442d93d153c0cd303f6a70034d93304b0e62))
+
+## [1.32.4](https://github.com/msgbyte/tianji/compare/v1.32.3...v1.32.4) (2026-06-20)
+
+### Features
+
+* **ai-router:** add logs refresh button ([089579c](https://github.com/msgbyte/tianji/commit/089579cc13ca326deace07f1f72beda2d65c6ed4))
+
+### Bug Fixes
+
+* **ai-gateway:** add stream keepalive pings ([907dd17](https://github.com/msgbyte/tianji/commit/907dd17f82aacdcbca4bb510e53425efceed09ff))
+* **server:** include execa in production deps ([c4960b6](https://github.com/msgbyte/tianji/commit/c4960b60a4e16dabe6709cd7823f99f2a7047cf5))
+
+## [1.32.3](https://github.com/msgbyte/tianji/compare/v1.32.2...v1.32.3) (2026-06-20)
+
+### Features
+
+* **ai-router:** add models endpoint aggregation ([0c6f5b8](https://github.com/msgbyte/tianji/commit/0c6f5b87878901acee601c3b7a2c6a0915baa79f))
+
+### Bug Fixes
+
+* **build:** remediate image cves and dev optimizer ([4dc5ea2](https://github.com/msgbyte/tianji/commit/4dc5ea2b8dd20ad62d2e15b1ab13a14114e9ea73))
+* **ci:** align pnpm version ([d9d3621](https://github.com/msgbyte/tianji/commit/d9d362100cf9d3ab7fa11a29225b9631f5e808da))
+
+## [1.32.2](https://github.com/msgbyte/tianji/compare/v1.32.1...v1.32.2) (2026-06-15)
+
+### Bug Fixes
+
+* **vm:** upgrade and harden vm2 sandbox fallback ([0534445](https://github.com/msgbyte/tianji/commit/0534445a68d000ec40b6623597687bdf543ee838))
+
+### Others
+
+* **ai:** update example model names ([ac0d772](https://github.com/msgbyte/tianji/commit/ac0d772907305d876f8bea0f5d8569ec20d0ba1f))
+
+## [1.32.1](https://github.com/msgbyte/tianji/compare/v1.32.0...v1.32.1) (2026-06-15)
+
+### Bug Fixes
+
+* **ai-router:** proxy dev runtime routes and log invalid requests ([33a18a4](https://github.com/msgbyte/tianji/commit/33a18a4238f271425810b31c3208d688f6f75aef))
+* **survey:** prefill field type in edit form ([1689941](https://github.com/msgbyte/tianji/commit/1689941c91157231860474db2d00949c79cf5012))
+
+### Others
+
+* remove unused index ([de8ab85](https://github.com/msgbyte/tianji/commit/de8ab85c0440b367936153c582e50e9a7b82bc66))
+
+## [1.32.0](https://github.com/msgbyte/tianji/compare/v1.31.29...v1.32.0) (2026-06-14)
+
+### Features
+
+* add ai route feature ([446263d](https://github.com/msgbyte/tianji/commit/446263d95e5d02d0db56b9bc62992788c9d73dc5))
+
+### Bug Fixes
+
+* **ai-gateway:** add cache write pricing support ([cd7dac9](https://github.com/msgbyte/tianji/commit/cd7dac950145516330927b0f22fde760304c03ff))
+
+## [1.31.29](https://github.com/msgbyte/tianji/compare/v1.31.28...v1.31.29) (2026-06-10)
+
+### Features
+
+* **ai-gateway:** add custom model strategy pricing editor ([ef1c5f1](https://github.com/msgbyte/tianji/commit/ef1c5f1454ddfb71f365cf0afe13283f9655e47e))
+
+### Bug Fixes
+
+* **security:** harden templates and insight sql ([132ff67](https://github.com/msgbyte/tianji/commit/132ff67907df897d222829ea8ad1a018ff74df48))
+
+### Others
+
+* update model price list ([abf21c3](https://github.com/msgbyte/tianji/commit/abf21c326654d33f56605a1dc67121e7e7e06f60))
+* update translation ([b7a6efd](https://github.com/msgbyte/tianji/commit/b7a6efd08ebfaa95a0be2d369cee902d496a07c4))
+
+## [1.31.28](https://github.com/msgbyte/tianji/compare/v1.31.27...v1.31.28) (2026-06-02)
+
+### Features
+
+* **aiGateway:** add openai responses support ([7dd7549](https://github.com/msgbyte/tianji/commit/7dd7549ce86822b4d4f0d8e0cf6ad85ad3128e8f))
+* **aigateway:** add tpot monitoring ([84ef6bc](https://github.com/msgbyte/tianji/commit/84ef6bcd989546d3dd6f550b9a9c6379f7a55d85))
+
+### Bug Fixes
+
+* **aiGateway:** add scrolling to edit forms ([1e9e029](https://github.com/msgbyte/tianji/commit/1e9e029deeee66c733eb2172f11a8e359249d017))
+
+## [1.31.27](https://github.com/msgbyte/tianji/compare/v1.31.26...v1.31.27) (2026-05-30)
+
+### Features
+
+* add models list API handlers for OpenAI and Anthropic ([c0fe7c5](https://github.com/msgbyte/tianji/commit/c0fe7c5a3f44ac940ffb0cca44300dc1fdf8e0f0))
+* implement auto-disable functionality for continuously down monitors ([a20ac02](https://github.com/msgbyte/tianji/commit/a20ac024f5400d66a49a61c265ee274eaa1991aa))
+
+### Others
+
+* change skills position and add skill document ([6174760](https://github.com/msgbyte/tianji/commit/617476040a9b35221947b53c1bf6edb330d38674))
+* update deploy website action ([0e0358a](https://github.com/msgbyte/tianji/commit/0e0358a1f6ddefeaeec1f73d68d046632b9c4347))
+* update deploy website config ([374cb50](https://github.com/msgbyte/tianji/commit/374cb50e4a026185483779056715a7ee13d17f86))
+* update website ([90487ce](https://github.com/msgbyte/tianji/commit/90487cec5c5c7fabf86f6f542d724c57a593dab1))
+
+## [1.31.26](https://github.com/msgbyte/tianji/compare/v1.31.25...v1.31.26) (2026-05-26)
+
+### Features
+
+* enhance SecretInput component with clear button and interaction handling ([4993f4c](https://github.com/msgbyte/tianji/commit/4993f4c20aa047f2848934225258020ba0bc04ff))
+
+### Others
+
+* update deploy website config ([73799d1](https://github.com/msgbyte/tianji/commit/73799d1d5dc2425532287af98ddbfb2ffb61fbff))
+* update Tianji URLs to point to the new domain tianji.dev ([db04ca0](https://github.com/msgbyte/tianji/commit/db04ca00fbc6be82028100c79c484c01904f3295))
+
+## [1.31.25](https://github.com/msgbyte/tianji/compare/v1.31.24...v1.31.25) (2026-05-07)
+
+### Others
+
+* update ErrorRateChart to handle missing data and improve rate calculation logic ([882894c](https://github.com/msgbyte/tianji/commit/882894cd855fa522b679a588a7a43d5509b9695e))
+
+## [1.31.24](https://github.com/msgbyte/tianji/compare/v1.31.23...v1.31.24) (2026-05-06)
+
+### Features
+
+* implement ErrorRateChart in AIGatewayAnalytics to visualize error rates over time ([9d45e62](https://github.com/msgbyte/tianji/commit/9d45e62eeae33df848894fcbe521fb29e74acf0b))
+
+### Bug Fixes
+
+* enhance error message in verifyUserApiKey to include partial input for better debugging ([f66ba76](https://github.com/msgbyte/tianji/commit/f66ba761fb4c5f4db1d4207c60ad3a9da3e86bf5))
+
+### Others
+
+* modify DialogContent to support dynamic portal container selection ([6658ed1](https://github.com/msgbyte/tianji/commit/6658ed1d49e7f3130117089a268c384307dd5de4))
+* update SheetContent component to support dynamic portal container selection ([fa250d7](https://github.com/msgbyte/tianji/commit/fa250d70c06a2312023e2149f9be2b6242b99622))
+
+## [1.31.23](https://github.com/msgbyte/tianji/compare/v1.31.22...v1.31.23) (2026-04-28)
+
+### Features
+
+* add provider analytics to AIGatewayAnalytics and log model provider in AIGatewayLogs ([c01435d](https://github.com/msgbyte/tianji/commit/c01435d70ea71b8cfb8110de59a98c2227baf27b))
+
+## [1.31.22](https://github.com/msgbyte/tianji/compare/v1.31.21...v1.31.22) (2026-04-19)
+
+### Features
+
+* add rollback functionality to WorkerRevisionsSection with confirmation dialog and update TRPC router for revision rollback ([ddc5e0a](https://github.com/msgbyte/tianji/commit/ddc5e0a87aaa36c12cfae1e6dcde6631b615c5fe))
+
+## [1.31.21](https://github.com/msgbyte/tianji/compare/v1.31.20...v1.31.21) (2026-04-15)
+
+### Features
+
+* add WorkerStatsSection and WorkerHourlyCharts components for enhanced worker performance visualization ([7e3e6b9](https://github.com/msgbyte/tianji/commit/7e3e6b9a55b73e113b68a9233c4c59090bc68674))
+* implement SurveyResultCount component to display survey response counts and update survey list rendering ([33a3c29](https://github.com/msgbyte/tianji/commit/33a3c296f79362f830089712db9534bd72ea6212))
+
+### Document
+
+* Add one-click "Add to Kiro" install badge ([#262](https://github.com/msgbyte/tianji/issues/262)) ([cecee1c](https://github.com/msgbyte/tianji/commit/cecee1cd39c4c9cc92ec8e356610db5e968c16ea))
+
+## [1.31.20](https://github.com/msgbyte/tianji/compare/v1.31.19...v1.31.20) (2026-03-27)
+
+### Bug Fixes
+
+* fix a bug which calc aigateway usage incorrect ([2d5d979](https://github.com/msgbyte/tianji/commit/2d5d97946fadc63f3a68ac61c4597c021255c0ab))
+* update hosted service URL from app-tianji.msgbyte.com to app.tianji.dev across multiple documentation files ([35b74cd](https://github.com/msgbyte/tianji/commit/35b74cdd2b69a97c0057324e56e892c23f6c55a1))
+
+## [1.31.19](https://github.com/msgbyte/tianji/compare/v1.31.18...v1.31.19) (2026-03-26)
+
+### Others
+
+* rename cache input token to cache read token and add cache write token for improved clarity and tracking ([7cd02a4](https://github.com/msgbyte/tianji/commit/7cd02a4061fef4479773effaba43aef1f06dd384))
+* replace Card component with CodeBlock for improved JSON data rendering in AIGatewayLogTable ([10efc96](https://github.com/msgbyte/tianji/commit/10efc966df762b054a76b0d537344857b5fcdeb7))
+
+## [1.31.18](https://github.com/msgbyte/tianji/compare/v1.31.17...v1.31.18) (2026-03-24)
+
+### Features
+
+* add cache input token tracking in AIGateway ([eafbf3d](https://github.com/msgbyte/tianji/commit/eafbf3d5ec03e83cea1e582b644ad8cda47e4a24))
+
+### Bug Fixes
+
+* add refresh functionality to date range hooks in AIGateway components for improved data updates ([8816c8e](https://github.com/msgbyte/tianji/commit/8816c8e956f52ed7c4465c13382d31723741faf8))
+* update token initialization in AI Gateway handlers to default to zero for improved handling ([87e5115](https://github.com/msgbyte/tianji/commit/87e5115c65468e61dde1fd127e14ce92ecec5eba))
+
+## [1.31.17](https://github.com/msgbyte/tianji/compare/v1.31.16...v1.31.17) (2026-03-16)
+
+### Bug Fixes
+
+* increase model pricing query limit from 10 to 50 for improved data retrieval ([e371ca2](https://github.com/msgbyte/tianji/commit/e371ca247c62791c8da410ad2b44efc664c0b896))
+* update response cost handling in Anthropic API integration for accurate pricing calculations ([41be2ad](https://github.com/msgbyte/tianji/commit/41be2ad22cc834cb07888dfb88f4afb70df621f0))
+
+## [1.31.16](https://github.com/msgbyte/tianji/compare/v1.31.15...v1.31.16) (2026-03-15)
+
+### Features
+
+* add daily clearing functions for worker execution data and payloads ([d76e782](https://github.com/msgbyte/tianji/commit/d76e782454b3b5699a5235831f607dc2a67843a1))
+* implement Anthropic API integration with message handling and code generation examples ([c4c10b2](https://github.com/msgbyte/tianji/commit/c4c10b2e5b58f86411ece8acb2f36dc17a8dca66))
+
+### Others
+
+* streamline daily task execution in cronjob with improved error handling ([dda8669](https://github.com/msgbyte/tianji/commit/dda86695a0daec37cfddefcf8201fde21e2e3f7a))
+
+## [1.31.15](https://github.com/msgbyte/tianji/compare/v1.31.14...v1.31.15) (2026-03-13)
+
+### Features
+
+* add {{url}} variable for http monitor [#190](https://github.com/msgbyte/tianji/issues/190) ([eafbd82](https://github.com/msgbyte/tianji/commit/eafbd82fa96e3d440dc903e691e7546475ee1cc7))
+* add daily log and payload clearing functions for AI Gateway ([a75119a](https://github.com/msgbyte/tianji/commit/a75119a47a78a777e92913029a596b5115616279))
+* add user analytics and logging enhancements to AI Gateway components ([8afa79a](https://github.com/msgbyte/tianji/commit/8afa79a750f11d1cced02895eaee1c5a37bf33ba))
+* enhance logging in cronjob functions and initialize system info logging ([bacdfc0](https://github.com/msgbyte/tianji/commit/bacdfc008475c013d4ee813802f5528e3ce31a75))
+
+## [1.31.14](https://github.com/msgbyte/tianji/compare/v1.31.13...v1.31.14) (2026-03-12)
+
+### Features
+
+* add some audit log in important logic ([91c562b](https://github.com/msgbyte/tianji/commit/91c562bdd4937369cdee12c5ea9cd0248e7c902c))
+* add Tianji analytics skill with OpenAPI integration and endpoint documentation ([b3ba444](https://github.com/msgbyte/tianji/commit/b3ba444bf92f9b4d17239f566de44d964339a2fc))
+* implement session error tracking and handling in website session management ([0006c34](https://github.com/msgbyte/tianji/commit/0006c347e2501cb91db22a4dcde1ca7d1473b418))
+* update pricing logic to utilize response cost from API and improve handling of custom model prices ([3811467](https://github.com/msgbyte/tianji/commit/38114678f1e2d2ec71fb8741cade7d29b204b3f2))
+
+### Document
+
+* update track-script documentation with new script attributes and examples ([8093993](https://github.com/msgbyte/tianji/commit/80939932a6c6d41cfd9c4588762746c8cbb005c9))
+
+### Others
+
+* add Zod validation schemas for LLM model data fetching ([418a2ae](https://github.com/msgbyte/tianji/commit/418a2ae788b9f9dee013b18622c85217a77e151f))
+* simply website overview component with card layout and event tracking ([67d336e](https://github.com/msgbyte/tianji/commit/67d336efe1983929abb6b697490e36a188a3e0a8))
+* update model price ([2896db8](https://github.com/msgbyte/tianji/commit/2896db85c991b469f1ec4ed04510249783a8139c))
+* update model pricing ([cebfafd](https://github.com/msgbyte/tianji/commit/cebfafd63fb38275a765d604407bc693691af3c0))
+
+## [1.31.13](https://github.com/msgbyte/tianji/compare/v1.31.12...v1.31.13) (2026-02-13)
+
+### Features
+
+* add graceful shutdown handling and batch writer flushing on termination ([1e301a0](https://github.com/msgbyte/tianji/commit/1e301a07b593c85a0a098dc22e2e8d0f009e5bf2))
+* enhance saveWebsiteEvent function to utilize batch writing for improved performance ([98aadb9](https://github.com/msgbyte/tianji/commit/98aadb95d2606382e4f4853cbf35a8ad3cc4bc2c))
+
+## [1.31.12](https://github.com/msgbyte/tianji/compare/v1.31.11...v1.31.12) (2026-02-12)
+
+### Features
+
+* implement batch writer for efficient database operations in worker execution ([ef0382f](https://github.com/msgbyte/tianji/commit/ef0382f3a7d23314eace0d8464aa995a9e686a3d))
+
+## [1.31.11](https://github.com/msgbyte/tianji/compare/v1.31.10...v1.31.11) (2026-02-12)
+
+### Features
+
+* add save functionality with keyboard shortcut in HtmlEditor ([c7f1a11](https://github.com/msgbyte/tianji/commit/c7f1a11611fc9e1393480a39e2c938dba8716674))
+* implement in-memory caching layer for buildQueryWithCache function ([8437170](https://github.com/msgbyte/tianji/commit/84371709b89b2601a37054a46b3b9d92f46e2fa2))
+* implement keyboard shortcut for saving in editor ([5be539b](https://github.com/msgbyte/tianji/commit/5be539ba23f091fa39bd002d053f13e20376c691))
+
+### Others
+
+* migrate mod + k to useHotkeys to reduce usage ([bf7aab1](https://github.com/msgbyte/tianji/commit/bf7aab119a0e8c6c3aa131c8efa92bf28b0b0a64))
+
+## [1.31.10](https://github.com/msgbyte/tianji/compare/v1.31.9...v1.31.10) (2026-02-04)
+
+### Features
+
+* add static page router for seo and caching mechanism ([52185e9](https://github.com/msgbyte/tianji/commit/52185e9da89c09fd0aac84c4391508f0d63ab086))
+* enhance custom domain handling with static and status page types ([10fe22d](https://github.com/msgbyte/tianji/commit/10fe22df71e0c55c58c7f29240de0b875fc90ce9))
+
+## [1.31.9](https://github.com/msgbyte/tianji/compare/v1.31.8...v1.31.9) (2026-01-31)
+
+### Others
+
+* add title for more customize ([965b3d9](https://github.com/msgbyte/tianji/commit/965b3d99d8170ad7d0c731ab1a930e8381bee17c))
+
+## [1.31.8](https://github.com/msgbyte/tianji/compare/v1.31.7...v1.31.8) (2026-01-19)
+
+### Features
+
+* add url as new field type of survey ([c8a6efe](https://github.com/msgbyte/tianji/commit/c8a6efe1982e7ed9a2c323abd7e515dbc593fa1b))
+* add wrap for survey event table to display long text ([1ea8d41](https://github.com/msgbyte/tianji/commit/1ea8d419ca38ab49cb800285e75deda519ac2608))
+
+### Others
+
+* update model price ([f7daffa](https://github.com/msgbyte/tianji/commit/f7daffa3161c9db271b437516238dcf8087db04f))
+* update translation ([21d929a](https://github.com/msgbyte/tianji/commit/21d929a5d838b6b726e86c7ba57b4ae710c39e21))
+
+## [1.31.7](https://github.com/msgbyte/tianji/compare/v1.31.6...v1.31.7) (2026-01-13)
+
+### Features
+
+* add download feature ([b855872](https://github.com/msgbyte/tianji/commit/b8558723d51364b8af2d4627c6d785fbe53039fc))
+
+## [1.31.6](https://github.com/msgbyte/tianji/compare/v1.31.5...v1.31.6) (2026-01-12)
+
+### Features
+
+* add ai translation and ai category in survey event table ([6d28506](https://github.com/msgbyte/tianji/commit/6d28506042ecd46e59c9778304bc4258c7d718d1))
+* add DataTableColumnSelector for dynamic column visibility in SurveyEventTable ([0ba1299](https://github.com/msgbyte/tianji/commit/0ba12998bc0cc37ea85ff439b38e2e3b43ba3bd9))
+* add image render to survey event table ([45f4772](https://github.com/msgbyte/tianji/commit/45f477288d333b69c279c8e0671dfefc8db46917))
+* enhance DataTableColumnSelector with drag-and-drop functionality and local storage for column visibility and order ([6aa327b](https://github.com/msgbyte/tianji/commit/6aa327b87f95e449ed1baacc686baf96816d5442))
+
+### Bug Fixes
+
+* correct date handling and toggle logic in insights events page ([4fd93ad](https://github.com/msgbyte/tianji/commit/4fd93ad108099b98c90bf08375fd6184e6ecec02))
+* fix layout and resize issue for VirtualizedInfiniteDataTable ([75524ae](https://github.com/msgbyte/tianji/commit/75524aee0595fe2a3d84c60e3c33ed573acfce13))
+* update tracker import path to use core module from tianji-client-sdk ([540e161](https://github.com/msgbyte/tianji/commit/540e161668ff2b7fb39bb5f7205778ab2069c4bc))
+
+### Others
+
+* improve style of survey event table ([74543a3](https://github.com/msgbyte/tianji/commit/74543a3590ce599d2361c6c3415e72350a723c59))
+
+## [1.31.5](https://github.com/msgbyte/tianji/compare/v1.31.4...v1.31.5) (2026-01-11)
+
+### Features
+
+* add event batch feature for website inject tracker ([1f58af3](https://github.com/msgbyte/tianji/commit/1f58af3a4cebdf92405680f1839960cf44714203))
+* update health check to conditionally verify database and cache connectivity based on query parameters ([34c3bb1](https://github.com/msgbyte/tianji/commit/34c3bb17f068fbc482649b9be77b9e54705fba8b))
+
+## [1.31.4](https://github.com/msgbyte/tianji/compare/v1.31.3...v1.31.4) (2026-01-08)
+
+### Features
+
+* add Prometheus counter for monitor execution tracking ([946f280](https://github.com/msgbyte/tianji/commit/946f28039652030d3d49711e190fcdb251cc6241))
+* add query to improve query performance ([807f223](https://github.com/msgbyte/tianji/commit/807f223cbff8f646e13bbd6ffb2a63f8de89f4d2))
+
+### Others
+
+* change create to upsert which maybe can resolve issue of competition ([fd401de](https://github.com/msgbyte/tianji/commit/fd401de51ace71a3a6473300d61971dc58308009))
+* update cache query identifiers for consistency across models ([d480edb](https://github.com/msgbyte/tianji/commit/d480edb35f02541fe7d0335d59fcc787b2d1f604))
+* update translation ([d4ed7a3](https://github.com/msgbyte/tianji/commit/d4ed7a32ad7b92ef758f63476fe1968b41f2d083))
+
+## [1.31.3](https://github.com/msgbyte/tianji/compare/v1.31.2...v1.31.3) (2026-01-08)
+
+### Features
+
+* add country and OS distribution charts for application sessions ([47165b5](https://github.com/msgbyte/tianji/commit/47165b537d2f75171bb5e3f7b0b8cf0a2b525310))
+* add survey event fetch ([da931f4](https://github.com/msgbyte/tianji/commit/da931f427b3a7082ade554e1557b3733a0682ffa))
+* add version stats feature ([04070f7](https://github.com/msgbyte/tianji/commit/04070f7c118606c5484fd23fa49dfa70439f3fca))
+* enhance SurveyEventTable with virtualized data fetching and loading state management ([6f756c5](https://github.com/msgbyte/tianji/commit/6f756c53c5e530eeddd286078de5986ae7eeaadc))
+
+### Bug Fixes
+
+* handle uncaught exceptions and unhandled rejections in server initialization ([6c0dbea](https://github.com/msgbyte/tianji/commit/6c0dbeab26b11cc6e6e6ab49118212ccb81ccd40))
+
+### Others
+
+* add builtin session data key language ([97e0861](https://github.com/msgbyte/tianji/commit/97e0861c3d144aade757562d014a13b318791d0e))
+* update layout for application overview cards in the application details page ([0a39068](https://github.com/msgbyte/tianji/commit/0a39068744620648d8b9e1e35b27da8beed57ff5))
+
+## [1.31.2](https://github.com/msgbyte/tianji/compare/v1.31.1...v1.31.2) (2026-01-05)
+
+### Others
+
+* add get location cache for improve usage for get ip ([ed27233](https://github.com/msgbyte/tianji/commit/ed27233ad98a6c8402d5357e6e3b26b0c4bc3274))
+* add survey counter for prometheus ([b1012c5](https://github.com/msgbyte/tianji/commit/b1012c511bfde9fe10aa993b16f4a38257fd6144))
+* add updatedAt in application session which can track update time of builtin info update ([ba9ba06](https://github.com/msgbyte/tianji/commit/ba9ba06fed25769f20dfcbdafcdacd5911bef5b1))
+* improve html render and update tabs panel style ([021530e](https://github.com/msgbyte/tianji/commit/021530e1f578c911f82fb512cb0a7341a8adf776))
+* improve page editor toolbar style and update translation ([16955ee](https://github.com/msgbyte/tianji/commit/16955eea4f5ba93e9b339e228f34a7092c8ae695))
+* record builtin info when save application session data ([8fad875](https://github.com/msgbyte/tianji/commit/8fad875309e5a4bcab1068f5b0e489e076364242))
+
+## [1.31.1](https://github.com/msgbyte/tianji/compare/v1.31.0...v1.31.1) (2025-12-29)
+
+### Features
+
+* add HTMLRender to unify render way of static page ([a08b852](https://github.com/msgbyte/tianji/commit/a08b85241517ab610907931172d8fb937923f0d8))
+* add tianji theme inject to improve style display in in tianji's preview ([dcfbcba](https://github.com/msgbyte/tianji/commit/dcfbcba338ba987e43aa97481c432336e16e1510))
+* static page editor add save feature ([5bc2a1a](https://github.com/msgbyte/tianji/commit/5bc2a1a3984a4d7d32cd20235770b0320f7217f7))
+
+### Others
+
+* dump google-play-scraper version ([f848eef](https://github.com/msgbyte/tianji/commit/f848eef2ba6deba50be43cad59bba82851cd5243))
+
+## [1.31.0](https://github.com/msgbyte/tianji/compare/v1.30.25...v1.31.0) (2025-12-28)
+
+### Features
+
+* add html editor ([d222023](https://github.com/msgbyte/tianji/commit/d222023d28dd3ca19b8dd5d145d5252394960818))
+* add html editor for vibe coding prepare ([6dd7c7f](https://github.com/msgbyte/tianji/commit/6dd7c7f763c5b2442a6e2d521f3008cee4dd8653))
+* add new model page ([0fc6e03](https://github.com/msgbyte/tianji/commit/0fc6e0355017d38fff20be1af51606b72af4c9c4))
+* implement AI chat panel for HTML editor with AI tools for generating and modifying HTML ([320c094](https://github.com/msgbyte/tianji/commit/320c094ff1007ef1338998049c6e1ecea33003e7))
+* **routes:** add custom domain management for page routes and change page route ([657e501](https://github.com/msgbyte/tianji/commit/657e5015be004087e1b37d2143f9b5a6c5f8d207))
+* **routes:** add dynamic page routing and enhance status page editing with type selection ([594fa24](https://github.com/msgbyte/tianji/commit/594fa241ae0db2b0a17f95bb60fe79b87caa8947))
+* update streamdown to version 1.6.10 and enhance response component with theme support ([847095b](https://github.com/msgbyte/tianji/commit/847095b6ef944ee72ecd40b9263a594f3be76b38))
+
+### Bug Fixes
+
+* fix a style issue for isCollapsed style with FreeTierTip ([5608a6f](https://github.com/msgbyte/tianji/commit/5608a6f69d0ca8ad402e8c8b9fdea94779b50f53))
+
+### Others
+
+* migrate page file from old path to new path ([36099f1](https://github.com/msgbyte/tianji/commit/36099f13711daf3b294d250a610d9bee5ba2b719))
+* resolve type issue for ci ([62c62a4](https://github.com/msgbyte/tianji/commit/62c62a48fab0a95197d2e178679b90d2244cea4c))
+* update OpenAPI schema path and relocate JSON file to static directory ([0ecdd77](https://github.com/msgbyte/tianji/commit/0ecdd7759cb4ac63963fb37bf0535497fe4d63aa))
+
+## [1.30.25](https://github.com/msgbyte/tianji/compare/v1.30.24...v1.30.25) (2025-12-22)
+
+### Features
+
+* **metrics:** add AI Gateway request counter to Prometheus metrics ([845f07d](https://github.com/msgbyte/tianji/commit/845f07df1c891cd0a6317080b050f2033a6a9a8d))
+* **metrics:** add Prometheus event counters for applications and websites ([8a14bf9](https://github.com/msgbyte/tianji/commit/8a14bf9372b4b85872f4671fb911ffaf1e240107))
+* **metrics:** add Prometheus metrics for worker execution tracking ([88ef452](https://github.com/msgbyte/tianji/commit/88ef45210a7fb14a1c0563e00fd2f7bf231f672e))
+* **worker:** enhance execWorker to include unique ID and improve logging for execution records ([d576d59](https://github.com/msgbyte/tianji/commit/d576d59542987bd52ef137d9acd7c4dd690cfed9))
+
+## [1.30.24](https://github.com/msgbyte/tianji/compare/v1.30.23...v1.30.24) (2025-12-21)
+
+### Features
+
+* **sdk:** implement batch request management for application and website tracking ([dce22c2](https://github.com/msgbyte/tianji/commit/dce22c27b70ab454bfe22d8634fa1b00fb48faff))
+
+### Others
+
+* allow custom prometheus metrics path with env ([74a5b42](https://github.com/msgbyte/tianji/commit/74a5b42724e310b534da2284731f012c4d2f39d5))
+* dump client sdk version to v1.5.0 ([269d108](https://github.com/msgbyte/tianji/commit/269d108aa9a95d9f7f3a58001eafd243f2d9815e))
+* dump react native sdk version to v1.1.0 ([ae45e2a](https://github.com/msgbyte/tianji/commit/ae45e2afa823609e07dc50e3027c9ada9c6c36b2))
+* remove migrate script for docker start ([c35671e](https://github.com/msgbyte/tianji/commit/c35671ec6442de33d407e51479217ec8553b7c20))
+
+## [1.30.23](https://github.com/msgbyte/tianji/compare/v1.30.22...v1.30.23) (2025-12-18)
+
+### Features
+
+* add es-ES language support ([5a2d52e](https://github.com/msgbyte/tianji/commit/5a2d52eac3d3428e3d4d81838a418899ac980b5d))
+
+### Others
+
+* update translation ([5f25c03](https://github.com/msgbyte/tianji/commit/5f25c03973ad5b71f4cbaf8726edf5c5e6e5ac7a))
+* update translation ([ad379df](https://github.com/msgbyte/tianji/commit/ad379df7ea839739e226fcdbaa6049eb454f0b82))
+
+## [1.30.22](https://github.com/msgbyte/tianji/compare/v1.30.21...v1.30.22) (2025-12-11)
+
+### Others
+
+* remove unused index ([1497f05](https://github.com/msgbyte/tianji/commit/1497f05a3f83c8884d59b7ab5dceefe0568e2d3b))
+
+## [1.30.21](https://github.com/msgbyte/tianji/compare/v1.30.20...v1.30.21) (2025-12-11)
+
+### Features
+
+* add description field to survey model and update forms for input and display ([4452a5a](https://github.com/msgbyte/tianji/commit/4452a5af086b50cd10879a9699386556cb0f5c0e))
+* add hidden field which not display in survey public page ([23423cb](https://github.com/msgbyte/tianji/commit/23423cb1653f0879f5c286aff6e425d00d092029))
+
+### Document
+
+* update tianji social card ([74a9b9c](https://github.com/msgbyte/tianji/commit/74a9b9cbe4a874a499d82c1267df3b62162ec159))
+
+## [1.30.20](https://github.com/msgbyte/tianji/compare/v1.30.19...v1.30.20) (2025-12-04)
+
+### Bug Fixes
+
+* update connection issue for new connection logic which will parse driver ([ae4ae90](https://github.com/msgbyte/tianji/commit/ae4ae90f7e629474eda894a33e5006ed5adaeeb8))
+
+## [1.30.19](https://github.com/msgbyte/tianji/compare/v1.30.18...v1.30.19) (2025-12-04)
+
+### Features
+
+* add pg query support for sql query ([bf832ee](https://github.com/msgbyte/tianji/commit/bf832eea4bda9cfcd152b00418a44430581a8065))
+* add session count for event stats ([6a31851](https://github.com/msgbyte/tianji/commit/6a31851b8b1b16104cd7162863b1f36eac5d1c6b))
+* update ApplicationStatsChart to use new session count fields ([093aafd](https://github.com/msgbyte/tianji/commit/093aafdcd3fff0adc1f7c36b51726cc894652ad7))
+
+### Others
+
+* improve query ([8487675](https://github.com/msgbyte/tianji/commit/84876751f526daa339beed14bb7206f9f1651548))
+* improve validate sql logic to make sure its can be work in many case ([880d80d](https://github.com/msgbyte/tianji/commit/880d80d68527cd76358a78da5ec62463535838ed))
+
+## [1.30.18](https://github.com/msgbyte/tianji/compare/v1.30.17...v1.30.18) (2025-12-01)
+
+### Others
+
+* fix email not match issue ([5bd2e06](https://github.com/msgbyte/tianji/commit/5bd2e06ac7ebda8c6bed685faa4732f3937bf8c6))
+
+## [1.30.17](https://github.com/msgbyte/tianji/compare/v1.30.16...v1.30.17) (2025-11-30)
+
+### Features
+
+* add secret input for secret key sense ([b0677b8](https://github.com/msgbyte/tianji/commit/b0677b89a8794a6fbbb797036afb10dff4c33717))
+
+### Others
+
+* change style of quota setting to improve style of ai gateway ([06b0091](https://github.com/msgbyte/tianji/commit/06b00916b5570e93843c001a7398b3fe97be7aee))
+
+## [1.30.16](https://github.com/msgbyte/tianji/compare/v1.30.15...v1.30.16) (2025-11-29)
+
+### Features
+
+* add toolType as useAIChat feature, and add sql chat which can help user generate sql which easy to query ([2dd3ea8](https://github.com/msgbyte/tianji/commit/2dd3ea83af4dd21a0fd802c5a20aa912362e9593))
+
+### Bug Fixes
+
+* fix a bug which calc incorrect survey count ([e550e9c](https://github.com/msgbyte/tianji/commit/e550e9ccca292c6cc6a830e72c939b81b42148c2))
+* migrate cron runner status to cache manager to avoid multi-node async issue ([5a8f85c](https://github.com/msgbyte/tianji/commit/5a8f85c5422c2f83864c9c31eecb57dfc3ac61dd))
+
+### Others
+
+* extract common aichatbot component which ready for reuse for other ai chat bot feature ([dde5219](https://github.com/msgbyte/tianji/commit/dde52192ba484b476c2ac834fba3e46a299bdffc))
+* improve email display for non-email ([76c3802](https://github.com/msgbyte/tianji/commit/76c3802a2fe57a6468ec090ff16e84d4e802a137))
+* rename warehouse insight hooks ([2bf0c61](https://github.com/msgbyte/tianji/commit/2bf0c619b927420cb2038f0b85a3a48ba76a70c4))
+* update translation ([de3401d](https://github.com/msgbyte/tianji/commit/de3401d8641ea1efe05f76d94aa1534f64ebd471))
+
+## [1.30.15](https://github.com/msgbyte/tianji/compare/v1.30.14...v1.30.15) (2025-11-24)
+
+### Others
+
+* fix ci issue ([ae0e640](https://github.com/msgbyte/tianji/commit/ae0e640aa5f41be2705d433dcf1cc346c04f5b18))
+
+## [1.30.14](https://github.com/msgbyte/tianji/compare/v1.30.13...v1.30.14) (2025-11-24)
+
+### Features
+
+* add ai chat persist feature ([d9ec593](https://github.com/msgbyte/tianji/commit/d9ec59313985747b897cee5e60113f4e9f119b5f))
+* add context usage for ai chat ([8322fcc](https://github.com/msgbyte/tianji/commit/8322fccb1646a02cc59dd1819bb71d45faa32678))
+* add download csv table for warehouse chart block ([efa1527](https://github.com/msgbyte/tianji/commit/efa15276331e416eea0df52257f8926115ee0d10))
+* add render complex which has group feature render chart in warehouse ai chat feature ([a5c9bd8](https://github.com/msgbyte/tianji/commit/a5c9bd836196b03edc096d846b879e6c8de95c6b))
+* add tip for large source data ([0de6235](https://github.com/msgbyte/tianji/commit/0de6235ef1624e84eed0c849e0b66f34a481c44c))
+* add warehouse ai chat allow stop feature ([bc969ce](https://github.com/msgbyte/tianji/commit/bc969ce198b98555f63e35a121941c92fa14dd2e))
+* add warehouse ai chat message actions: regenerate and copy feature ([e58034d](https://github.com/msgbyte/tianji/commit/e58034d9bb32e3076723dcab813cd8ff7a40bb55))
+
+### Bug Fixes
+
+* adjust message content width based on role in AI response component ([f65f1e3](https://github.com/msgbyte/tianji/commit/f65f1e3ace5a543c55fba0f346369f9e52963339))
+
+### Others
+
+* improve style of ai chat bot style and improve user interface ([0e1e21d](https://github.com/msgbyte/tianji/commit/0e1e21d8a568edfbf527afb12374fbb56c1b1710))
+* move processGroupedTimeSeriesData utils to share code ([45000ed](https://github.com/msgbyte/tianji/commit/45000edf7706bbb65d50b5e45aa0f25d418f461a))
+
+## [1.30.13](https://github.com/msgbyte/tianji/compare/v1.30.12...v1.30.13) (2025-11-22)
+
+### Features
+
+* add manual recheck for workspace pause status by owners ([1247667](https://github.com/msgbyte/tianji/commit/12476676ea6adc63c55386bfecfa5905a229d064))
+* add tts feature for feed public page ([315b0bb](https://github.com/msgbyte/tianji/commit/315b0bb03ae1bb82c29a6fe80155df0fa70be587))
+
+### Bug Fixes
+
+* fix a bug which ai gateway analytics will render negative number ([4d003cb](https://github.com/msgbyte/tianji/commit/4d003cbcc1176d01f16d1b4cd355e25f3633d451))
+* fix a bug which will use much resource when request will incorrect model name ([b9fc873](https://github.com/msgbyte/tianji/commit/b9fc873aa5f80f76e487a14bd39729a841b6a1de))
+
+### Others
+
+* standardize error logging to use logger instead of console ([96d1cea](https://github.com/msgbyte/tianji/commit/96d1cead44c90473997fa2008f281214b53bdba8))
+
+## [1.30.12](https://github.com/msgbyte/tianji/compare/v1.30.11...v1.30.12) (2025-11-20)
+
+### Bug Fixes
+
+* fix a bug which will make crash when print undefined value ([22ba8a2](https://github.com/msgbyte/tianji/commit/22ba8a2c007286ae387a6df2f825f0acbd48d474))
+* fix shortlink order incorrect issue ([58997d7](https://github.com/msgbyte/tianji/commit/58997d70aa86b3413c711af04b700b8145eccd63))
+
+### Document
+
+* update tracking document with expo-router example ([c85996e](https://github.com/msgbyte/tianji/commit/c85996e2e0c1b77624d74c4505bf76d59d9620c2))
+
+### Others
+
+* dump react-native package version to 1.0.5 ([d49a929](https://github.com/msgbyte/tianji/commit/d49a929df29d9493bbfa7e3705a21313ee431bbd))
+* update screen params handler ([e3027e6](https://github.com/msgbyte/tianji/commit/e3027e6437f37441ff56954d7747717c0f42c523))
+
+## [1.30.11](https://github.com/msgbyte/tianji/compare/v1.30.10...v1.30.11) (2025-11-16)
+
+### Bug Fixes
+
+* fix survey count logic ([c2c8118](https://github.com/msgbyte/tianji/commit/c2c8118a997f067f97cd0ba5c94c6543d88d9347))
+
+### Document
+
+* add more log ([d6a9d86](https://github.com/msgbyte/tianji/commit/d6a9d866cb8970a959fbfb70c790edca24d483a2))
+* update api document and resolve render issue  for website api page ([94c824f](https://github.com/msgbyte/tianji/commit/94c824f6f86892ed1e38904de9f410b27d279e13))
+
+### Others
+
+* update model price ([441770e](https://github.com/msgbyte/tianji/commit/441770eb60854dcd8b3cbc5cbb3e89955a725f25))
+* update translation ([1966254](https://github.com/msgbyte/tianji/commit/1966254b471a829655d3d1434919643ba2d1a1ef))
+
+## [1.30.10](https://github.com/msgbyte/tianji/compare/v1.30.9...v1.30.10) (2025-11-11)
+
+### Features
+
+* add days visit charts for shortlink ([a3bcf49](https://github.com/msgbyte/tianji/commit/a3bcf4964bd08200afa228377269ea265a5897b9))
+* TimeEventChart add new props hideLegend ([e3f7df9](https://github.com/msgbyte/tianji/commit/e3f7df9cb593fca6dce0eeb46943ffd28264781e))
+
+### Bug Fixes
+
+* improve legend display in  time event chart when too much data ([8e615fd](https://github.com/msgbyte/tianji/commit/8e615fd102d0ac53db4619f740726bb336f1d4f9))
+
+## [1.30.9](https://github.com/msgbyte/tianji/compare/v1.30.8...v1.30.9) (2025-11-10)
+
+### Others
+
+* add new implementation method for typescript support ([654abec](https://github.com/msgbyte/tianji/commit/654abec67bc9cf1f743ac2f87c7570505886f199))
+
+## [1.30.8](https://github.com/msgbyte/tianji/compare/v1.30.7...v1.30.8) (2025-11-10)
+
+### Features
+
+* enhance MonitorRunner with caching for retried number and current status ([766d229](https://github.com/msgbyte/tianji/commit/766d2295c1431a18630ebf0d5333e56f9230b6c5))
+
+### Bug Fixes
+
+* rollback typescript support which maybe have memory leak ([c5f4a57](https://github.com/msgbyte/tianji/commit/c5f4a57a9588b0ff5540ac46230263f075f75950))
+
+### Others
+
+* improve JSON display performance with large payload ([2f093d6](https://github.com/msgbyte/tianji/commit/2f093d67621e8a72d424480c418c0713fcbbb83b))
+
+## [1.30.7](https://github.com/msgbyte/tianji/compare/v1.30.6...v1.30.7) (2025-11-09)
+
+### Features
+
+* add test feature without deploy ([402e236](https://github.com/msgbyte/tianji/commit/402e23634b1ef2e1eb38bbd10d6debd2f0dde3d8))
+* add worker typescript support ([c723f62](https://github.com/msgbyte/tianji/commit/c723f626ca292f71c2948054bb8510e0a804e7f5))
+
+### Others
+
+* add benchmarking for ts support and sandbox module demo ([474433f](https://github.com/msgbyte/tianji/commit/474433fe6a0e6739c718e0658f9c13a5aa0a7e25))
+* add editor tip for worker edit form ([e4a2bc2](https://github.com/msgbyte/tianji/commit/e4a2bc2cd1c4cfba3abe2c9cf2f0b100067c9222))
+* remove unused code ([c8a9814](https://github.com/msgbyte/tianji/commit/c8a981452258388b570cc6fb68f53b4488ffc906))
+
+## [1.30.6](https://github.com/msgbyte/tianji/compare/v1.30.5...v1.30.6) (2025-11-04)
+
+### Features
+
+* add tianji cli which should more easy to manage worker ([c9ce2ab](https://github.com/msgbyte/tianji/commit/c9ce2ab18842a3e85f051e4d3fd2c81355133256))
+* add tianji worker pull command ([c658101](https://github.com/msgbyte/tianji/commit/c658101a8b7889b6b683527d890f2016872d6580))
+* add worker execution replay feature ([eee5f84](https://github.com/msgbyte/tianji/commit/eee5f846dc84a4da24d187a1fc18905130de0a45))
+
+### Others
+
+* dump sdk version to latest openapi ([e4b61b2](https://github.com/msgbyte/tianji/commit/e4b61b2466e87d92c94d1c36687a4cd3333c57da))
+* update translations and increment SDK version to 1.30.5 ([8fa574c](https://github.com/msgbyte/tianji/commit/8fa574c99670cc9f8393d2f832b87f06dd03e8a1))
+
+## [1.30.5](https://github.com/msgbyte/tianji/compare/v1.30.4...v1.30.5) (2025-11-03)
+
+### Features
+
+* add failed worker record usage and log support ([094291a](https://github.com/msgbyte/tianji/commit/094291a88206496b209893ad63a7df1bd73feebf))
+* add keyboard shortcut to execute SQL statements in editor ([2b77df7](https://github.com/msgbyte/tianji/commit/2b77df7cdaeab7b90986bd5074e21e1ad7ac9984))
+* add sql editor componemt ([b4e41ec](https://github.com/msgbyte/tianji/commit/b4e41ece65db171f1cb1c970237605b833210488))
+* add SQL editor with run button feature ([720db51](https://github.com/msgbyte/tianji/commit/720db51ccd724c458336a61f468f6a19e1229f03))
+* add sql formatter for sql editor ([3c34919](https://github.com/msgbyte/tianji/commit/3c3491901b84be4e54a313305dea46b5dcaa3373))
+* add warehouse sql query feature ([a2ce0a5](https://github.com/msgbyte/tianji/commit/a2ce0a53e7a7342d5ef109a4f9098fa2c7f79e88))
+* improve sql editor and query page display ([9594a14](https://github.com/msgbyte/tianji/commit/9594a14356bd2699975290bb24dee5f75826aacd))
+
+### Bug Fixes
+
+* fix a bug which warehouse can not correct exec insight query issue with workspace level ([5fa8650](https://github.com/msgbyte/tianji/commit/5fa865057788c9481bfd0dfe1d865627a15cc0ee))
+
+### Document
+
+* update tracker script document ([67a3023](https://github.com/msgbyte/tianji/commit/67a3023a5bb6ad3360b077ed1975d060ac87fdd7))
+
+### Others
+
+* add query limit to avoid query too many data ([f4fe136](https://github.com/msgbyte/tianji/commit/f4fe136988bb6c7a41f5f74f82623a12b3d0c1cb))
+* add worker openapi ([e22eb2d](https://github.com/msgbyte/tianji/commit/e22eb2d3dcdada292cf36b71fe51103c1c54f636))
+* change sql formatter library to reduce bundle size ([f7eddb8](https://github.com/msgbyte/tianji/commit/f7eddb8fe67582479447a661dc2fd75533f0889f))
+* extract logic for ai generate ([97ee03a](https://github.com/msgbyte/tianji/commit/97ee03aa3b7604d9dbf955c443fe993121cd62be))
+* resolve duplicated register issue ([802b645](https://github.com/msgbyte/tianji/commit/802b645a7dcea94c0e70f048d6d8e3c83aceae2a))
+* streamline SQL CodeLens management for editor instances ([1b9bc27](https://github.com/msgbyte/tianji/commit/1b9bc2719e0ee9dd072319675dd4142285aa5775))
+* update default worker template ([339f861](https://github.com/msgbyte/tianji/commit/339f8612327103441bb39f7ae4854029548e0dce))
+* update storybook for more code editor ([c941638](https://github.com/msgbyte/tianji/commit/c94163869c6a5e5d6df31ec3ae5bed5ed3950771))
+
+## [1.30.4](https://github.com/msgbyte/tianji/compare/v1.30.3...v1.30.4) (2025-10-26)
+
+### Features
+
+* implement distributed locking for worker cron execution to prevent concurrent runs ([34dceed](https://github.com/msgbyte/tianji/commit/34dceed6a5d0c5fd65a839f16a573b8ff71252b8))
+
+## [1.30.3](https://github.com/msgbyte/tianji/compare/v1.30.2...v1.30.3) (2025-10-24)
+
+### Features
+
+* add survey insight query alias support ([ec7b8e0](https://github.com/msgbyte/tianji/commit/ec7b8e0743ec88520cd498491d886d2de6d13476))
+* add WorkerSparkline ([0f6e728](https://github.com/msgbyte/tianji/commit/0f6e728ad97fd98db35b193684697ad6a59c8b29))
+
+### Document
+
+* add summaries to various API endpoints for improved documentation ([e835a00](https://github.com/msgbyte/tianji/commit/e835a00c25e361e64e2a5a34801e5cacaef7fa47))
+* update openapi.json ([586441e](https://github.com/msgbyte/tianji/commit/586441ef60bf24a5aa77dc2ccc83b38c050b4bd9))
+
+## [1.30.2](https://github.com/msgbyte/tianji/compare/v1.30.1...v1.30.2) (2025-10-24)
+
+### Bug Fixes
+
+* fix a bug which monitor not have lock and will call many times in multi-node case ([70d8059](https://github.com/msgbyte/tianji/commit/70d80592b041131ce8b9876706811e2508b31800))
+* fix insights fetch same column name not work in clickhouse and improve display for insight metric ([900224b](https://github.com/msgbyte/tianji/commit/900224b5944b69bff716b17f871ab79c6b61a148))
+
+### Others
+
+* update worker editor default template ([d7e0905](https://github.com/msgbyte/tianji/commit/d7e0905bc6a71f84b33ed93de438378ae031d891))
+
+## [1.30.1](https://github.com/msgbyte/tianji/compare/v1.30.0...v1.30.1) (2025-10-23)
+
+### Bug Fixes
+
+* fix a issue which oauth not have email handle ([99a009c](https://github.com/msgbyte/tianji/commit/99a009c67bb309c13178b025cd66d8f9b44a0329))
+
+### Others
+
+* skip if tianji already init ([e209a84](https://github.com/msgbyte/tianji/commit/e209a84fae780eb260a6ad991a8245593df410aa))
+
+## [1.30.0](https://github.com/msgbyte/tianji/compare/v1.29.2...v1.30.0) (2025-10-21)
+
+### Features
+
+* add NavigationBlocker component to prevent navigation on unsaved changes ([ad28a51](https://github.com/msgbyte/tianji/commit/ad28a51ef174f86b9684716c78b02eb4468b0fb7))
+* add public page for survey ([2243915](https://github.com/msgbyte/tianji/commit/2243915b24dc0523bcd5ca3cea74da3c0d48f11d))
+* add ShortLinkType enum and update short link creation to support type ([2e02a98](https://github.com/msgbyte/tianji/commit/2e02a98cd2ef0b4ea7978d012bd2ca01e545a0f5))
+
+### Bug Fixes
+
+* fix a bug which telemetry not work in some case ([f55a07c](https://github.com/msgbyte/tianji/commit/f55a07cc32f30bff73e38901d9fea71ba39f2e04))
+
+### Others
+
+* refactor default color theme usage ([91e11fe](https://github.com/msgbyte/tianji/commit/91e11fe99d09a6731fb57f63c00e27c0e1334a0c))
+* update translation ([0c8ad6e](https://github.com/msgbyte/tianji/commit/0c8ad6e1d5a4f1ca0f46a9564b6bde055789262f))
+
+## [1.29.2](https://github.com/msgbyte/tianji/compare/v1.29.1...v1.29.2) (2025-10-20)
+
+### Bug Fixes
+
+* fix version issue for zod version incorrect ([7f3a41b](https://github.com/msgbyte/tianji/commit/7f3a41b37a66ad72ea401f8350699467eecce94b))
+
+### Document
+
+* add blog ([c9815b0](https://github.com/msgbyte/tianji/commit/c9815b03f4c778b5fd2564111ef2e0b5cf5f4048))
+
+### Others
+
+* add clickhouse migrate on db migrate script ([d03167a](https://github.com/msgbyte/tianji/commit/d03167abfd88dab9ddcbe31627c88d1c92c78f94))
+
+## [1.29.1](https://github.com/msgbyte/tianji/compare/v1.29.0...v1.29.1) (2025-10-18)
+
+### Bug Fixes
+
+* [#230](https://github.com/msgbyte/tianji/issues/230) fix a issue which monitor bar not disable after health bar refactor ([123ae28](https://github.com/msgbyte/tianji/commit/123ae289a7e97569fabb8c9b40eed9779d1c8c82))
+* fix a bug which monitor can not unselect when update website info ([f424a32](https://github.com/msgbyte/tianji/commit/f424a3285ff2cc7249f0a7c1580d4b4314230b45))
+
+### Others
+
+* update clickhouse migration sql for utm ([8ba5acf](https://github.com/msgbyte/tianji/commit/8ba5acfa98a221c1625373dc08dcfe7947635831))
+
+## [1.29.0](https://github.com/msgbyte/tianji/compare/v1.28.0...v1.29.0) (2025-10-17)
+
+### Features
+
+* add public url environment ([928f756](https://github.com/msgbyte/tianji/commit/928f7565d2c5221214d84f79e15558d42eb7ee26))
+* add utm support ([3c2190a](https://github.com/msgbyte/tianji/commit/3c2190af63301d1c45ef354c15497b9cf3178f21))
+
+### Bug Fixes
+
+* fix date message display issue ([81f3ba1](https://github.com/msgbyte/tianji/commit/81f3ba139bfaba95dcf6b6ead0e42eee93ee9a0a))
+
+### Others
+
+* add hour level disable for long date range ([c8579e9](https://github.com/msgbyte/tianji/commit/c8579e9a5d582321de7df9380504812392f2baca))
+* optimize date lookup performance by using a Map for O(1) access, reduces time complexity from O(n×m) to O(n+m) ([511050e](https://github.com/msgbyte/tianji/commit/511050edc19db4097036b5f2b59ee166192198ed))
+
+## [1.28.0](https://github.com/msgbyte/tianji/compare/v1.27.12...v1.28.0) (2025-10-15)
+
+### Features
+
+* add datakey parse support which can improve display for share query params ([dee32ae](https://github.com/msgbyte/tianji/commit/dee32aef32d9fd776a8219f48197c2000f2e2c3c))
+* add insight share feature ([e371612](https://github.com/msgbyte/tianji/commit/e37161205377d264e0a2d7654d932ee2ed47ba85))
+
+### Document
+
+* add more info for survey openapi endpoint ([f8fe355](https://github.com/msgbyte/tianji/commit/f8fe35577e64a2a32453157a6c78dc1a42597e7c))
+
+### Others
+
+* improve query performance for worker stats ([1510218](https://github.com/msgbyte/tianji/commit/1510218a96d478cbbb5c8117e179a6d2b9a0f252))
+* upgrade zod to v4 and trpc to v11 ([955fd53](https://github.com/msgbyte/tianji/commit/955fd53a962a9f174081e7fc775dd4d3d82eba11))
+
+## [1.27.12](https://github.com/msgbyte/tianji/compare/v1.27.11...v1.27.12) (2025-10-14)
+
+### Features
+
+* add shortlink feature ([2fa9ea8](https://github.com/msgbyte/tianji/commit/2fa9ea858ce8154861f6c6c213e9330e2f88b37e))
+
+### Bug Fixes
+
+* fix crash for insights context ([e854ec6](https://github.com/msgbyte/tianji/commit/e854ec6bbea7a153c2e4307767bf08ab52ea2c25))
+
+### Document
+
+* update openapi overview description ([ca6077e](https://github.com/msgbyte/tianji/commit/ca6077efc23a7f6aef366f2e2a27e31ecb36612d))
+
+### Others
+
+* update translation ([5c78c38](https://github.com/msgbyte/tianji/commit/5c78c38e42d27c3572a3a7f7aecff6135b3386d5))
+
+## [1.27.11](https://github.com/msgbyte/tianji/compare/v1.27.10...v1.27.11) (2025-10-14)
+
+### Bug Fixes
+
+* fix ci issue ([bdb457d](https://github.com/msgbyte/tianji/commit/bdb457dd1aae83fe2548d827ef8e5fc95dc360c9))
+
+## [1.27.10](https://github.com/msgbyte/tianji/compare/v1.27.9...v1.27.10) (2025-10-14)
+
+### Features
+
+* add full screen worker editor ([97db785](https://github.com/msgbyte/tianji/commit/97db7851e61f695cb331944f16ab131b60102df2))
+* add get result endpoint which can get survey result by result id ([016bb26](https://github.com/msgbyte/tianji/commit/016bb2644fae77dd0d872de45eedcc7cae70675a))
+* add worker code editor entry ([54b119d](https://github.com/msgbyte/tianji/commit/54b119dff0e503d2b9f24701bcac5edf54dc7ee9))
+* add worker visibility ([5129825](https://github.com/msgbyte/tianji/commit/51298250c4767e206740f520678f14f171cf6754))
+
+### Others
+
+* add backup script ([714f088](https://github.com/msgbyte/tianji/commit/714f0883e683829b011c42fc1e59667a26167ac4))
+* add context scope for insight feature ([18c8b66](https://github.com/msgbyte/tianji/commit/18c8b66d3e1437080ff0be93ad4f4073a096d75d))
+* improve performance of work exec ([122a13e](https://github.com/msgbyte/tianji/commit/122a13e56795f18017490ee505bc04da9dfa45cc))
+* update translation ([ea33bf7](https://github.com/msgbyte/tianji/commit/ea33bf7ae124638ba8b590008f2fb2fdd75cb2f6))
+
+## [1.27.9](https://github.com/msgbyte/tianji/compare/v1.27.8...v1.27.9) (2025-10-10)
+
+### Features
+
+* add cron preview feature to WorkerEditForm ([76f18ff](https://github.com/msgbyte/tianji/commit/76f18ffe277711363d718fc7c0efb6b9a427e8d5))
+* improve description display for function worker ([d7d4776](https://github.com/msgbyte/tianji/commit/d7d477685287d5d707bc1ab1a21076da129237d6))
+
+### Bug Fixes
+
+* fix worker runner issue problem ([c10917c](https://github.com/msgbyte/tianji/commit/c10917c66910e180f9939a03e315648d58f60cba))
+
+### Document
+
+* add badge on turbo0 ([9719ea9](https://github.com/msgbyte/tianji/commit/9719ea938cb9955d2bebfe4dce798da79afd8dac))
+
+### Others
+
+* change endpoint place ([af168af](https://github.com/msgbyte/tianji/commit/af168af7bc3d2a785fc5ad40381fb7474afcb4a6))
+
+## [1.27.8](https://github.com/msgbyte/tianji/compare/v1.27.7...v1.27.8) (2025-10-09)
+
+### Features
+
+* add worker runtime context ([7527fdc](https://github.com/msgbyte/tianji/commit/7527fdcfec4ee330d9bd858f62216493d7c4c2df))
+
+### Others
+
+* upgrade isolated-vm version ([eb542b5](https://github.com/msgbyte/tianji/commit/eb542b538eba1900bdb40c892b02a82dee577fa4))
+
+## [1.27.7](https://github.com/msgbyte/tianji/compare/v1.27.6...v1.27.7) (2025-10-08)
+
+### Features
+
+* add id language support ([d95435a](https://github.com/msgbyte/tianji/commit/d95435a4aa99d6af281eb21e6659a930968ef386))
+
+### Document
+
+* add id language support ([1003668](https://github.com/msgbyte/tianji/commit/10036687a5d7f271810eddadb6c9412d31b3c79c))
+
+### Others
+
+* update patched dependency version ([0587fb0](https://github.com/msgbyte/tianji/commit/0587fb04c1de9fc8f46b56c2beeb7d83283a1c5b))
+
+## [1.27.6](https://github.com/msgbyte/tianji/compare/v1.27.5...v1.27.6) (2025-10-05)
+
+### Features
+
+* add preview collapse button in worker page ([67ae4f0](https://github.com/msgbyte/tianji/commit/67ae4f092933a73310ec49f6b224e5e9a1d7ee41))
+* add tooltip for website share feature when feed is disabled ([6f18466](https://github.com/msgbyte/tianji/commit/6f184662a2fab0bf7e0793993891ccdacb2b4551))
+
+### Document
+
+* add blog ([e103dc5](https://github.com/msgbyte/tianji/commit/e103dc596c9833d459619eab21ccb85f33cd6338))
+
+### Others
+
+* update translation ([ba11c97](https://github.com/msgbyte/tianji/commit/ba11c97c350dc0b97a29dcf01c630882404dd3f7))
+* upgrade pnpm version to 10.17.1 across the project ([0803aae](https://github.com/msgbyte/tianji/commit/0803aae4a0095021d669d067b8d65a439ea36141))
+
+## [1.27.5](https://github.com/msgbyte/tianji/compare/v1.27.4...v1.27.5) (2025-10-04)
+
+### Others
+
+* add glib which can resolve docker scout issue ([687bb7c](https://github.com/msgbyte/tianji/commit/687bb7c9348e0173b849d237d2e9875f1fee3b6d))
+* upgrade report docker lib version ([e21a436](https://github.com/msgbyte/tianji/commit/e21a43680eedb3d7c61fbb294870e1b58a359189))
+* upgrade zeromq version ([df62b53](https://github.com/msgbyte/tianji/commit/df62b533476f5ec3a36116ee6e621791c7939048))
+
+## [1.27.4](https://github.com/msgbyte/tianji/compare/v1.27.3...v1.27.4) (2025-10-03)
+
+### Others
+
+* fix ci problem ([033c425](https://github.com/msgbyte/tianji/commit/033c4257130dc35ccb2b90d35c1b677b74ba4e85))
+
+## [1.27.3](https://github.com/msgbyte/tianji/compare/v1.27.2...v1.27.3) (2025-10-03)
+
+### Features
+
+* add pageview tracker for tianji self ([9103ba5](https://github.com/msgbyte/tianji/commit/9103ba51b6aff6946156f593431b8654645fb4bc))
+* add public share feature for feed channels ([47c890e](https://github.com/msgbyte/tianji/commit/47c890eb2f63911ae2698ed4e7e779d72cb1a6c2))
+* add website share feature which can share info to public ([36b521e](https://github.com/msgbyte/tianji/commit/36b521eb8c8c4fcb8a5d56812351474f9cc5f8d1))
+* sdk add trackPageView function ([5b30e8d](https://github.com/msgbyte/tianji/commit/5b30e8dffedda78ed28af607ed5b00bd01c87a76))
+
+### Others
+
+* update translation ([74f575b](https://github.com/msgbyte/tianji/commit/74f575b4f832ea5d781ecdfd36379e114bf849b4))
+
+## [1.27.2](https://github.com/msgbyte/tianji/compare/v1.27.1...v1.27.2) (2025-09-29)
+
+### Features
+
+* add multi console log item support ([e1b599d](https://github.com/msgbyte/tianji/commit/e1b599d9bc13ded28bf9516f6e570857d0b9a606))
+* worker add request payload ([eb77559](https://github.com/msgbyte/tianji/commit/eb77559f8b0145241ff7dc69f1f44c5799471a76))
+
+### Bug Fixes
+
+* fix type error for request function ([bd3f72e](https://github.com/msgbyte/tianji/commit/bd3f72e70f93e1ec60e45212e86ff29868076f15))
+
+### Others
+
+* change order of worker ([50621e3](https://github.com/msgbyte/tianji/commit/50621e3814d8c31806067ac2c430acbe007e8da6))
+
+## [1.27.1](https://github.com/msgbyte/tianji/compare/v1.27.0...v1.27.1) (2025-09-28)
+
+### Features
+
+* add function worker revision ([bf2a800](https://github.com/msgbyte/tianji/commit/bf2a800f3a68a7a27f879d12715fe1bddcf7f32a))
+* add tabs for subscription and credit recharge in billing settings ([1953b09](https://github.com/msgbyte/tianji/commit/1953b09ae46653f9926b70caaeefd81378283574))
+
+## [1.27.0](https://github.com/msgbyte/tianji/compare/v1.26.4...v1.27.0) (2025-09-28)
+
+## [1.26.4](https://github.com/msgbyte/tianji/compare/v1.26.3...v1.26.4) (2025-09-28)
+
+### Features
+
+* add credit balance and recharge feature for billing ([7f7d2a7](https://github.com/msgbyte/tianji/commit/7f7d2a728f2ae7a2e86bf1200c322c6970dfda14))
+* add credit history page ([d75e791](https://github.com/msgbyte/tianji/commit/d75e791d325b55d49710ae467e51c7e5622fe0d5))
+* add WebsiteEventAnalysis component to display event metrics ([b89ec22](https://github.com/msgbyte/tianji/commit/b89ec2284b96a727189b669ee9bc234f07334b65))
+
+### Others
+
+* improve display for credit balance ([54967e5](https://github.com/msgbyte/tianji/commit/54967e5526c727e08803410117ea3b07f5ac8b5c))
+* update translation ([fe98ea6](https://github.com/msgbyte/tianji/commit/fe98ea6900d72b33cd9a0397169eaf558a76fd4d))
+
+## [1.26.3](https://github.com/msgbyte/tianji/compare/v1.26.2...v1.26.3) (2025-09-24)
+
+### Features
+
+* add observability configuration and event tracker ([768a145](https://github.com/msgbyte/tianji/commit/768a14584dbd2593b7c3a9efa737bb2054bea826))
+
+### Bug Fixes
+
+* fix a issue when open function page will crash total page ([de58aca](https://github.com/msgbyte/tianji/commit/de58acaec48e5731842eaa4c419bf1fe10523ae1))
+* replace ScrollArea with div in WorkerExecutionDetail for better layout ([755dfac](https://github.com/msgbyte/tianji/commit/755dface0eaf3b3bcb8a7824298b6ec4eb7d3ba5))
+
+### Others
+
+* add more event tracking ([872611e](https://github.com/msgbyte/tianji/commit/872611ebce53f8e3ff771ccaf62a0aea05f713a9))
+* adjust header title styling for better layout ([f622569](https://github.com/msgbyte/tianji/commit/f62256900b45b23cf3bbadf4cd078c626b9190de))
+* fix broken link ([06bda72](https://github.com/msgbyte/tianji/commit/06bda72a0969a2679ede1e4db889b4a59009bbd0))
+
+## [1.26.2](https://github.com/msgbyte/tianji/compare/v1.26.1...v1.26.2) (2025-09-23)
+
+### Features
+
+* add code validator for function worker ([d1bb53b](https://github.com/msgbyte/tianji/commit/d1bb53b991d096835df79b7b0557c8bd4da5f7a1))
+* add function worker entry and service count ([0c0da21](https://github.com/msgbyte/tianji/commit/0c0da219bcbb4a5f30ebe07d8270d1daf746097a))
+
+### Bug Fixes
+
+* ensure worker deletion handles null worker case and invalidate cache ([4a410c8](https://github.com/msgbyte/tianji/commit/4a410c83ba4a918416fbb5a2f8621d79fb9dda3c))
+* fix crash when open worker detail for some case ([27f7068](https://github.com/msgbyte/tianji/commit/27f70684099d5ed9e018378fe24677bc2de7869f))
+
+### Document
+
+* update environment document ([afc93e9](https://github.com/msgbyte/tianji/commit/afc93e973cb9d952349bfb89fb9dbf855c720fd0))
+
+### Others
+
+* update translations ([7307e8a](https://github.com/msgbyte/tianji/commit/7307e8a3504d3f5430f7d65f48defa10b113d641))
+
+## [1.26.1](https://github.com/msgbyte/tianji/compare/v1.26.0...v1.26.1) (2025-09-22)
+
+### Bug Fixes
+
+* fix field error issue for warehouse long table ([47016b0](https://github.com/msgbyte/tianji/commit/47016b022302403a1ebe262f4054f3b3f1f4cedc))
+
+### Others
+
+* update default desktop panel layout size ([d9c1688](https://github.com/msgbyte/tianji/commit/d9c1688fe926c70375f1d2f63e3d69838ef78927))
+
+## [1.26.0](https://github.com/msgbyte/tianji/compare/v1.25.14...v1.26.0) (2025-09-21)
+
+### Features
+
+* add custom auth icon support ([303372e](https://github.com/msgbyte/tianji/commit/303372ee20d7a2b76636cbf42ae1d5cd90426749))
+* add debug option for ClickHouse sync cronjob ([3e64174](https://github.com/msgbyte/tianji/commit/3e6417480863b3596ed0e7b9a8549a4ecf5b53cb))
+* add DotPatternBackground component and theme support in register route ([edc1a6d](https://github.com/msgbyte/tianji/commit/edc1a6d54087c3446021bd3278e0ae6f23ce8542))
+* add redis adaptar for socket.io ([2202931](https://github.com/msgbyte/tianji/commit/2202931b9193d5a5a7cb6c88ef0bab3db543e478))
+* add REGISTER_AUTO_JOIN_WORKSPACE_ID env for auto join workspace with new user ([9ad13fc](https://github.com/msgbyte/tianji/commit/9ad13fc5a7c8461ec6bfe09b0d98dbe42d6a1496))
+* enhance ChartRender component with metrics validation and improved query handling ([7422450](https://github.com/msgbyte/tianji/commit/742245042e658254c450ee4c067d5b2287330a05))
+
+### Bug Fixes
+
+* fix style issue for ai gateway sparkline ([8d97872](https://github.com/msgbyte/tianji/commit/8d97872f15660a63fffc405b450b98c46924137e))
+
+### Others
+
+* fix ci issue ([c634185](https://github.com/msgbyte/tianji/commit/c6341851f0c6167a0d9f1c1f266b27290c673cd6))
+* update tianji favicon icon ([ac1628a](https://github.com/msgbyte/tianji/commit/ac1628a9ef652bef8132848425884c32b986a207))
+* update translation ([a149b02](https://github.com/msgbyte/tianji/commit/a149b02ced177c5ff2b55f7c75660f048e14ba79))
+
+## [1.25.14](https://github.com/msgbyte/tianji/compare/v1.25.13...v1.25.14) (2025-09-17)
+
+### Others
+
+* add openrouter ranker for tianji ([98e239b](https://github.com/msgbyte/tianji/commit/98e239b06277c940cb9dcdba201ba437f88f60cf))
+
+## [1.25.13](https://github.com/msgbyte/tianji/compare/v1.25.12...v1.25.13) (2025-09-17)
+
+### Features
+
+* enhance AIGateway analytics with detailed metrics and improved naming conventions ([2878777](https://github.com/msgbyte/tianji/commit/2878777bacbc7b80a3796544f28ffc57e239a602))
+
+## [1.25.12](https://github.com/msgbyte/tianji/compare/v1.25.11...v1.25.12) (2025-09-17)
+
+### Features
+
+* add ai gateway analytics ([78559d7](https://github.com/msgbyte/tianji/commit/78559d7c536753243e1f354d2a0c65eb8bdabf45))
+
+### Bug Fixes
+
+* fix timezone config in monitor feature not work issue ([1cd0245](https://github.com/msgbyte/tianji/commit/1cd024530943610f9a8a8af4b65c67de8cc1db0b))
+
+### Others
+
+* changed correct timezone display in settings ([9a62f86](https://github.com/msgbyte/tianji/commit/9a62f86f20465d70e5aa4b0620ae230cc0a76502))
+* improve calc token usage and improve quota alert formatting ([ef9984c](https://github.com/msgbyte/tianji/commit/ef9984c9ddd5885e1160b8b648ab2c301800f0fc))
+* quota alert support correct time display for timezone with workspace config ([842f83a](https://github.com/msgbyte/tianji/commit/842f83a468d0012454dad5acd77783efaa6089e0))
+* update translation ([9cca1a7](https://github.com/msgbyte/tianji/commit/9cca1a70ada680b372a04bfb515098fb26e015ad))
+
+## [1.25.11](https://github.com/msgbyte/tianji/compare/v1.25.10...v1.25.11) (2025-09-16)
+
+### Others
+
+* add openrouter price support, improve calc price more precision ([f5881ae](https://github.com/msgbyte/tianji/commit/f5881aebc1586b28d76ec8db6fc30bee07d21c39))
+
+## [1.25.10](https://github.com/msgbyte/tianji/compare/v1.25.9...v1.25.10) (2025-09-16)
+
+### Others
+
+* fix ci problem ([ae59609](https://github.com/msgbyte/tianji/commit/ae596093b09d8b130b76f5a25688e70388028913))
+
+## [1.25.9](https://github.com/msgbyte/tianji/compare/v1.25.8...v1.25.9) (2025-09-15)
+
+### Features
+
+* add json editor and warehouse config ([d841396](https://github.com/msgbyte/tianji/commit/d8413963c250586a734407732ed3f3e9aeeee0c8))
+* add warehouse query support with workspace level config ([ef5a852](https://github.com/msgbyte/tianji/commit/ef5a852331560444204654b8c4eddd43ab95c312))
+* add workspace config ([f64c984](https://github.com/msgbyte/tianji/commit/f64c984759bda51338133cb4e2bc1c9e2f5b1a7e))
+* refactor workspace config handling and expose schemas for insights applications ([eba3bf5](https://github.com/msgbyte/tianji/commit/eba3bf5732875fcd1c28f1b20e607de199c4c277))
+
+### Others
+
+* upgrade @modelcontextprotocol/inspector version to resolve CVE issue [#222](https://github.com/msgbyte/tianji/issues/222) ([664b0c0](https://github.com/msgbyte/tianji/commit/664b0c0bd80f2a27004458214cec48d316840779))
+
+## [1.25.8](https://github.com/msgbyte/tianji/compare/v1.25.7...v1.25.8) (2025-09-14)
+
+### Features
+
+* add refresh feature in aigateway overview which can easy update info without web refresh ([2062adc](https://github.com/msgbyte/tianji/commit/2062adc35ef875e32024790c07c3ba8372c86f30))
+
+### Others
+
+* add health check and improve health endpoint ([7b049c9](https://github.com/msgbyte/tianji/commit/7b049c94b015e68eaa9e5c6205cb234609249c33))
+
+## [1.25.7](https://github.com/msgbyte/tianji/compare/v1.25.6...v1.25.7) (2025-09-14)
+
+### Features
+
+* add lock to reduce notification ([49c6e77](https://github.com/msgbyte/tianji/commit/49c6e774b6fc6e9e09fed01b7cdd1927353f4e50))
+
+## [1.25.6](https://github.com/msgbyte/tianji/compare/v1.25.5...v1.25.6) (2025-09-14)
+
+### Features
+
+* add distributed lock implementation for managing concurrent tasks ([764cfaa](https://github.com/msgbyte/tianji/commit/764cfaa88ac1599fa6c1a4ab8eb0c947a1ecb387))
+* enhance PostgreSQL to ClickHouse sync with distributed locking mechanism ([b3f3373](https://github.com/msgbyte/tianji/commit/b3f33732ca1b4d8497061ddccccfce5c4903adbd))
+
+## [1.25.5](https://github.com/msgbyte/tianji/compare/v1.25.4...v1.25.5) (2025-09-12)
+
+### Bug Fixes
+
+* resolve ai gateway log infinite fetch issue ([810789e](https://github.com/msgbyte/tianji/commit/810789e1169c4bd42a04bde029cb660200d088ac))
+
+### Others
+
+* improve refresh function which improve performance for infinite list ([ad38950](https://github.com/msgbyte/tianji/commit/ad38950caa226e40b62c87ea732467acc59b05d2))
+
+## [1.25.4](https://github.com/msgbyte/tianji/compare/v1.25.3...v1.25.4) (2025-09-12)
+
+### Features
+
+* improve algorithm of calc prompt token and prefer to use response token result rather than calc by self ([988caed](https://github.com/msgbyte/tianji/commit/988caed8733cbb2227a30d37de6b481edb84c823))
+
+## [1.25.3](https://github.com/msgbyte/tianji/compare/v1.25.2...v1.25.3) (2025-09-12)
+
+### Others
+
+* fix ci issue ([6243ae5](https://github.com/msgbyte/tianji/commit/6243ae52eeff25ffc1fdee56a86c215810ef2d9d))
+
+## [1.25.2](https://github.com/msgbyte/tianji/compare/v1.25.1...v1.25.2) (2025-09-12)
+
+### Others
+
+* fix ci issue ([8f8a573](https://github.com/msgbyte/tianji/commit/8f8a5736246e4359c286c953b5fd6f8cf5582131))
+
+## [1.25.1](https://github.com/msgbyte/tianji/compare/v1.25.0...v1.25.1) (2025-09-12)
+
+### Features
+
+* add keyv cache manager support which can make sure cache can be use in multi-node ([4b20d32](https://github.com/msgbyte/tianji/commit/4b20d32e7161f1dbba406d46bd183f6d6dd44b3f))
+* add update function to cache management for quota alerts ([53e32f4](https://github.com/msgbyte/tianji/commit/53e32f487ab9162bd6bda76ebc7627bb58c77fc4))
+* implement token calculation queue to optimize performance and prevent high CPU usage ([0df31eb](https://github.com/msgbyte/tianji/commit/0df31ebad6a983d0441cc351d2bc6e24a7e89a03))
+
+### Others
+
+* update cost calc timezone ([46fb8d2](https://github.com/msgbyte/tianji/commit/46fb8d28b67b4a268155643aaef961d77b4869b2))
+* update translation ([bbcc720](https://github.com/msgbyte/tianji/commit/bbcc7202ebd996b5cfdc273fc4459e4019fffd5c))
+
+## [1.25.0](https://github.com/msgbyte/tianji/compare/v1.24.29...v1.25.0) (2025-09-11)
+
+### Features
+
+* add AIGateway quota alert ([1948b42](https://github.com/msgbyte/tianji/commit/1948b42b4c70ba6f45fafff88a1c39d7a4e565ac))
+* add NotificationPickerV2 and ColorTagV2 ([1a4de44](https://github.com/msgbyte/tianji/commit/1a4de44ba0ef443393e7788172687ac3a917c717))
+
+### Others
+
+* improve fetch logic to avoid block ([fe77fad](https://github.com/msgbyte/tianji/commit/fe77fad6028d7e9e7a85c2bb42ea1c2e177c0229))
+* remove unused cronjob ([8150656](https://github.com/msgbyte/tianji/commit/815065677bae971c5980546d788177c6c6d0637e))
+* replace Spin component with LoadingView for better loading state management ([f1892dd](https://github.com/msgbyte/tianji/commit/f1892dd4102ade6f28e803e8398d83ef596ae195))
+
+## [1.24.29](https://github.com/msgbyte/tianji/compare/v1.24.28...v1.24.29) (2025-09-11)
+
+### Bug Fixes
+
+* fix image problem ([df8b8cf](https://github.com/msgbyte/tianji/commit/df8b8cf7f6c55d9c937332f193e23d2c05c44dd7))
+
+## [1.24.28](https://github.com/msgbyte/tianji/compare/v1.24.27...v1.24.28) (2025-09-10)
+
+### Features
+
+* add AIGatewayPricingBtn and AIGatewayPricingModal components for model pricing display ([c5cb8ba](https://github.com/msgbyte/tianji/commit/c5cb8ba6f698038bbaeb008060e99576a113fa42))
+* add AIGatewaySparkline component in aigateway list ([426fa82](https://github.com/msgbyte/tianji/commit/426fa822c0784080e54976971aebacaa99f68327))
+* add sparkline component ([a5f41db](https://github.com/msgbyte/tianji/commit/a5f41db20f7e6aead9323e1a0aa02c7c204f3f52))
+* add v2 llm model price list which can improve price usage with more models ([2c0b498](https://github.com/msgbyte/tianji/commit/2c0b498c583d76fcacf27bcac3d31778d57241dd))
+
+### Others
+
+* add storybook support ([7273155](https://github.com/msgbyte/tianji/commit/727315567408ce98ce71fd2a3deb2cdd6dffdf7b))
+* translation and change ai price button position ([dea798a](https://github.com/msgbyte/tianji/commit/dea798a353061f60f408792889887615cf63c90e))
+* update model prices ([74bd53b](https://github.com/msgbyte/tianji/commit/74bd53bccba9ac627966b4cb628e3707eb645b9a))
+
+## [1.24.27](https://github.com/msgbyte/tianji/compare/v1.24.26...v1.24.27) (2025-09-08)
+
+### Features
+
+* add aiTranslation field for survey insight ([b2b7ee7](https://github.com/msgbyte/tianji/commit/b2b7ee7bec61c18dd13f6a015d8cd3ce059c5382))
+* add duplicate feature in survey ([c00ff7a](https://github.com/msgbyte/tianji/commit/c00ff7a0ea43857f3f222d7912cd2cdbe4e5856d))
+
+### Bug Fixes
+
+* fix a bug which in list and not list in insight not work ([09f5aea](https://github.com/msgbyte/tianji/commit/09f5aeaee14539ef57d8fcc992f723f4a1650f41))
+
+### Document
+
+* add blog post on privacy-first website analytics with Tianji ([7ccab50](https://github.com/msgbyte/tianji/commit/7ccab50913449fca7655e3f016d5459030bfc679))
+
+### Others
+
+* add blog ([ad115f3](https://github.com/msgbyte/tianji/commit/ad115f30dbbcadc1a8266bcd05f944f193712377))
+* update clickhouse sync cronjob ([bbf865a](https://github.com/msgbyte/tianji/commit/bbf865a59c90357f6e42e4ff50b055c2f4d0b203))
+
+## [1.24.26](https://github.com/msgbyte/tianji/compare/v1.24.25...v1.24.26) (2025-08-29)
+
+### Features
+
+* website session info support clickhouse query ([0cd5714](https://github.com/msgbyte/tianji/commit/0cd5714fefe9a9420502c86aae625580aef7c76d))
+
+## [1.24.25](https://github.com/msgbyte/tianji/compare/v1.24.24...v1.24.25) (2025-08-29)
+
+### Features
+
+* add alias support for insight ([79f156d](https://github.com/msgbyte/tianji/commit/79f156dbf798dcf9f791510be80f7932732056fa))
+
+### Document
+
+* add new blog ([1918605](https://github.com/msgbyte/tianji/commit/1918605e25f53be94201aeb489c9daf2c8fc85f3))
+* improve seo info ([2d21a87](https://github.com/msgbyte/tianji/commit/2d21a87420b319872ebabde195fa9f0014ac7883))
+
+### Others
+
+* remove unused footer ([6c3baf8](https://github.com/msgbyte/tianji/commit/6c3baf8b326b2a99c5f741bb65ef0b79e7c5abf2))
+* update query structure in WebsiteOverview component for insights ([ea72bb1](https://github.com/msgbyte/tianji/commit/ea72bb11f3b88aebec58fb580db8bee17089e206))
+* update SQL query handling in InsightsSqlBuilder and WebsiteInsightsSqlBuilder ([7dc952a](https://github.com/msgbyte/tianji/commit/7dc952a295db3d47aa24cbc7fa79a8cd8a0ded15))
+
+## [1.24.24](https://github.com/msgbyte/tianji/compare/v1.24.23...v1.24.24) (2025-08-28)
+
+### Features
+
+* enhance warehouse AI tools with database connection handling ([2fba864](https://github.com/msgbyte/tianji/commit/2fba8645e2ba7cea614dfe69fa46615c73d0f444))
+
+### Others
+
+* add ui testing ([4f8672c](https://github.com/msgbyte/tianji/commit/4f8672c82dc86af116f53b49bd1f422aa6237e33))
+* allow non-dev mode can use insight chat endpoint ([f3ec5a0](https://github.com/msgbyte/tianji/commit/f3ec5a00c5965ca93dda0bf399d434623eb7d4e7))
+* improve database status handling in insights warehouse page ([3a56d15](https://github.com/msgbyte/tianji/commit/3a56d150e7e955104d9dd234e6a4e0c21940d1e7))
+* update model price ([5fcd1fe](https://github.com/msgbyte/tianji/commit/5fcd1fed758d2c4ec68ff2a065a88074aa15867d))
+
+## [1.24.23](https://github.com/msgbyte/tianji/compare/v1.24.22...v1.24.23) (2025-08-26)
+
+### Features
+
+* add insights warehouse scope select feature ([0a8ab92](https://github.com/msgbyte/tianji/commit/0a8ab927a64b9b77f84edddda6ec435713c05c34))
+* add Turkish (tr) localization ([#218](https://github.com/msgbyte/tianji/issues/218)) ([1c011cb](https://github.com/msgbyte/tianji/commit/1c011cbf2ee6fcadc3741b5551d1c8fa9a294d8b))
+* add WarehouseDatabase and WarehouseDatabaseTable models ([a1f353e](https://github.com/msgbyte/tianji/commit/a1f353ee1f3768218c214eb5f825c9b8bffd72d4))
+* enhance warehouse insights functionality with new connection management and table synchronization features ([2d1178f](https://github.com/msgbyte/tianji/commit/2d1178fd110cd79f06411b63738da65d2e54b892))
+* implement insights warehouse connection management and table editing features ([7034348](https://github.com/msgbyte/tianji/commit/70343487819571440279b8f1eceb7c29f3f7fc09))
+
+### Others
+
+* remove unused code ([039ccbe](https://github.com/msgbyte/tianji/commit/039ccbe5bfd07f18b73a49bed13fc4f0c35fba53))
+* translation ([ece4e9f](https://github.com/msgbyte/tianji/commit/ece4e9f843548bfbc5174e70d9647e3d87f7b550))
+* update prompt and suggestions ([38ac73a](https://github.com/msgbyte/tianji/commit/38ac73a73cbe326efb1e1639bbf31bf5701cdc15))
+* update prompt of warehouse ai insight ([bc90a75](https://github.com/msgbyte/tianji/commit/bc90a75524e41b0aaac7883fca0b1f8302fcc3e9))
+* update translation ([e419c76](https://github.com/msgbyte/tianji/commit/e419c76794d58116e77bcab88fb4731e71cac1c8))
+
+## [1.24.22](https://github.com/msgbyte/tianji/compare/v1.24.21...v1.24.22) (2025-08-24)
+
+### Others
+
+* update default tianji container reporter mode to silent mode ([ca76a4f](https://github.com/msgbyte/tianji/commit/ca76a4f30f873c62aefa8ef49d505981568061ee))
+
+## [1.24.21](https://github.com/msgbyte/tianji/compare/v1.24.20...v1.24.21) (2025-08-24)
+
+### Features
+
+* **reporter:** add silent mode to suppress logs for cleaner output ([1d15ce4](https://github.com/msgbyte/tianji/commit/1d15ce4db78d2f0260054d77536308d306366f3b))
+
+### Others
+
+* add send reasoning ([b4cc15e](https://github.com/msgbyte/tianji/commit/b4cc15eee80ef888843f5301be8f95ee12077bc3))
+* update cronjob sync batch size ([b5877c0](https://github.com/msgbyte/tianji/commit/b5877c076a3585906100625ca493382fae3c322d))
+
+## [1.24.20](https://github.com/msgbyte/tianji/compare/v1.24.19...v1.24.20) (2025-08-22)
+
+### Features
+
+* add Carousel and HoverCard components for enhanced UI interactions ([38db0cb](https://github.com/msgbyte/tianji/commit/38db0cbff0888bca2b40b0d85120d83457df44f4))
+
+## [1.24.19](https://github.com/msgbyte/tianji/compare/v1.24.18...v1.24.19) (2025-08-22)
+
+### Features
+
+* add ai-elements ui components ([ff183c0](https://github.com/msgbyte/tianji/commit/ff183c0e2e86f75e49eb151afb74c8b9b80a0471))
+* add basic ai charts analyze and add rich display support for render ([a309bc9](https://github.com/msgbyte/tianji/commit/a309bc931878c529cf89afe39f43dc40ba980a21))
+* add empty state for insight warehouse ([20b5c24](https://github.com/msgbyte/tianji/commit/20b5c24b6afe3468a6a22b9b36929172621f6739))
+* add WarehouseChartBlock component for visualizing warehouse data and integrate it into the insights page ([e06e6f9](https://github.com/msgbyte/tianji/commit/e06e6f9f65cdbc0e53ad62b2a20473e78edd2a55))
+* update API route from /api/ai/ to /api/insights/ and enhance error response for development mode ([198dd1c](https://github.com/msgbyte/tianji/commit/198dd1caf1562965498457b47234c0d0d9e8e3fc))
+* update API routes for insights and add authentication middleware ([57baa63](https://github.com/msgbyte/tianji/commit/57baa6300ca08df1d24ae7ad79ab9bbe3395a096))
+
+### Bug Fixes
+
+* resolve some clickhouse instance not support transaction issue ([5dd56cf](https://github.com/msgbyte/tianji/commit/5dd56cf87e799bfcd89bbac8d4414eb53db3f1da))
+
+### Others
+
+* add sync controller ([419761c](https://github.com/msgbyte/tianji/commit/419761ce63c196c54700ea0a1f378a3ff6637198))
+* add translation ([15ff07f](https://github.com/msgbyte/tianji/commit/15ff07f4f323286876075ee02e2893160ce84c05))
+* clean up imports and improve class order in message components; add sleep utility function ([38d48a1](https://github.com/msgbyte/tianji/commit/38d48a19ad944ea064a19115ded65967abce5ca1))
+* improve display for result ([169f031](https://github.com/msgbyte/tianji/commit/169f0317fe7e30936db62ef65b7eaee6a033daae))
+* improve table context ([27de587](https://github.com/msgbyte/tianji/commit/27de587810613cd6d100bdd32c5439cb7e642a77))
+
+## [1.24.18](https://github.com/msgbyte/tianji/compare/v1.24.17...v1.24.18) (2025-08-19)
+
+### Features
+
+* add optional session id for long table ([5ba38da](https://github.com/msgbyte/tianji/commit/5ba38da21c588dcf3b02bbb2e6ce9295b5736308))
+* add title for survey download button which can improve survey usage ([15515a8](https://github.com/msgbyte/tianji/commit/15515a8282cb646b7b6950c0a755dd47cc9623f1))
+
+### Document
+
+* update robots.txt content ([eeb241c](https://github.com/msgbyte/tianji/commit/eeb241c29d0538aa205e7ddcf2e4631ebd34d690))
+
+### Others
+
+* add fallback operator to support custom field ([5238b36](https://github.com/msgbyte/tianji/commit/5238b3642c12971dccb79d0f88d75ae7cf9d4976))
+* improve type handling and simplify conditionals in insights components ([badf59d](https://github.com/msgbyte/tianji/commit/badf59d58977ba6f315ba40306e62537dc09fa4a))
+* reset insight params after change insight target ([9e01059](https://github.com/msgbyte/tianji/commit/9e01059d33c7bdfc0ef0c613dd65d1b818a631be))
+* upgrade version of dev dependency to resolve vulnerabilities ([9d022fb](https://github.com/msgbyte/tianji/commit/9d022fb896c6f72d60f958c6abbcf9484a56e733))
+
+## [1.24.17](https://github.com/msgbyte/tianji/compare/v1.24.16...v1.24.17) (2025-08-18)
+
+### Features
+
+* add download buttion for insights table ([abebd62](https://github.com/msgbyte/tianji/commit/abebd6206382e11069b9a19c69dfb2a3362a9b13))
+
+### Document
+
+* update llms file generator ([ac07c8c](https://github.com/msgbyte/tianji/commit/ac07c8c773e27a1aa6b5a2c23a3b364a52731b02))
+
+## [1.24.16](https://github.com/msgbyte/tianji/compare/v1.24.15...v1.24.16) (2025-08-18)
+
+### Features
+
+* add warehouse sql page ([1b250f5](https://github.com/msgbyte/tianji/commit/1b250f5023e73979149249d1834b3b85f0146934))
+
+### Bug Fixes
+
+* fix a bug which will cause loop fetch for survey ([cb9688c](https://github.com/msgbyte/tianji/commit/cb9688c1b5ae7ada9a7a423f2992824b22cf06b7))
+* update fallback in FilterParamsOperator to return string operators ([35b3411](https://github.com/msgbyte/tianji/commit/35b3411ad618d466470b16ee985a1ba1e46ffbbd))
+
+### Document
+
+* add new blog post ([108b38d](https://github.com/msgbyte/tianji/commit/108b38d99f4e7bd882e9cbf8bf51b69e06a5d55a))
+
+## [1.24.15](https://github.com/msgbyte/tianji/compare/v1.24.14...v1.24.15) (2025-08-16)
+
+### Features
+
+* add cohorts workspace id support for warehouse and some design ([3c60859](https://github.com/msgbyte/tianji/commit/3c608592fec188edc0c5c458a6054b326d922597))
+* add simple retention query ([3309c9b](https://github.com/msgbyte/tianji/commit/3309c9b0077397866d8948d51bb3cad22101f743))
+* allow user modify up / down message template ([f3678b0](https://github.com/msgbyte/tianji/commit/f3678b0b4c3e5a8fab23f7e57a21317e03a3619b))
+
+### Bug Fixes
+
+* fix color issue of simple world map ([df1340c](https://github.com/msgbyte/tianji/commit/df1340cf869d6c088ce3dfc8b3e9767d4b4665a8))
+
+### Document
+
+* [#216](https://github.com/msgbyte/tianji/issues/216) fix website openapi doc issue ([b5a59ee](https://github.com/msgbyte/tianji/commit/b5a59ee400d03a081b6d0111debb052a2bce8d42))
+* add feed documents ([e9a3796](https://github.com/msgbyte/tianji/commit/e9a3796470b96cdd5d2b27840f29f49e9048ada4))
+* add lastUpdatedAt support for route ([b38b500](https://github.com/msgbyte/tianji/commit/b38b500c0a51293edba7b18560bcb09742a7beff))
+* add new blog post on cost-aware observability to optimize cloud spending while maintaining SLOs ([a5c84f2](https://github.com/msgbyte/tianji/commit/a5c84f27dd50dd75b731cb286f617dd9d8520abd))
+* add new blog post on runbook automation connecting detection, diagnosis, and repair into a closed loop ([19352a2](https://github.com/msgbyte/tianji/commit/19352a287442530db47a52a29edf9c298f32e4e6))
+* add some blog for SEO ([7949a21](https://github.com/msgbyte/tianji/commit/7949a2156c5433012cbe8ba603433f69f1274a14))
+* try to resolve vercel build issue for sitemap ([acc45a1](https://github.com/msgbyte/tianji/commit/acc45a145e6545faee85f2b130185e1d038f54a3))
+* update i18n support for docs ([c8916bc](https://github.com/msgbyte/tianji/commit/c8916bca8e1c1f8d48d3e6afe2c596ebe5173d4d))
+* update robot config which allow /api route ([c3c13e1](https://github.com/msgbyte/tianji/commit/c3c13e14d2c837831748178e021825af6f764e07))
+
+## [1.24.14](https://github.com/msgbyte/tianji/compare/v1.24.13...v1.24.14) (2025-08-11)
+
+## [1.24.13](https://github.com/msgbyte/tianji/compare/v1.24.12...v1.24.13) (2025-08-11)
+
+### Features
+
+* add 3-day date range selection option in DateRangeSelection component ([b5f7c12](https://github.com/msgbyte/tianji/commit/b5f7c12c2a9f56561646624d1dfc7d427959f809))
+* add event name field and filter support in WarehouseInsightsSqlBuilder ([88940e2](https://github.com/msgbyte/tianji/commit/88940e248707806221afd666c0f4d554c1d629fd))
+* add event names fetcher ([8737a34](https://github.com/msgbyte/tianji/commit/8737a34db82da6364e11e4dcdc5d475995fc7d66))
+* add insights event handling with warehouse wide table application ([13e3fb8](https://github.com/msgbyte/tianji/commit/13e3fb8c296768e18ff6b2fdd9cc0953f0282030))
+* add insightsWarehouseFilterParams function to fetch distinct event parameters ([47f3506](https://github.com/msgbyte/tianji/commit/47f3506f7d508fa29168dff37a5f8cb2ca383bf6))
+* add long table query events logic and improve display of event list page ([9a81ec9](https://github.com/msgbyte/tianji/commit/9a81ec921f2898a45b1900a1ce41718d4a1158b3))
+* add skipBatch context to TRPC queries in insights components ([c2df195](https://github.com/msgbyte/tianji/commit/c2df19512b8347b00e4e059aab3e29fd60f60b9f))
+* add specify feature for events ([0d3c841](https://github.com/msgbyte/tianji/commit/0d3c8414864724cdf4aaf1076a2169a5e4125146))
+* add warehousecohorts db model ([6f2f15d](https://github.com/msgbyte/tianji/commit/6f2f15d41907e116dfc68a61167d9b8cb9eb57c2))
+* add wide table query support ([b8fa898](https://github.com/msgbyte/tianji/commit/b8fa8988344b3b59a31eabe691fa7646456c277f))
+
+### Others
+
+* reduce intro of raw and sql from prisma ([37b0640](https://github.com/msgbyte/tianji/commit/37b064098023fdb49cdbf06e4e4700629711fd65))
+* rename insight file path ([11bbf01](https://github.com/msgbyte/tianji/commit/11bbf0164ca09a59bfbbb1e43f15d36cf4d85f1a))
+* rename warehouse to warehouse long table and extract some logic ([476553b](https://github.com/msgbyte/tianji/commit/476553b67c5e9fb3f5f94b771c1d848fbc71e08c))
+
+## [1.24.12](https://github.com/msgbyte/tianji/compare/v1.24.11...v1.24.12) (2025-08-06)
+
+## [1.24.11](https://github.com/msgbyte/tianji/compare/v1.24.10...v1.24.11) (2025-08-06)
+
+## [1.24.10](https://github.com/msgbyte/tianji/compare/v1.24.9...v1.24.10) (2025-08-05)
+
+### Features
+
+* add basic warehouse insight query ([d107f76](https://github.com/msgbyte/tianji/commit/d107f767072652867d5e662d841309c137ed3ef7))
+* add logId filter support for AIGatewayLogTable ([d59675a](https://github.com/msgbyte/tianji/commit/d59675a9d236ea834e77e67ec5117d227c02e793))
+* add optimized date based query support ([5bfd8dd](https://github.com/msgbyte/tianji/commit/5bfd8ddabe60a47769c11a568ea6a87efd668bdf))
+* add query time tracking for insights feature ([465569f](https://github.com/msgbyte/tianji/commit/465569f2c7a0d5fbf482d4fc1d163fbeb9f48507))
+* add warehouse view ([3abe951](https://github.com/msgbyte/tianji/commit/3abe95102ace6eb2eeba0440b5da976acc96a53e))
+
+### Others
+
+* add LoadingView component and integrate it into VirtualizedInfiniteDataTable for improved loading state handling ([48ee26b](https://github.com/msgbyte/tianji/commit/48ee26bc9ba22fdd5bc423da9b396137af930707))
+* extract SearchInput component ([dfd79c6](https://github.com/msgbyte/tianji/commit/dfd79c6cc78585630d490597841f13a6bb217d78))
+* integrate LoadingView component into website detail view ([c6d386a](https://github.com/msgbyte/tianji/commit/c6d386a53fa41f4f97502fb9102cab8e89ad33dd))
+* translation ([68e00c2](https://github.com/msgbyte/tianji/commit/68e00c2869dc7b2a7cb8d8929758263be840c8c6))
+* update translation ([6ef8b96](https://github.com/msgbyte/tianji/commit/6ef8b96f0f9c25a1fb1c05d5e3bd27b1651d9b5c))
+
+## [1.24.9](https://github.com/msgbyte/tianji/compare/v1.24.8...v1.24.9) (2025-08-02)
+
+### Features
+
+* add cron worker support ([c794d42](https://github.com/msgbyte/tianji/commit/c794d4222b5769d7f6bf868beb7761cb921a8ba5))
+* add react simple map for website detail ([ab8a6b8](https://github.com/msgbyte/tianji/commit/ab8a6b8d7e1f2e197c211b53430dc62f21d1b50a))
+
+### Bug Fixes
+
+* fix a bug which survey and aigateway insight query not work ([d3c10ee](https://github.com/msgbyte/tianji/commit/d3c10ee2ea5d06a0f8c163ed4f757d33653c3b4e))
+* fix layout issue about filter section in vertical mode ([c429a12](https://github.com/msgbyte/tianji/commit/c429a125dd5323160ec52d72b107721698fee100))
+
+### Others
+
+* add aigateway alias which maybe more better for gateway using api ([3c214a9](https://github.com/msgbyte/tianji/commit/3c214a973a7eec449429cf14aa445e25c5910b79))
+* add translation ([6781f6f](https://github.com/msgbyte/tianji/commit/6781f6f5c22edc3b7fb016a8d4c3105e66a678a4))
+* extract buildOpenAIHandler to model folder ([648fa2e](https://github.com/msgbyte/tianji/commit/648fa2ea472f84448b8831449d6ff6efcec27129))
+* optimize ChartTypeSelection component by consolidating chart type definitions and improving icon retrieval ([6cf85f7](https://github.com/msgbyte/tianji/commit/6cf85f74d96fcbf98bb5608096297b807b8aeb01))
+
+## [1.24.8](https://github.com/msgbyte/tianji/compare/v1.24.7...v1.24.8) (2025-07-29)
+
+### Bug Fixes
+
+* fix type check [#213](https://github.com/msgbyte/tianji/issues/213) ([06ab175](https://github.com/msgbyte/tianji/commit/06ab17595012a0ea1f73b22652d72491a1f56f0e))
+
+## [1.24.7](https://github.com/msgbyte/tianji/compare/v1.24.6...v1.24.7) (2025-07-27)
+
+### Features
+
+* add code testing functionality in worker edit form ([849d51b](https://github.com/msgbyte/tianji/commit/849d51bf530748ee2ad85cd2b3553c2f9a41d201))
+* add country and ip for server ([374a302](https://github.com/msgbyte/tianji/commit/374a302f25d36db336db1a658b256565d15e903f))
+* add env switch for worker which can control permission and risk ([c926c5e](https://github.com/msgbyte/tianji/commit/c926c5e89326993fdaec0fa024fd44b2f17b5f7d))
+* add fullscreen modal for code editor in worker edit form ([5a7a2ed](https://github.com/msgbyte/tianji/commit/5a7a2ed7490e7c527b2b8772046ea5ab60011112))
+* add UrlParamsInput component for handling URL parameters ([9a29c48](https://github.com/msgbyte/tianji/commit/9a29c488aaf96d325d4b9cedb654f95ea281523d))
+* add verbose logging option to display full payload content or its length ([a62aa22](https://github.com/msgbyte/tianji/commit/a62aa2242397b50569bfad2242f8cdf6ee23ce2c))
+
+### Document
+
+* update openapi schema ([bf1c684](https://github.com/msgbyte/tianji/commit/bf1c6841afc9c7ab65c93fccb069e81015cd532b))
+
+### Others
+
+* update background of worker preview ([38ef5ae](https://github.com/msgbyte/tianji/commit/38ef5aeb550533b5a5489fce5cb05cc1c6c0eadc))
+* update model prices and context window configurations in JSON files ([8a8855c](https://github.com/msgbyte/tianji/commit/8a8855cecc9abbda3eee39dde5b06bf865a155ec))
+* update UrlParamsInput component to improve layout and add overflow handling ([1a085a6](https://github.com/msgbyte/tianji/commit/1a085a6d43b20d0c59c3f4c6d92ef34c901d6ea8))
+
+## [1.24.6](https://github.com/msgbyte/tianji/compare/v1.24.5...v1.24.6) (2025-07-22)
+
+### Others
+
+* fix ci problem ([054f831](https://github.com/msgbyte/tianji/commit/054f831405245de5472c4f2203671def394d0bb8))
+
+## [1.24.5](https://github.com/msgbyte/tianji/compare/v1.24.4...v1.24.5) (2025-07-21)
+
+### Features
+
+* add function worker feature ([58f8eca](https://github.com/msgbyte/tianji/commit/58f8eca551933f58186d42a6c39ecd351dc925de))
+* add request payload handle for worker ([24e4fdc](https://github.com/msgbyte/tianji/commit/24e4fdc6f54f488761a0ea60da37d889afbb2add))
+* add worker API endpoint ([6f34f37](https://github.com/msgbyte/tianji/commit/6f34f37bd4bb7b71acb25e4bf5ee9eab45079cbe))
+* implement pagination for worker executions and enhance preview functionality ([d256e5c](https://github.com/msgbyte/tianji/commit/d256e5c706a95024f237d960417e5d2fd856124b))
+* refactor worker routes and add edit functionality with new components ([334484d](https://github.com/msgbyte/tianji/commit/334484d3d863973390f910a21c760773b27e85ef))
+
+### Others
+
+* add pagination component ([558e7cf](https://github.com/msgbyte/tianji/commit/558e7cfd0fe2755917b11ec7bfb5218abda8d3b4))
+* update CPU time display from milliseconds to microseconds for better precision ([6e6a10e](https://github.com/msgbyte/tianji/commit/6e6a10e3e390d9e117313aa1b7e32f536c616f61))
+
+## [1.24.4](https://github.com/msgbyte/tianji/compare/v1.24.3...v1.24.4) (2025-07-20)
+
+### Others
+
+* clean logs ([c3fe3a8](https://github.com/msgbyte/tianji/commit/c3fe3a8d2d4dd3dbb9688b4ea24e9740466c794b))
+* update chart type labels for better clarity and add missing translations ([fc31946](https://github.com/msgbyte/tianji/commit/fc319462358ad2a122b6ec3b6140c0096d6c65aa))
+
+## [1.24.3](https://github.com/msgbyte/tianji/compare/v1.24.2...v1.24.3) (2025-07-19)
+
+### Others
+
+* add amd64 support for alpine release ([8df7071](https://github.com/msgbyte/tianji/commit/8df707160276771c76e0e16c5c3e3c365fee3178))
+
+## [1.24.2](https://github.com/msgbyte/tianji/compare/v1.24.1...v1.24.2) (2025-07-19)
+
+### Features
+
+* add monitor manual trigger ([4db5d04](https://github.com/msgbyte/tianji/commit/4db5d041128bd6b8897646ded3b5ab3dac7ae670))
+* reporter build add alpine support ([07af814](https://github.com/msgbyte/tianji/commit/07af814b7f8e0b05be899d20896f447004148e34))
+
+## [1.24.1](https://github.com/msgbyte/tianji/compare/v1.24.0...v1.24.1) (2025-07-18)
+
+### Features
+
+* add batch endpoint for website events ([44d45b2](https://github.com/msgbyte/tianji/commit/44d45b2d59558d7f6871b928813b69aaaf22f131))
+* add pure website tracking functions and update existing tracker to utilize them ([0662362](https://github.com/msgbyte/tianji/commit/0662362f29d2172e8b481590e094e778bbd65f48))
+* add WebsiteVisitorMap route and enhance map components with full-screen support ([fc6266f](https://github.com/msgbyte/tianji/commit/fc6266fffd3c776c2b43a9692adffd96786b916f))
+* implement batch request handling for website events and enhance tracking options ([38bd5e9](https://github.com/msgbyte/tianji/commit/38bd5e9c26f9b7bbd6671e356cdacee1f606a5a8))
+
+### Bug Fixes
+
+* fix a bug which insight can not good handle timezone problem when in different timezone ([a20cb7a](https://github.com/msgbyte/tianji/commit/a20cb7ae5f6231d944319924e382317568fd52ac))
+
+### Document
+
+* update changelog page ([e06d1b5](https://github.com/msgbyte/tianji/commit/e06d1b506c7b9a5457ac34e554dabdb03488709e))
+
+### Others
+
+* add TypeScript tracker implementation and update build entry point ([fcc7f94](https://github.com/msgbyte/tianji/commit/fcc7f94b883ee257e91611946607c3f0ee4bc51d))
+* redesign changelog page ([658c045](https://github.com/msgbyte/tianji/commit/658c045ed1828a4e9067e3b1b7e22947043d6317))
+* simplify insightsAIGateway function by utilizing processGroupedTimeSeriesData ([58369d4](https://github.com/msgbyte/tianji/commit/58369d4d6a2d17a198cf8651cfa5bd64b3684f11))
+* update model prices ([46ba80d](https://github.com/msgbyte/tianji/commit/46ba80db81d478c6be1940ae62391c11c052c2ed))
+* update tracking functions to use new website event reporting methods ([2494227](https://github.com/msgbyte/tianji/commit/2494227933b1fe477d8d34755a3fab1d2ebad07f))
+
+## [1.24.0](https://github.com/msgbyte/tianji/compare/v1.23.5...v1.24.0) (2025-07-15)
+
+### Features
+
+* add ClickHouse health check manager and integrate it into insights query handling ([b755b63](https://github.com/msgbyte/tianji/commit/b755b632424f258e1b0994161bcfd2cf7727c194))
+* add clickhouse infrastructure ([23ea9c1](https://github.com/msgbyte/tianji/commit/23ea9c1da2965ba40f686343bb5769812b71c50b))
+* add clickhouse insights support ([4fdfacd](https://github.com/msgbyte/tianji/commit/4fdfacdef9fe0241ae90e04e033e331b7dd23b63))
+* implement transaction handling in migration process and improve SQL query parameterization ([bd1a866](https://github.com/msgbyte/tianji/commit/bd1a866eb8d5ca0ec302a759e15b48e31953c052))
+
+### Bug Fixes
+
+* fix a bug which last_sync_timestamp incorrect ([6ac7250](https://github.com/msgbyte/tianji/commit/6ac7250f0f17b831c92f2760a859cd66e387939c))
+
+### Others
+
+* add CLICKHOUSE_DISABLE_SYNC environment ([8de9899](https://github.com/msgbyte/tianji/commit/8de9899d1c4b18be46f2f6abe09195bd6a79f9a7))
+* add sdk environment check before run browser only logic ([407ab74](https://github.com/msgbyte/tianji/commit/407ab74e1721042b38d98aa6ca06f6c139c158c3))
+* change client sdk tracker path ([83c50bb](https://github.com/msgbyte/tianji/commit/83c50bbbd45578b1157670511c86ca484ee4efb9))
+* **example app:** add Tianji tracking functionality with page view simulation and user session management ([0eeb672](https://github.com/msgbyte/tianji/commit/0eeb6722919ab7411b9e6446807c1d604a6331e4))
+* simplify SQL query construction for ClickHouse and PostgreSQL ([1ade1fb](https://github.com/msgbyte/tianji/commit/1ade1fb637a432e3b580ee2cf42561f0564c66fe))
+* update ClickHouse env examples ([f0ff7cf](https://github.com/msgbyte/tianji/commit/f0ff7cf34f1cfeeeac732555f4bc52c0c66082de))
+* update dependencies and bump docker version ([7d007b5](https://github.com/msgbyte/tianji/commit/7d007b5cbbcc866cfca4c1600c4bd8cd3bd3e039))
+
+## [1.23.5](https://github.com/msgbyte/tianji/compare/v1.23.4...v1.23.5) (2025-07-13)
+
+### Features
+
+* add direction prop to FilterParamsBlock and update FilterSection for horizontal layout ([ed17bbb](https://github.com/msgbyte/tianji/commit/ed17bbb3c501ab97c373762f62218224ba1bf686))
+* enhance event display with object serialization and custom collapse icon ([a7e5efa](https://github.com/msgbyte/tianji/commit/a7e5efa88ed01bb0e9cffb6f16bfeb3468580b55))
+
+### Bug Fixes
+
+* fix insights event feature session data incorrect problem ([2c2b570](https://github.com/msgbyte/tianji/commit/2c2b5704c5dd10a85e0f21e6c4756e44a0d6fe53))
+
+### Others
+
+* fix filter not work issue in fetch event ([107de00](https://github.com/msgbyte/tianji/commit/107de0006a7e6101be2d6590dc61fa1844ebeb35))
+
+## [1.23.4](https://github.com/msgbyte/tianji/compare/v1.23.3...v1.23.4) (2025-07-10)
+
+### Features
+
+* upgrade go runtime and upgrade gopsutil version and add process command support ([a17a4b4](https://github.com/msgbyte/tianji/commit/a17a4b44e956ae8f0cd43d0c940ec7f38f28f6e3))
+
+## [1.23.3](https://github.com/msgbyte/tianji/compare/v1.23.2...v1.23.3) (2025-07-09)
+
+### Features
+
+* add bar chart support ([a6839c3](https://github.com/msgbyte/tianji/commit/a6839c346ddc6166aea26e98b0c91cbdb4588331))
+* add default and max result limits for insights queries to avoid performance issues ([47eb27e](https://github.com/msgbyte/tianji/commit/47eb27e4cdf812f21380fea73ee916adef208d14))
+* add pie chart view type ([f9e7c26](https://github.com/msgbyte/tianji/commit/f9e7c2614c553ec7708fecb9507eb683871ce9af))
+* add server timezone options in global config ([ec3f5ac](https://github.com/msgbyte/tianji/commit/ec3f5ac8d4b88a17cffecc8eb48ff477cc9ac541))
+* add timezone support for insights components and add presist date setting ([0bf04a2](https://github.com/msgbyte/tianji/commit/0bf04a2f07bc0519d82918403eee0ba618eadbbf))
+
+### Document
+
+* update yandex verify html ([8cf94d9](https://github.com/msgbyte/tianji/commit/8cf94d9d59f80977fea0dec7f4514e610863e043))
+
+### Others
+
+* improve display for table view ([e6bd1e3](https://github.com/msgbyte/tianji/commit/e6bd1e30932ef5ed204f4d39a9b92f4bcdc1a92a))
+* remove ai category which should not filter or group ([000253f](https://github.com/msgbyte/tianji/commit/000253fd20bc6b38efbbbc6d71cd837f69caa7f0))
+
+## [1.23.2](https://github.com/msgbyte/tianji/compare/v1.23.1...v1.23.2) (2025-07-07)
+
+### Features
+
+* add more group support for insightsSurveyBuiltinFields ([eac0c65](https://github.com/msgbyte/tianji/commit/eac0c65d905ff5aede93c64c915cd27e5992b433))
+
+## [1.23.1](https://github.com/msgbyte/tianji/compare/v1.23.0...v1.23.1) (2025-07-07)
+
+### Features
+
+* add in list filter support in string operator ([e68cc15](https://github.com/msgbyte/tianji/commit/e68cc150d35d254f0655d10c19e6e23906b29a79))
+
+### Bug Fixes
+
+* fix a problem which can not support insight input and save ([9ce3a8d](https://github.com/msgbyte/tianji/commit/9ce3a8d4ff4a02d09eb968776511381c55025935))
+
+### Others
+
+* translation ([b98c630](https://github.com/msgbyte/tianji/commit/b98c6302706613c897aac89ff89bf9ec763e858d))
+
+## [1.23.0](https://github.com/msgbyte/tianji/compare/v1.22.6...v1.23.0) (2025-07-06)
+
+### Features
+
+* add server status option for status pages ([f281d1d](https://github.com/msgbyte/tianji/commit/f281d1d8b30b0427c6447784edb49f92446b5a55))
+* add tipicon which tell user how to use api key ([174d1df](https://github.com/msgbyte/tianji/commit/174d1df781e8d4f8ad5a674cc609c8d7135671e8))
+* add tooltip of user invitation which SMTP maybe not config [#180](https://github.com/msgbyte/tianji/issues/180) ([c721595](https://github.com/msgbyte/tianji/commit/c721595a876e1c42044678a2f4f946c943924a3b))
+
+### Bug Fixes
+
+* fix tooltip can only display part issue ([d9678f3](https://github.com/msgbyte/tianji/commit/d9678f3481d3d12b814e40c29810784ed8d86d64))
+
+### Others
+
+* improve display for server status page ([4513026](https://github.com/msgbyte/tianji/commit/4513026a63fcc143d5adf14ef9d3449cf818ad47))
+
+## [1.22.6](https://github.com/msgbyte/tianji/compare/v1.22.5...v1.22.6) (2025-07-05)
+
+### Features
+
+* add multiselectpopover logic which support filter reference value ([4b11135](https://github.com/msgbyte/tianji/commit/4b111352202e29a4a7c79498750a644698ee4e4e))
+* **insights:** add filterParamValues query for website and survey insights ([7d7e65e](https://github.com/msgbyte/tianji/commit/7d7e65e8e493e402b9825000529c5342c3bb385a))
+* **status-page:** toggle detail display ([5a3a336](https://github.com/msgbyte/tianji/commit/5a3a336ec5a79e89a3cca64dce4c57ea158b5bac))
+
+### Bug Fixes
+
+* fix survey create page can not scroll if form is too large ([96d9c79](https://github.com/msgbyte/tianji/commit/96d9c79f31023ff94539ca1f7b2dbdf7cda5f4ec))
+
+### Document
+
+* add kubernetes reporter daemonset ([80d5b7f](https://github.com/msgbyte/tianji/commit/80d5b7fae6569c6ffcef17e112f38c1d12b5ae0f))
+* add translation file note ([2e4da45](https://github.com/msgbyte/tianji/commit/2e4da453c420f1ccab13c820bf1958618954b565))
+
+### Others
+
+* update valueFormatter to format numbers with locale ([a76890d](https://github.com/msgbyte/tianji/commit/a76890d9494df1443cfa093f9c0a097a64bf591b))
+
+## [1.22.5](https://github.com/msgbyte/tianji/compare/v1.22.4...v1.22.5) (2025-06-28)
+
+### Features
+
+* add yAxisDomain to time event chart and improve history display ([235920a](https://github.com/msgbyte/tianji/commit/235920aee10ec10fc4b1c9ef664552304cff9c13))
+* enhance database configuration with debug and transaction options ([812bfe5](https://github.com/msgbyte/tianji/commit/812bfe571674f5ecf70044ea88d625faaf7f64b7))
+* **server-status:** implement caching for server status and history, update related functions to support async operations ([ca7cb73](https://github.com/msgbyte/tianji/commit/ca7cb738fbb83d963903cd277f8a658348c79676))
+
+### Document
+
+* add document for traefik plugin ([1493d4a](https://github.com/msgbyte/tianji/commit/1493d4a1a386db3fa4267029344db667ae1889cb))
+* change website domain to tianji.dev ([30834aa](https://github.com/msgbyte/tianji/commit/30834aad73179bd5f642833428dee4a68e4f3f11))
+* move traefik with plugin document position ([422fbde](https://github.com/msgbyte/tianji/commit/422fbdec40b93a11eca463e5921fe6710cdc9160))
+
+### Others
+
+* change docker start script, redirect tianji-reporter output to /dev/null for cleaner logs ([0034253](https://github.com/msgbyte/tianji/commit/0034253944015446f25d388b1e898a093c3b0763))
+* migrate traefik tianji plugin to independent repo ([0718edb](https://github.com/msgbyte/tianji/commit/0718edb39d9813eb3d1848efcacaf3369cae3a01))
+* update translation ([d7e94fc](https://github.com/msgbyte/tianji/commit/d7e94fca3ef27aa46bd413b4b5955ec3b1193168))
+
+## [1.22.4](https://github.com/msgbyte/tianji/compare/v1.22.3...v1.22.4) (2025-06-25)
+
+### Features
+
+* add process stats support ([6079501](https://github.com/msgbyte/tianji/commit/607950178ce2d7f8beaeff5090a0e3485a3400e7))
+* add ServerCard and ServerCardView components for improved server monitoring display ([79a026e](https://github.com/msgbyte/tianji/commit/79a026e441d19d6366eb0c7540d577299a677904))
+* **server-status:** add history caching and chart ([4c9c938](https://github.com/msgbyte/tianji/commit/4c9c93852dab03a6996f72c0fe53f03d7a627896))
+
+### Document
+
+* fix typos and env variable ([7ca6fff](https://github.com/msgbyte/tianji/commit/7ca6fff64a8da4601e78f6e31d4b5a9b99f8260d))
+
+### Others
+
+* add translation ([9331c6a](https://github.com/msgbyte/tianji/commit/9331c6a349b45d708a6fbf73fa8076e492c34525))
+* fix ci issue ([257ecad](https://github.com/msgbyte/tianji/commit/257ecad0fe679087ca7c3350719030f6c6b62f75))
+* fix ci type issue ([d6328b4](https://github.com/msgbyte/tianji/commit/d6328b4435ece16186996cc08e551e3714886189))
+* scale timeout time to 10x which added more tolerance ([f6ba75e](https://github.com/msgbyte/tianji/commit/f6ba75ecef841193b869d82fbaf05ebec5c5498a))
+
+## [1.22.3](https://github.com/msgbyte/tianji/compare/v1.22.2...v1.22.3) (2025-06-22)
+
+### Others
+
+* update server list header name to improve display ([76236e9](https://github.com/msgbyte/tianji/commit/76236e9bf0a8bac28800a72d836730bcde713c4d))
+* upgrade reporter version from 1.21.1 to 1.22.5 ([49f90af](https://github.com/msgbyte/tianji/commit/49f90afac845a9504bfacc6534d83d40f5051432))
+
+## [1.22.2](https://github.com/msgbyte/tianji/compare/v1.22.1...v1.22.2) (2025-06-22)
+
+### Features
+
+* add start tianji container shell and which make tianji report can build in report self ([d420443](https://github.com/msgbyte/tianji/commit/d420443735a2fa0fb823ffff395d771123e2667e))
+
+### Document
+
+* add document about docker monitoring ([c2354f6](https://github.com/msgbyte/tianji/commit/c2354f69ff317e822d5412ab82513e78f4becf95))
+
+### Others
+
+* change run strategy of ai classify ([8923df3](https://github.com/msgbyte/tianji/commit/8923df34fadfcf5d47db73f5b01eabd2d8105150))
+* improve example app style ([60af300](https://github.com/msgbyte/tianji/commit/60af3005b6c17d9f989408c85288769153d7936b))
+* upgrade wrangler version ([ff3c4a5](https://github.com/msgbyte/tianji/commit/ff3c4a569d093737c07c07c27a4a5dfd861f0e0d))
+
+## [1.22.1](https://github.com/msgbyte/tianji/compare/v1.22.0...v1.22.1) (2025-06-20)
+
+### Features
+
+* add recent suggestion category feature to Survey model and remove auto input suggestion category ([f2a8184](https://github.com/msgbyte/tianji/commit/f2a81847b0b515fa7f042429883f3a382ce087b3))
+* add Tianji plugin for Traefik [#142](https://github.com/msgbyte/tianji/issues/142) ([b1d97e9](https://github.com/msgbyte/tianji/commit/b1d97e9d27b5064330c9072c1e7ce5f9fd3327c4))
+* improve daily ai trigger logic which can use recentSuggestionCategory ([b302104](https://github.com/msgbyte/tianji/commit/b3021044c5e6e89cb2d0ac03ef66ef674c2fa16f))
+* intro new visitor map layer style which fit on black and light theme ([32e3fa1](https://github.com/msgbyte/tianji/commit/32e3fa15fa31c26daa65b1aceff8f3d8d6aa86b6))
+
+### Bug Fixes
+
+* fix openapi swagger can not call self problem ([35f41de](https://github.com/msgbyte/tianji/commit/35f41de72c48ef78632b55a113c7478c2643d6b7))
+
+### Others
+
+* improve openapi ui page which maybe more prettier ([213f366](https://github.com/msgbyte/tianji/commit/213f366afcb50860e194f3a09daf133118ee4500))
+
+## [1.22.0](https://github.com/msgbyte/tianji/compare/v1.21.17...v1.22.0) (2025-06-18)
+
+### Bug Fixes
+
+* change env and fix a bug which OPENAI_ will exposing to other openai instance. ([2ff7f16](https://github.com/msgbyte/tianji/commit/2ff7f16ab1e7aef03f3049018bc3e5bf9bf9bc5f))
+
+## [1.21.17](https://github.com/msgbyte/tianji/compare/v1.21.16...v1.21.17) (2025-06-18)
+
+### Bug Fixes
+
+* fix a bug which website event throw error if can not create session together ([0592355](https://github.com/msgbyte/tianji/commit/0592355841c41dec762fbfce6a673bd05aec83c7))
+
+### Others
+
+* improve display for common list and ai gateway example ([afa4391](https://github.com/msgbyte/tianji/commit/afa439168cc27391343e25f29faccf2cd355bc6c))
+
+## [1.21.16](https://github.com/msgbyte/tianji/compare/v1.21.15...v1.21.16) (2025-06-17)
+
+### Others
+
+* update lock file ([c8f5fb3](https://github.com/msgbyte/tianji/commit/c8f5fb3d2f15ac55a3b1bf8240f506ea1cb078d1))
+
+## [1.21.15](https://github.com/msgbyte/tianji/compare/v1.21.14...v1.21.15) (2025-06-17)
+
+### Bug Fixes
+
+* fix update problem when switch page in admin which maybe not update data ([042cc8d](https://github.com/msgbyte/tianji/commit/042cc8ddf48a20efeb1404d659fa7a13a548c06a))
+
+### Others
+
+* add more logs ([f39e7fb](https://github.com/msgbyte/tianji/commit/f39e7fb8b64c653a8a3904d5b177a8389a9d153e))
+* remove unused time markers in MonitorHTTPTiming ([2e1ebb8](https://github.com/msgbyte/tianji/commit/2e1ebb8730ad2e093b86cd2804c56287c887240e))
+* update translation ([4a6ea01](https://github.com/msgbyte/tianji/commit/4a6ea01559d005a6105026efa6ab61378e4feea3))
+* upgrade dependency version ([79467e2](https://github.com/msgbyte/tianji/commit/79467e2b807f873757e429cf6c56b0c3a739831f))
+
+## [1.21.14](https://github.com/msgbyte/tianji/compare/v1.21.13...v1.21.14) (2025-06-16)
+
+### Features
+
+* add AIGatewaySummaryStats component and integrate it into AIGatewayOverview ([1a04d0a](https://github.com/msgbyte/tianji/commit/1a04d0a54920d0b05779ff38c05ae193e2406abe))
+* add FOCUS_CATEGORY support ([075e08d](https://github.com/msgbyte/tianji/commit/075e08d51523c2fa25384c11969e64a8d0181ba1))
+* add MonitorHTTPTiming component to display detailed HTTP request timing metrics in MonitorInfo ([a89ddbe](https://github.com/msgbyte/tianji/commit/a89ddbeb3dfd094b3158246a188c45c7afe461dd))
+* add timedFetch utility for HTTP requests with detailed timing metrics and integrate it into the monitor provider ([205cee6](https://github.com/msgbyte/tianji/commit/205cee69b03f1537f6ce26ded6e21fb92fae8945))
+* add tooltips to HTTP timing phases for better user guidance ([ad8c9fa](https://github.com/msgbyte/tianji/commit/ad8c9facdb2d015ee9c1794b0dc255850228c95a))
+
+### Others
+
+* improve animation of timing component ([fa3cbce](https://github.com/msgbyte/tianji/commit/fa3cbceb73e24c9d7275bb48f2765c68683f29aa))
+* simplify MonitorHTTPTiming component structure and improve timing metrics display ([a01fb40](https://github.com/msgbyte/tianji/commit/a01fb40ecf3d76901e5be549d219cd509cfc3345))
+* update translation ([4f7e7de](https://github.com/msgbyte/tianji/commit/4f7e7de695c96c73fa037228581244119424ec78))
+
+## [1.21.13](https://github.com/msgbyte/tianji/compare/v1.21.12...v1.21.13) (2025-06-13)
+
+### Features
+
+* add template support for ai translation worker which easy to translate mul-field ([7c7dbc3](https://github.com/msgbyte/tianji/commit/7c7dbc39d4ad71e83371f19e34ad50b00f773429))
+
+### Others
+
+* update app store and Google Play reviews fetching to use async/await for better error handling ([81bf407](https://github.com/msgbyte/tianji/commit/81bf4071d943fe71330c8a144be8480d6cb8067b))
+
+## [1.21.12](https://github.com/msgbyte/tianji/compare/v1.21.11...v1.21.12) (2025-06-11)
+
+### Bug Fixes
+
+* fix a bug which normal user can not see example ([6d607a9](https://github.com/msgbyte/tianji/commit/6d607a969011e3596b3b0017ee95062448a78960))
+
+### Document
+
+* add installation link for Tianji MCP server ([250a1e7](https://github.com/msgbyte/tianji/commit/250a1e7a62d4f618c8a34ab2aa25633e7fca79f9))
+* remove unused section ([b39faf2](https://github.com/msgbyte/tianji/commit/b39faf20de2c062c11f94aaceacc5755b4711f75))
+
+### Others
+
+* ai gateway add anthropic api ([79d403a](https://github.com/msgbyte/tianji/commit/79d403a938ab08a9614db4de127c6c1eceb026c9))
+* update email template style ([0a63cf3](https://github.com/msgbyte/tianji/commit/0a63cf3a8319947126a9cda1944718f668454f7e))
+* update model price and context window config ([a769d71](https://github.com/msgbyte/tianji/commit/a769d71b577a95bd68ae1a231c69fa14e1ce9d18))
+
+## [1.21.11](https://github.com/msgbyte/tianji/compare/v1.21.10...v1.21.11) (2025-06-08)
+
+### Features
+
+* add application batch endpoint ([d1ff4e6](https://github.com/msgbyte/tianji/commit/d1ff4e6f7b78bf904e9e65d4bd1b1ba4c31057c1))
+* add custom mode setting feature ([9227ddb](https://github.com/msgbyte/tianji/commit/9227ddba714bc7efeffa48e8dbe4a02b8ff2ef70))
+* add manual refresh button to ai gateway logs ([b3eba5f](https://github.com/msgbyte/tianji/commit/b3eba5f2aeb9840d32ffa66f6746ae9db4db40d0))
+* add render function for nullable values in AIGateway log columns ([b7dd1d9](https://github.com/msgbyte/tianji/commit/b7dd1d92b4e03d168295032e2a0aeca62bc5bbc8))
+
+### Others
+
+* improve style and improve code handle for calc cost ([bb14b5a](https://github.com/msgbyte/tianji/commit/bb14b5ae5b678c0f5477d6beecd163d0271aab12))
+* translation ([cac7519](https://github.com/msgbyte/tianji/commit/cac7519932234ddf09f00deb09981237947a05cb))
+
+## [1.21.10](https://github.com/msgbyte/tianji/compare/v1.21.9...v1.21.10) (2025-06-05)
+
+### Document
+
+* add troubleshooting for websocket connection issues ([0db2013](https://github.com/msgbyte/tianji/commit/0db2013fc67de24a7f648698895dcb859d03c33f))
+
+### Others
+
+* add AUTH_USE_SECURE_COOKIES env var to try to resolve ws and https mix problem ([605443f](https://github.com/msgbyte/tianji/commit/605443f907265c1f3301f8d450e0478dd41e62c5))
+* improve secure cookie handling in getAuthSession function ([00b6e2d](https://github.com/msgbyte/tianji/commit/00b6e2d6e53cd1bdda12be1e7e706ac3352b7e4a))
+
+## [1.21.9](https://github.com/msgbyte/tianji/compare/v1.21.8...v1.21.9) (2025-06-04)
+
+### Others
+
+* add more context for debug ([f347440](https://github.com/msgbyte/tianji/commit/f3474406dd2f6d89995be022eed1607c6e9b1e54))
+
+## [1.21.8](https://github.com/msgbyte/tianji/compare/v1.21.7...v1.21.8) (2025-06-04)
+
+### Others
+
+* add more logs ([00286ef](https://github.com/msgbyte/tianji/commit/00286efa68e11bbe0ca2115eda9205f4bc8ec43d))
+
+## [1.21.7](https://github.com/msgbyte/tianji/compare/v1.21.6...v1.21.7) (2025-06-04)
+
+### Bug Fixes
+
+* handle case when CPU information is unavailable, returning 0.0 as fallback [#193](https://github.com/msgbyte/tianji/issues/193) ([80d1be4](https://github.com/msgbyte/tianji/commit/80d1be40d3f752675df9631677566f7775cd9733))
+
+### Document
+
+* update env document ([9c0838e](https://github.com/msgbyte/tianji/commit/9c0838e39315caa5713f43605f6bc6058ffb4df1))
+
+### Others
+
+* add more log for get auth session which maybe can help to debug ([5eb57f4](https://github.com/msgbyte/tianji/commit/5eb57f438785f167fe6b76d6e3ec81c67e28ae32))
+
+## [1.21.6](https://github.com/msgbyte/tianji/compare/v1.21.5...v1.21.6) (2025-06-02)
+
+### Bug Fixes
+
+* improve JSON parsing and handling of quotes in user feedback ([b6368ba](https://github.com/msgbyte/tianji/commit/b6368baf0f470213c327d5d768e55c84955045a1))
+
+## [1.21.5](https://github.com/msgbyte/tianji/compare/v1.21.4...v1.21.5) (2025-06-02)
+
+### Bug Fixes
+
+* try to fix quote bad case in sonnet which maybe more fit to real world case. ([08a8c5f](https://github.com/msgbyte/tianji/commit/08a8c5fc5382c937705f628dfcc71a13e24d3395))
+
+## [1.21.4](https://github.com/msgbyte/tianji/compare/v1.21.3...v1.21.4) (2025-06-02)
+
+### Bug Fixes
+
+* try to handle sonnet problem in translation prompt ([e0587ac](https://github.com/msgbyte/tianji/commit/e0587acc4b04cb8827bc2aade9d2802b33840a11))
+
+## [1.21.3](https://github.com/msgbyte/tianji/compare/v1.21.2...v1.21.3) (2025-06-01)
+
+### Features
+
+* add modelApiKey which can use same api key in one team ([43b1bbe](https://github.com/msgbyte/tianji/commit/43b1bbe9d2ee0868f66dbf9d7d61115c73e894e1))
+* add partial to save to database because translation task have more bad case to parse json format ([6a125d5](https://github.com/msgbyte/tianji/commit/6a125d54af8d78d56ce2c65321f96f610f69b62d))
+
+### Document
+
+* add authentication and getting started documents in multiple languages ([917306a](https://github.com/msgbyte/tianji/commit/917306a78d17fd91955287fc5af8473417a405b9))
+
+## [1.21.2](https://github.com/msgbyte/tianji/compare/v1.21.1...v1.21.2) (2025-05-30)
+
+### Bug Fixes
+
+* fix sonnet mode will output invalid json problem ([94ce294](https://github.com/msgbyte/tianji/commit/94ce294a8666811b5704f25bea328d54b69d0287))
+
+### Document
+
+* add api related documents ([850b642](https://github.com/msgbyte/tianji/commit/850b642cead45beacaefe4e4f1dc54a7a447c580))
+
+## [1.21.1](https://github.com/msgbyte/tianji/compare/v1.21.0...v1.21.1) (2025-05-30)
+
+### Features
+
+* add a function which make sure we can get json response from LLM output even mode not support json mode ([411c285](https://github.com/msgbyte/tianji/commit/411c285b536a20e2c14d906356962c73c8fa8a67))
+* add new routes and CommonPageEmpty component for various sections ([b5df979](https://github.com/msgbyte/tianji/commit/b5df979a92e8489bf15733b9c3882cce4c721dca))
+* wrap Empty component in DelayRender for improved loading experience in CommonPageEmpty ([fedb7f9](https://github.com/msgbyte/tianji/commit/fedb7f922bf91e56d85130f4badbbdefb1d323c4))
+
+## [1.21.0](https://github.com/msgbyte/tianji/compare/v1.20.10...v1.21.0) (2025-05-25)
+
+### Features
+
+* add api manage page allow description editing ([48f14b6](https://github.com/msgbyte/tianji/commit/48f14b6b8c970a8d3dd273d6f71528a983e53c69))
+* add cron cron support to push monitor ([c23dff5](https://github.com/msgbyte/tianji/commit/c23dff5c699e92cfc5b74ccda5c7bd3816f83075))
+* add MonitorPushStatus component to display push monitor status ([211a7fa](https://github.com/msgbyte/tianji/commit/211a7fab1a28a5f9e3fe33eb52086657e4265ffa))
+* add more language example for push feature ([7a6fcbb](https://github.com/msgbyte/tianji/commit/7a6fcbbf057b8cee209176acda3cf1fd26ae322b))
+* add Prometheus counters for cron jobs and message queue operations ([0afcb3d](https://github.com/msgbyte/tianji/commit/0afcb3d987b915b6a9e494ec8fc3464dc6ddc77f))
+* add push monitor [#36](https://github.com/msgbyte/tianji/issues/36) ([2ca6487](https://github.com/msgbyte/tianji/commit/2ca6487f05e267308e8d34fb664765f9a99ea121))
+* add push token regeneration feature to MonitorPush component ([3b07de2](https://github.com/msgbyte/tianji/commit/3b07de24821cb90ded72d4f09cac0be603adad14))
+* integrate Stagewise toolbar for development environment ([303b799](https://github.com/msgbyte/tianji/commit/303b79941bdc1e6ea1e9c8263e55239464df975e))
+
+### Document
+
+* add document about push monitor ([8210f74](https://github.com/msgbyte/tianji/commit/8210f74e0127b08e9890ffe91a1fec4d86ea35e9))
+
+### Others
+
+* add badge SVG proxy in dev mode ([da0428c](https://github.com/msgbyte/tianji/commit/da0428c66b623863fd89acd64afd702e6eda919d))
+* add global rules and project structure documentation for Tianji ([e5c427c](https://github.com/msgbyte/tianji/commit/e5c427c78f815e790544693861118a58daaeb23d))
+* add more translation ([b21cd12](https://github.com/msgbyte/tianji/commit/b21cd123ccad10b52dee67acd7e78476e29ec1de))
+* update translation ([69f1a19](https://github.com/msgbyte/tianji/commit/69f1a197adbe4e48942cf4cf0ef2008c201d5575))
+
+## [1.20.10](https://github.com/msgbyte/tianji/compare/v1.20.9...v1.20.10) (2025-05-21)
+
+### Features
+
+* add AIGatewayCodeExampleBtn component and update ai proxy proxy configuration ([a921e24](https://github.com/msgbyte/tianji/commit/a921e24ad7b6d95cee3a79ff0dd36aea603d227b))
+* add FeedState model and related functionality for managing feed states ([7347833](https://github.com/msgbyte/tianji/commit/734783310a61d2bc695dbd494ebe148e85575daf))
+* add FeedStateList component to display and manage feed states in the feed view ([645e3b1](https://github.com/msgbyte/tianji/commit/645e3b1c88e5d6b515302071ac7cbb153be7d2b5))
+* add insights events route ([51d949b](https://github.com/msgbyte/tianji/commit/51d949b4e31a4443fec7bfb85c3ecdabab78d4b8))
+* add queryEvents function to handle website event queries ([db27f51](https://github.com/msgbyte/tianji/commit/db27f515042117293d1edc576875600835d68367))
+* add state guide for feed api ([3050cfa](https://github.com/msgbyte/tianji/commit/3050cfa166a39b6ac9674a6949faaee0dc795622))
+* update queryEvents to support cursor pagination and refactor related functions ([e698c61](https://github.com/msgbyte/tianji/commit/e698c616d4586385d526af9ddd19a9f51af665f2))
+
+### Others
+
+* move insight route ([78b21a4](https://github.com/msgbyte/tianji/commit/78b21a4d401e31310086bf828d1112f5b3f51d2c))
+* rename insights.events => insights.eventNames ([0a5346d](https://github.com/msgbyte/tianji/commit/0a5346df3c5b083d7dcd6cb1582302c12ea0efa1))
+* update dependencies and remove deprecated API files ([afad5f0](https://github.com/msgbyte/tianji/commit/afad5f08fc9086fff728567c66f2856a1ba6abe8))
+
+## [1.20.9](https://github.com/msgbyte/tianji/compare/v1.20.8...v1.20.9) (2025-05-05)
+
+### Bug Fixes
+
+* fix website not support group filter problem ([4cc7fd0](https://github.com/msgbyte/tianji/commit/4cc7fd01309ed1079a7d9811f7e7cc3336b871f3))
+
+### Others
+
+* prevent access logs in test environment ([5fe4205](https://github.com/msgbyte/tianji/commit/5fe4205a44bce2e6c5fb17c27c911407c00ba246))
+
+## [1.20.8](https://github.com/msgbyte/tianji/compare/v1.20.7...v1.20.8) (2025-05-02)
+
+### Features
+
+* add responsive testimonial grid and tweet card styles ([80cbf2b](https://github.com/msgbyte/tianji/commit/80cbf2bb4c26a3b223502bb33a2671d6ec7ffc8f))
+
+### Document
+
+* add robots.txt and LLM documentation files ([6da44ab](https://github.com/msgbyte/tianji/commit/6da44ab29cf29ae21fa9eb758fd3a48652761c9f))
+* update documents ([4dc3d6d](https://github.com/msgbyte/tianji/commit/4dc3d6df1e5bf72bd39d11763ae5a20f89b872ba))
+
+### Others
+
+* improve insight debug logic ([31a9a33](https://github.com/msgbyte/tianji/commit/31a9a339cbb2030e44dc2d78f6fa1c8a3637a8b0))
+* update version to 1.3.1 and improve event tracking error handling ([755dc8f](https://github.com/msgbyte/tianji/commit/755dc8fd78a4116f39fd673e1ec9e12437f95ae5))
+
+## [1.20.7](https://github.com/msgbyte/tianji/compare/v1.20.6...v1.20.7) (2025-04-19)
+
+### Features
+
+* add real-time update feature for AI Gateway logs ([080123f](https://github.com/msgbyte/tianji/commit/080123f039fb43cdcb086195b5c32acad84d04df))
+
+### Bug Fixes
+
+* fix ai gateway chart label not correct issue ([a83ee66](https://github.com/msgbyte/tianji/commit/a83ee66874e67b7780ca8ed4fcbe61edd5b4564a))
+
+## [1.20.6](https://github.com/msgbyte/tianji/compare/v1.20.5...v1.20.6) (2025-04-18)
+
+### Bug Fixes
+
+* restore timezone parameter in insights functions to improve date handling ([d3ee48e](https://github.com/msgbyte/tianji/commit/d3ee48e4c56171221f427f03003ebe1c0322f831))
+
+## [1.20.5](https://github.com/msgbyte/tianji/compare/v1.20.4...v1.20.5) (2025-04-18)
+
+### Bug Fixes
+
+* fix a issue which maybe cause service crash ([08f3fe5](https://github.com/msgbyte/tianji/commit/08f3fe5705f9117d2907818cd6e798d36b140a47))
+* make timezone parameter optional in date-related functions ([e05a289](https://github.com/msgbyte/tianji/commit/e05a289b37ebc86b532ebd13074ef93f7662d938))
+
+### Others
+
+* remove sitemap ([357c11c](https://github.com/msgbyte/tianji/commit/357c11c7af9ce76b909f7ac4cccdd55493324e27))
+* update docusaurus dependencies to version 3.7.0 and enable sitemap configuration ([681d50c](https://github.com/msgbyte/tianji/commit/681d50ca86a54fc2a8b6ea718745502eb0774d27))
+
+## [1.20.4](https://github.com/msgbyte/tianji/compare/v1.20.3...v1.20.4) (2025-04-17)
+
+### Bug Fixes
+
+* remove timezone parameter from insights functions as return date is already in user timezone ([7cf38f3](https://github.com/msgbyte/tianji/commit/7cf38f3613bb4afc6cd9b6580b9a2d054a26bfe3))
+
+## [1.20.3](https://github.com/msgbyte/tianji/compare/v1.20.2...v1.20.3) (2025-04-17)
+
+### Features
+
+* enhance aiGateway to support additional model prefixes for deepseek variants ([5f2db80](https://github.com/msgbyte/tianji/commit/5f2db80c2e91f1d13994b1a364acf9d1d7152dd3))
+
+## [1.20.2](https://github.com/msgbyte/tianji/compare/v1.20.1...v1.20.2) (2025-04-17)
+
+### Bug Fixes
+
+* fix some problem with user timezone handling in AIGateway overview and enhance SQL date formatting validation ([734f716](https://github.com/msgbyte/tianji/commit/734f7162a618a1ed18f3f14a3e463aa558b54fc1))
+
+## [1.20.1](https://github.com/msgbyte/tianji/compare/v1.20.0...v1.20.1) (2025-04-17)
+
+### Features
+
+* enhance AI Gateway with model price name handling and support for new models in context window ([3771375](https://github.com/msgbyte/tianji/commit/3771375d6a8d5a80f461a17396aa957ef414bab5))
+
+### Bug Fixes
+
+* update email template and SMTP HTML to use 'Docs' instead of 'Documentation' ([041004c](https://github.com/msgbyte/tianji/commit/041004c369938483d0ed5a7be69649d2f42fb305))
+
+### Document
+
+* Add ClawCloud Run Button ([797c519](https://github.com/msgbyte/tianji/commit/797c519991cec001c8976f86183eadea5d114e38))
+
+## [1.20.0](https://github.com/msgbyte/tianji/compare/v1.19.7...v1.20.0) (2025-04-14)
+
+### Features
+
+* add AI Gateway feature with CRUD operations and logs ([69d7878](https://github.com/msgbyte/tianji/commit/69d78787b237a873134a6f639a391222fa5417c7))
+* add AI Gateway models, routes, and logging ([fe68b23](https://github.com/msgbyte/tianji/commit/fe68b2399a66f3a75377f0cbcf0705512ccde705))
+* add AIGateway support to insights query schema ([e1eacea](https://github.com/msgbyte/tianji/commit/e1eaceadbf35edcd2e5cc1f09d17246de24242a3))
+* add AIGateway-related translations and update chart colors ([b90d8ac](https://github.com/msgbyte/tianji/commit/b90d8ac24c11cbf63beed76edddcb14eaff9e78f))
+* add blog section and two new blog posts ([88c689f](https://github.com/msgbyte/tianji/commit/88c689fe7ced5ee618c991202f50dd4a11bad0b9))
+* add overview tab and insights support for AI Gateway ([ccf7bc7](https://github.com/msgbyte/tianji/commit/ccf7bc74176ae08e5b01a829862e67faca032601))
+* add price tracking for AI Gateway logs ([96b8996](https://github.com/msgbyte/tianji/commit/96b89963d219f451d6ed968ac1452b209c2c945e))
+* ai gateway add deepseek and openrouter support ([3a7dbc7](https://github.com/msgbyte/tianji/commit/3a7dbc71fdee11fe977919745a77f5e6b5864f29))
+
+### Others
+
+* consolidate SQL query building logic into base class ([77f046a](https://github.com/msgbyte/tianji/commit/77f046a8e3c5c8ac59030959f2c8afdabfeabee8))
+* fix ci issue ([127f59a](https://github.com/msgbyte/tianji/commit/127f59aef7601803232af1159bf889b8e385b90f))
+* improve token calculation with model fallback ([748be17](https://github.com/msgbyte/tianji/commit/748be176f12cab08f1186eb5e06e25258f22222e))
+* replace dropdown with select component for date range ([55c303d](https://github.com/msgbyte/tianji/commit/55c303df10f4cb33306d1b1784e046bb8d6a8bc4))
+* update translation ([d1dfbbb](https://github.com/msgbyte/tianji/commit/d1dfbbb6d4db7faa337b7846bb581f99184993c9))
+
+## [1.19.7](https://github.com/msgbyte/tianji/compare/v1.19.6...v1.19.7) (2025-04-06)
+
+### Features
+
+* add workspace invitation which allow user invite non-register user [#180](https://github.com/msgbyte/tianji/issues/180) ([32d52ae](https://github.com/msgbyte/tianji/commit/32d52aef5b23af3460e2e4d8f42b9b994669c02f))
+
+### Document
+
+* add MCP integration and environment variable documentation ([aefb090](https://github.com/msgbyte/tianji/commit/aefb0900703053920877fe266004425fd22fe584))
+* add social icons ([a9bee2a](https://github.com/msgbyte/tianji/commit/a9bee2a3e9399775be3f74a472c96da7ff1893e7))
+
+### Others
+
+* enhance email template and consolidate SMTP logic ([b2a384c](https://github.com/msgbyte/tianji/commit/b2a384cf0d8c23743e56c5c2ee75d56c81e4d35f))
+
+## [1.19.6](https://github.com/msgbyte/tianji/compare/v1.19.5...v1.19.6) (2025-04-01)
+
+### Features
+
+* add value formatter and filesize for application compare ([17ebf2e](https://github.com/msgbyte/tianji/commit/17ebf2e6bf402fc39d89a4ee5feb2c5975242791))
+* create tianji mcp server ([36aaabc](https://github.com/msgbyte/tianji/commit/36aaabc91e1dbfe5ee6da1cb465a2647e99d19be))
+* insight add line chart type ([bf0022d](https://github.com/msgbyte/tianji/commit/bf0022d7438646ec913c69dbdf65839df47f8f7b))
+
+### Bug Fixes
+
+* fix user api key not increment problem ([cf2b454](https://github.com/msgbyte/tianji/commit/cf2b454146651a5683306e12c50d350d923fdb78))
+
+### Document
+
+* add dark-brand ([a2c5c98](https://github.com/msgbyte/tianji/commit/a2c5c98d093f15fcf1d7a4ed606547678fc0ffa1))
+* fix typo ([34d863e](https://github.com/msgbyte/tianji/commit/34d863efa8814ee0919d0f24fa33f4cf26ba18e8))
+
+### Others
+
+* remove inappropriate translations ([0ffb3be](https://github.com/msgbyte/tianji/commit/0ffb3beb5ef3787b2a2f4a7f069d0676fb8f79cd))
+
+## [1.19.5](https://github.com/msgbyte/tianji/compare/v1.19.4...v1.19.5) (2025-03-28)
+
+### Others
+
+* rollback pnpm version to 9.x because of isolated_vm [#181](https://github.com/msgbyte/tianji/issues/181) ([15d575d](https://github.com/msgbyte/tianji/commit/15d575d954627fbd4ea1b626c837cdff8962ab60))
+
+## [1.19.4](https://github.com/msgbyte/tianji/compare/v1.19.3...v1.19.4) (2025-03-27)
+
+### Features
+
+* add line chart type support and adjust fill opacity ([0724d8c](https://github.com/msgbyte/tianji/commit/0724d8c6a4ef5d3946400758e083ee4887d7ab7e))
+* add react native sdk initApplication function and handle session version ([fdf4a05](https://github.com/msgbyte/tianji/commit/fdf4a05ff6ef432a2e9988626167e1e3a057cf08))
+* refactor insights SQL builders and update related tests ([ccf93cb](https://github.com/msgbyte/tianji/commit/ccf93cb6c6ee53d5ec9e0979310bef0f479b12f8))
+
+### Others
+
+* rerun all translation with 4o ([e60136e](https://github.com/msgbyte/tianji/commit/e60136e0a0aee3f16e9d05306d178ef775e8e020))
+* update pnpm version to 10.6.5 ([176f4ed](https://github.com/msgbyte/tianji/commit/176f4edb05ae40f015d1d91db2eda9bb90a8ca24))
+
+## [1.19.3](https://github.com/msgbyte/tianji/compare/v1.19.2...v1.19.3) (2025-03-25)
+
+### Features
+
+* add diff view in application compare chart ([c49152a](https://github.com/msgbyte/tianji/commit/c49152a1bc5bb895ccd76a4bd4db1231a75bc19e))
+* add http status code field which can treat other status code as normal. [#173](https://github.com/msgbyte/tianji/issues/173) ([1cacdeb](https://github.com/msgbyte/tianji/commit/1cacdeb7ec2b2d69f4b9f0fe69737c2a6e1451aa))
+
+### Document
+
+* add environment document ([db654d3](https://github.com/msgbyte/tianji/commit/db654d32bb5f594d4ba15caaa24e73d49d669825))
+
+### Others
+
+* update translation ([6d8b12e](https://github.com/msgbyte/tianji/commit/6d8b12e35e0426575be3f1057d9cbc403bad7028))
+
+## [1.19.2](https://github.com/msgbyte/tianji/compare/v1.19.1...v1.19.2) (2025-03-23)
+
+### Features
+
+* add app store search and picker ([331153d](https://github.com/msgbyte/tianji/commit/331153df25889802975d6836f8bf67e28e10a400))
+* add application compare feature ([0f8a672](https://github.com/msgbyte/tianji/commit/0f8a6729048e2d93bb8cee076387609c929d48e2))
+* add store info history ([0473ba5](https://github.com/msgbyte/tianji/commit/0473ba5f2178af9a1c7a6752810e6dc288f869b8))
+* store detail tab add history chart ([63e9588](https://github.com/msgbyte/tianji/commit/63e9588aa5e29a2541ba45b6a3c07ba2afa2201d))
+
+### Others
+
+* improve style ([8484e25](https://github.com/msgbyte/tianji/commit/8484e25e39509ed665200305c35763467b3ebe5b))
+* update translation ([6a21965](https://github.com/msgbyte/tianji/commit/6a21965f3d5bec5e66dab0e32716ee59809d9f09))
+* upgrade node version to 22.14.0, [#132](https://github.com/msgbyte/tianji/issues/132) ([48280c5](https://github.com/msgbyte/tianji/commit/48280c596d8dc9c6b1fbb22820e9a1075a7e7830))
+
+## [1.19.1](https://github.com/msgbyte/tianji/compare/v1.19.0...v1.19.1) (2025-03-22)
+
+### Bug Fixes
+
+* fix a bug which will clause run custom code error ([9a132d9](https://github.com/msgbyte/tianji/commit/9a132d93a4584db2e441a2bd68b64c5b86de1b75))
+
+### Document
+
+* add more language document for application tracking ([4ed139f](https://github.com/msgbyte/tianji/commit/4ed139fb9315a47288417914aa752842eba629b3))
+* update translation modify files in README.md ([3310a1c](https://github.com/msgbyte/tianji/commit/3310a1c00264067a7e62c7c67cc177c8e41f3a0c))
+
+### Others
+
+* add more docker ignore claim to reduce docker image size ([aa29d18](https://github.com/msgbyte/tianji/commit/aa29d18d910a3a45ecfddde71838db771dd700f6))
+
+## [1.19.0](https://github.com/msgbyte/tianji/compare/v1.18.22...v1.19.0) (2025-03-22)
+
+### Features
+
+* add application entry ([b9d6e4a](https://github.com/msgbyte/tianji/commit/b9d6e4a7745abcb059f9d6e9c1701d0855a86f8b))
+* add application event router ([da83fa9](https://github.com/msgbyte/tianji/commit/da83fa9d28d4d6d9c4ccd80b71568feed7b6e24b))
+* add application models ([90c72a9](https://github.com/msgbyte/tianji/commit/90c72a9d321c0df9c057b5da529bd598150df76d))
+* add application page add/edit and appinfo scraper logic ([b114aaf](https://github.com/msgbyte/tianji/commit/b114aafbf93a6fbb7531fb3391da9114e11edcbf))
+* add application screen name support ([5e7c499](https://github.com/msgbyte/tianji/commit/5e7c4990f85fe2c644f0e3fef47fd9deb7c27bc2))
+* add auto jump for application route ([01521e7](https://github.com/msgbyte/tianji/commit/01521e73097918e5a84757fc7ac9ed01bc86d0ef))
+* add avgEventsPerSession and avgScreensPerSession ([87e5e19](https://github.com/msgbyte/tianji/commit/87e5e191f7582305998b73e140e39aff8c098da9))
+* add charts for app stats ([a767aca](https://github.com/msgbyte/tianji/commit/a767acacab0d77797739020147289f444ca447e6))
+* add daily cronjob dailyUpdateApplicationStoreInfo ([0fbf456](https://github.com/msgbyte/tianji/commit/0fbf456be5de70c3b716d6afc94198db8d755527))
+* add delete feature in application page ([824dedd](https://github.com/msgbyte/tianji/commit/824deddc4102129be42d97a1efb2cf1dfe45ad3a))
+* add read more component and apply in application description ([10fb73a](https://github.com/msgbyte/tianji/commit/10fb73a304c16c1af9822633cb2a88f36f1dd766))
+* add screen view event reporting and update version ([83cb111](https://github.com/msgbyte/tianji/commit/83cb111617382ea8ad6458239c7b320f10ce2da6))
+* add StatCard component and integrate avg time metric ([f99a6e0](https://github.com/msgbyte/tianji/commit/f99a6e0dcc4287d2f5f7ea94420f0f74729a8f3c))
+* add vm2 sandbox support as vm runtime backup ([6928103](https://github.com/msgbyte/tianji/commit/69281039972301ad4c1b7f5a0916a8dab9c636b9))
+* allow change role in member table if people is workspace owner [#170](https://github.com/msgbyte/tianji/issues/170) ([d94a9bd](https://github.com/msgbyte/tianji/commit/d94a9bd5a0c120e8dc8675db98ea3c8df1622f2d))
+
+### Bug Fixes
+
+* [#172](https://github.com/msgbyte/tianji/issues/172) fix import issue ([be1e5fb](https://github.com/msgbyte/tianji/commit/be1e5fbf61a58f17859a1030a19bbf11be4645cc))
+
+### Document
+
+* add new documentation for application tracking SDK ([7374542](https://github.com/msgbyte/tianji/commit/7374542a44b0caaeff593b9a84b9a5d557674c89))
+* add yandex verify ([fa0d2da](https://github.com/msgbyte/tianji/commit/fa0d2dabf7fea18118c83d0fc54f141447e162d9))
+
+### Others
+
+* add app card component ([d34da88](https://github.com/msgbyte/tianji/commit/d34da88cb6c27714d05c09c1a64054f64809f9cc))
+* add application tracking things ([9ff4dc6](https://github.com/msgbyte/tianji/commit/9ff4dc663da112c0f13d5ce44242af9229043561))
+* add count sum in worker ([4672795](https://github.com/msgbyte/tianji/commit/4672795b9708ca4b494c425bdd720ebf4bb03661))
+* add member role translation ([512cbbf](https://github.com/msgbyte/tianji/commit/512cbbf0e8694a91d06cd8135c6c2ecf846313ee))
+* add no store info tip and update translation ([3a50ce5](https://github.com/msgbyte/tianji/commit/3a50ce56daee31dc676f69b117e9af0d74132976))
+* drop expo example support ([2bcec9e](https://github.com/msgbyte/tianji/commit/2bcec9ee2fca35fd8386bbf7127bfce690c335dc))
+* fix ci problem ([5a09aff](https://github.com/msgbyte/tianji/commit/5a09affb4752b0009ba6047f9341eccbd04e5a63))
+* improve style and make those things more better ([604d53c](https://github.com/msgbyte/tianji/commit/604d53ceb9a60177c97c4fb7da2cdfea311a0cc1))
+* init expo repo which as example for react native sdk ([0e42057](https://github.com/msgbyte/tianji/commit/0e42057aeda1cca54766ce21d9325af3494b43a0))
+* integrate nativewind for styling and update configs ([2d0a225](https://github.com/msgbyte/tianji/commit/2d0a2252b06925534dd8774a5d3c5c28e5dc7aa9))
+* move example to example/web ([45250ed](https://github.com/msgbyte/tianji/commit/45250ed748880c58478cfb28767019efc6ab951e))
+* refactor cronjob tasks and move to independent file ([9be0e28](https://github.com/msgbyte/tianji/commit/9be0e28085cea9a1dfa45e4ec83b626f6aba6ec3))
+* reorder components and update styles ([bd4e737](https://github.com/msgbyte/tianji/commit/bd4e73775d4f09ad69335e74bb4b5fce4a174272))
+* reorganize overview tab and detail card layout ([7cef811](https://github.com/msgbyte/tianji/commit/7cef81194337e8183caad633c55230917dc98d32))
+* update translation ([0d409be](https://github.com/msgbyte/tianji/commit/0d409be7b7c26656366f149bfbd5c01d177b33eb))
+
+## [1.18.22](https://github.com/msgbyte/tianji/compare/v1.18.21...v1.18.22) (2025-03-15)
+
+### Features
+
+* add stack chart type ([5a5579a](https://github.com/msgbyte/tianji/commit/5a5579a036cef1733d992b542c7ae728fcf42f42))
+* add survey break down filter render chart and table view ([e13256e](https://github.com/msgbyte/tianji/commit/e13256e6cdcde455e992905011de2693483fcca9))
+* insight survey add groups support ([0288735](https://github.com/msgbyte/tianji/commit/028873523f487e21215d5d7e6388f8339f473bc8))
+* insight website add groups support ([54d2678](https://github.com/msgbyte/tianji/commit/54d267887f06993d8cefa1bfdc96f6f7eab52402))
+
+### Others
+
+* add more chart color ([ca0601d](https://github.com/msgbyte/tianji/commit/ca0601d1e49c7602a23f310be0b32c98feb8a054))
+* fix ci problem ([78a2a79](https://github.com/msgbyte/tianji/commit/78a2a793ee43fce7fbd6f45f2d8b13a0930d18a5))
+* insight add types and survey params ([446b19a](https://github.com/msgbyte/tianji/commit/446b19a8ca9d37c28c7ad97e4f20ba2956be9600))
+* refactor survey sql place ([099214c](https://github.com/msgbyte/tianji/commit/099214ca6f0b41cfe126ab89ac8ababccb1f391c))
+* release insight route for non-dev environment ([8bdff74](https://github.com/msgbyte/tianji/commit/8bdff74ba6312461c4b3b57da10e5145c0b2fcab))
+* rollback react package version ([d69b484](https://github.com/msgbyte/tianji/commit/d69b484fae322523c2183fd319aaef23cc85930c))
+* update minute logic, will auto switch date unit after switch ([965e502](https://github.com/msgbyte/tianji/commit/965e50229a58ec37860483c8ed87b7d5dbf8f9ea))
+
+## [1.18.21](https://github.com/msgbyte/tianji/compare/v1.18.20...v1.18.21) (2025-03-13)
+
+### Others
+
+* improve write logic, update database when openai return response ([0d31c07](https://github.com/msgbyte/tianji/commit/0d31c074fa29d42de3f63d28656dac5de7988a5c))
+* update end at time for ai task to let has more range ([2849048](https://github.com/msgbyte/tianji/commit/2849048ec4d31b94b082609f2232f91a71c55a3d))
+
+## [1.18.20](https://github.com/msgbyte/tianji/compare/v1.18.19...v1.18.20) (2025-03-12)
+
+### Others
+
+* change daily work cronjob time ([a288245](https://github.com/msgbyte/tianji/commit/a288245cf306fb5fd523b659b611cb0b5b1499a8))
+* implement common filter query operator for insights model ([d972924](https://github.com/msgbyte/tianji/commit/d9729241e080e42e7c922ae15408ba3713b225b4))
+* update dependencies and package versions ([3762281](https://github.com/msgbyte/tianji/commit/3762281f601ab5517d3411da81b6238a98d7a4c8))
+
+## [1.18.19](https://github.com/msgbyte/tianji/compare/v1.18.18...v1.18.19) (2025-03-11)
+
+### Others
+
+* update default mode because of different performance in data analysis ([2b23ec9](https://github.com/msgbyte/tianji/commit/2b23ec95dd43b01e4d461548dc0685d797e7db20))
+
+## [1.18.18](https://github.com/msgbyte/tianji/compare/v1.18.17...v1.18.18) (2025-03-11)
+
+### Others
+
+* update top p and temperature ([1f850b6](https://github.com/msgbyte/tianji/commit/1f850b6a5b22307ff89ba70e6f1236c241d28fa5))
+
+## [1.18.17](https://github.com/msgbyte/tianji/compare/v1.18.16...v1.18.17) (2025-03-11)
+
+### Others
+
+* fix ci problem ([6fd40b0](https://github.com/msgbyte/tianji/commit/6fd40b0255ef727a06cc9f3fd22462892c10193c))
+
+## [1.18.16](https://github.com/msgbyte/tianji/compare/v1.18.15...v1.18.16) (2025-03-11)
+
+### Others
+
+* update lock file ([d3b1adc](https://github.com/msgbyte/tianji/commit/d3b1adcde0eb2f9a37f61c416f4bbdc19365c408))
+
+## [1.18.15](https://github.com/msgbyte/tianji/compare/v1.18.14...v1.18.15) (2025-03-11)
+
+### Others
+
+* rebuild ai classify prompt which will have more better performance ([c9f2a8e](https://github.com/msgbyte/tianji/commit/c9f2a8ebdf8d13b487a140d22bb63da5fafdcee7))
+
+## [1.18.14](https://github.com/msgbyte/tianji/compare/v1.18.13...v1.18.14) (2025-03-11)
+
+### Features
+
+* add country translation ([4a183a6](https://github.com/msgbyte/tianji/commit/4a183a685bdf443e07635f4f228f5d809f5f49a0))
+* add custom date picker in insight feature ([c0aa47b](https://github.com/msgbyte/tianji/commit/c0aa47b671758765456d68dad01f3cc8f83bb885))
+* add openapi for ai route and update openai schema ([da1cb8c](https://github.com/msgbyte/tianji/commit/da1cb8ce1ebfbf8de1be341582ec05205f204ca0))
+* add SearchLoadingView which improve insight display ([30fd3bf](https://github.com/msgbyte/tianji/commit/30fd3bfe4335170eb13cd71df83d2474a88dc48b))
+* add worker which can trigger ai task in survey daily ([44f8507](https://github.com/msgbyte/tianji/commit/44f8507ab42516dbcfa8732393cd1a2d7ae25dfb))
+* insight add survey support ([8542d48](https://github.com/msgbyte/tianji/commit/8542d48e8139435b0b71321f5aa147a768587bfe))
+
+### Bug Fixes
+
+* fix filter operator in date type ([13f96a8](https://github.com/msgbyte/tianji/commit/13f96a8ffb0095957ece18d7e1e4dd561eef1474))
+
+### Document
+
+* update openapi schema ([9642142](https://github.com/msgbyte/tianji/commit/96421423c564d17a967c933d1d7152360394ac13))
+
+### Others
+
+* add insight type support in code logic ([1f2af9b](https://github.com/msgbyte/tianji/commit/1f2af9b044645639dc23b3aabed180c8e0a9f14a))
+* create daily-ai-trigger project ([f20e149](https://github.com/msgbyte/tianji/commit/f20e14988912b0087aceb3e853aa29d79630b652))
+* improve display of count ([e26de44](https://github.com/msgbyte/tianji/commit/e26de446d787d2bdd4c64f74b3a71ab354d02d05))
+* improve insight chart render main block display ([62ef469](https://github.com/msgbyte/tianji/commit/62ef469812749030218a4dfd3e4e0211d3eaee5f))
+* rebuild insight related logic place folder ([4951410](https://github.com/msgbyte/tianji/commit/49514104c31ac766a91bdeb41723a1038e627356))
+* update monitor clear day, make sure its can always large than 1 month ([e048157](https://github.com/msgbyte/tianji/commit/e04815798849ddd59f547e6ab276a344105ca860))
+
+## [1.18.13](https://github.com/msgbyte/tianji/compare/v1.18.12...v1.18.13) (2025-03-09)
+
+### Features
+
+* add run task record ([48383db](https://github.com/msgbyte/tianji/commit/48383db76db4ad1b45aff6d0ddf41b1dd7677c99))
+
+### Others
+
+* change survey preview date range from 7 days to 14 days ([99a9f3b](https://github.com/msgbyte/tianji/commit/99a9f3b4765216a02e3c5406d0bba6feb53b0d4c))
+
+## [1.18.12](https://github.com/msgbyte/tianji/compare/v1.18.11...v1.18.12) (2025-03-07)
+
+### Features
+
+* add survey ai translation ([476259c](https://github.com/msgbyte/tianji/commit/476259ce5ce071717170ebe02ca4f9c2758703bf))
+* add workspace task model ([94a4943](https://github.com/msgbyte/tianji/commit/94a49436e3a194a29f3a073397651c4347a4ee57))
+
+### Bug Fixes
+
+* add scrollview in status page ([1f5280e](https://github.com/msgbyte/tianji/commit/1f5280e39d59f091a14ea5db1bacd8d595b53c4a))
+
+### Document
+
+* add Troubleshooting section in server status page ([9b2b881](https://github.com/msgbyte/tianji/commit/9b2b8812726f53d7cdb98dfbe5fb88b3a42a76f4))
+
+### Others
+
+* add ai classify worker batch log ([668705c](https://github.com/msgbyte/tianji/commit/668705c9de52d5803eb36887c0f1ce7b3a009c8c))
+* add key to force refresh table component ([ae095fb](https://github.com/msgbyte/tianji/commit/ae095fbf6768806f9acb018bb321e383d8a4bf01))
+* change default language strategy to user ([7b2b202](https://github.com/msgbyte/tianji/commit/7b2b2028fe6225866ac820951061752ba71a2b30))
+* fix ci problem ([3f8e17d](https://github.com/msgbyte/tianji/commit/3f8e17dcde44ce27caf145916cb90bdd739453e3))
+* move insight button into dev stage ([96faa81](https://github.com/msgbyte/tianji/commit/96faa81a3daf9d944e7d12b90c53c07c308c7678))
+* refacyor survey ai button modal ([9a24eca](https://github.com/msgbyte/tianji/commit/9a24ecacb18e70f39775f693f7e15469eed84218))
+
+## [1.18.11](https://github.com/msgbyte/tianji/compare/v1.18.10...v1.18.11) (2025-02-19)
+
+### Others
+
+* improve tokenizer calc, replace with number rather than calc because of high cpu usage ([3ba7ca2](https://github.com/msgbyte/tianji/commit/3ba7ca2b537a7eef5b01b9553897fc0e1410ca76))
+
+## [1.18.10](https://github.com/msgbyte/tianji/compare/v1.18.7...v1.18.10) (2025-02-18)
+
+### Features
+
+* migrate ai survey task from promise to MQ ([e79ad8f](https://github.com/msgbyte/tianji/commit/e79ad8fe4b966d69956fea01c3474fe6b347ba52))
+
+### Bug Fixes
+
+* fix a not accept language problem(some ts issue before) ([b38310e](https://github.com/msgbyte/tianji/commit/b38310eb1c2b9811c93567989aa15fcc7acb9afd))
+* hotfix some header not have language header issue ([8959ddc](https://github.com/msgbyte/tianji/commit/8959ddcc4bb70bb8d921bc27a5db3810d2daeecc))
+
+### Others
+
+* release v1.18.8 ([b838c4d](https://github.com/msgbyte/tianji/commit/b838c4dc055cd2109ee08476f1afec5bc94d38e3))
+* release v1.18.9 ([ab90204](https://github.com/msgbyte/tianji/commit/ab90204344f4336c14669e856c37267a94164bed))
+* update survey date picker logic ([a235289](https://github.com/msgbyte/tianji/commit/a2352896dc1806ce6e208b27ca150a3f3758dcf7))
+* use or to filter suggestion category ([c0995bc](https://github.com/msgbyte/tianji/commit/c0995bcb313d72429bc5fe1a7eeea6fde6ef5764))
+
+## [1.18.9](https://github.com/msgbyte/tianji/compare/v1.18.8...v1.18.9) (2025-02-18)
+
+### Bug Fixes
+
+* fix a not accept language problem(some ts issue before) ([5f53736](https://github.com/msgbyte/tianji/commit/5f53736fa1e0716ef04e50c95900087b9da78c9a))
+
+## [1.18.8](https://github.com/msgbyte/tianji/compare/v1.18.7...v1.18.8) (2025-02-18)
+
+### Bug Fixes
+
+* hotfix some header not have language header issue ([da24e65](https://github.com/msgbyte/tianji/commit/da24e653aeb7edef907a7dfa9b997e7b198fa83a))
+
+## [1.18.7](https://github.com/msgbyte/tianji/compare/v1.18.6...v1.18.7) (2025-02-17)
+
+### Features
+
+* add group analyze and ai debug ([971427f](https://github.com/msgbyte/tianji/commit/971427f22f2ee85cec8007a0f4bc3539df1aef11))
+* add user language support in ai category classify ([ab4342b](https://github.com/msgbyte/tianji/commit/ab4342b2a2af83581f0a910671df3725db0b3315))
+
+## [1.18.6](https://github.com/msgbyte/tianji/compare/v1.18.5...v1.18.6) (2025-02-16)
+
+### Features
+
+* add click to view ai category feature ([b72643a](https://github.com/msgbyte/tianji/commit/b72643a5372f29ba8aa0c9964efc6d54379c7c10))
+* add env DISABLE_ACCESS_LOGS and DEBUG_AI_FEATURE ([4795b3d](https://github.com/msgbyte/tianji/commit/4795b3dc3583b671ddf0e24f9ca7afb76ac04c5b))
+* add more run strategy and improve ui style ([fd1e5cb](https://github.com/msgbyte/tianji/commit/fd1e5cb46e39c114fb66db410f403ec15c36d79d))
+
+### Bug Fixes
+
+* [#158](https://github.com/msgbyte/tianji/issues/158) fix typo ([8819af4](https://github.com/msgbyte/tianji/commit/8819af4db1cc01727ddfe4cf41a48390b1634889))
+
+### Document
+
+* add telemetry report claim ([fc67dba](https://github.com/msgbyte/tianji/commit/fc67dbaef82121a58a02c14f1787cc7f3f1b9cd5))
+* improve display for website carousel, which will let image can be selected ([99b4140](https://github.com/msgbyte/tianji/commit/99b41408ce1b41f4229ee689def60d99189aa8e9))
+
+### Others
+
+* add filter query in survey result ([fff7346](https://github.com/msgbyte/tianji/commit/fff7346d3cd5da284691e89cc145863ec4d8d482))
+* update columns logic ([d6af45e](https://github.com/msgbyte/tianji/commit/d6af45e2b200a9cb2b188bb92843a8751a2ff626))
+* update translation ([dc41557](https://github.com/msgbyte/tianji/commit/dc415578ebdc363a7825a4262bf93ae2479b4d31))
+* update translation ([f627b31](https://github.com/msgbyte/tianji/commit/f627b31a71149eae27f8fda17d608a86fe3f1709))
+
+## [1.18.5](https://github.com/msgbyte/tianji/compare/v1.18.4...v1.18.5) (2025-02-11)
+
+### Others
+
+* add more timezone related things ([ca37ea1](https://github.com/msgbyte/tianji/commit/ca37ea16eaa5e98e29e3727859e9409fcbaacca6))
+* clear result text after re-run ([a63240a](https://github.com/msgbyte/tianji/commit/a63240accf6c5094bc6fd2f3e9f94697c4595c23))
+* merge category result after parsed ([8d6ab5c](https://github.com/msgbyte/tianji/commit/8d6ab5c44870ccf3aa19bfcd9989bb66e62d9275))
+
+## [1.18.4](https://github.com/msgbyte/tianji/compare/v1.18.3...v1.18.4) (2025-02-10)
+
+### Bug Fixes
+
+* fxi import problem in server side in 1.18.3 ([d59fe7b](https://github.com/msgbyte/tianji/commit/d59fe7b03a41924f823418508f0385b6323c9338))
+
+## [1.18.3](https://github.com/msgbyte/tianji/compare/v1.18.2...v1.18.3) (2025-02-10)
+
+### Bug Fixes
+
+* fix timezone issue in server side which in different server ([e3d6828](https://github.com/msgbyte/tianji/commit/e3d682889cb9011970687e6b6649eee33bee9bf8))
+
+### Others
+
+* fix ci problem ([73687a6](https://github.com/msgbyte/tianji/commit/73687a6163a178f1249963ca3da88b4572b3e997))
+
+## [1.18.2](https://github.com/msgbyte/tianji/compare/v1.18.1...v1.18.2) (2025-02-09)
+
+### Features
+
+* add checkbox ui ([9068935](https://github.com/msgbyte/tianji/commit/9068935e3bfab5fc375d8c75a1c66fa8ec3babf4))
+* add classify survey feature ([4c37eab](https://github.com/msgbyte/tianji/commit/4c37eab57ab43086c0c12ca5454469202b484cbd))
+* add credit cost and check in ai ask route ([6c8e49b](https://github.com/msgbyte/tianji/commit/6c8e49b43011991f6318ff2d979bfc13da0646ab))
+* add image url render ([b84b840](https://github.com/msgbyte/tianji/commit/b84b840a38fa331a4b86fb05883a6fe097aa9977))
+* add SurveyCategoryChart ([ba281ac](https://github.com/msgbyte/tianji/commit/ba281ac0f66ff756ad72c0f8d8e9c211f85cf2f5))
+
+### Bug Fixes
+
+* fix app review pool not enough problem ([cd29f86](https://github.com/msgbyte/tianji/commit/cd29f8631878023f7f363ff85e07bf65a6594a14))
+* fix survey stat timezone not correct problem ([a5c7998](https://github.com/msgbyte/tianji/commit/a5c7998cf1431086336d231b6aa2b5d9b40544d7))
+
+### Others
+
+* add global config local storage cache ([cc532bb](https://github.com/msgbyte/tianji/commit/cc532bb381f5cc766616f2a12165f01a56d69f1b))
+* add translation ([170b406](https://github.com/msgbyte/tianji/commit/170b40647c0f53216ebea85f18d891eca9b6b9a3))
+* extract DatePicker component ([ead62eb](https://github.com/msgbyte/tianji/commit/ead62eb77f985bcf5f7fe90bfe2aee3783246d2b))
+* survey download btn should export all necessary field ([b936421](https://github.com/msgbyte/tianji/commit/b936421fa7138b437efa9cc5a835cf3a59ba6be5))
+
+## [1.18.1](https://github.com/msgbyte/tianji/compare/v1.18.0...v1.18.1) (2025-02-02)
+
+### Others
+
+* upgrade isolated-vm version ([ec3e9a3](https://github.com/msgbyte/tianji/commit/ec3e9a3daeae4d7ed30742110b5424dce26d593a))
+* upgrade zeromq version from 6.0.4 -> 6.3.0 ([f5e5e5c](https://github.com/msgbyte/tianji/commit/f5e5e5c46b46a3bc219ef72db4ef8ef2d318cd75))
+
+## [1.18.0](https://github.com/msgbyte/tianji/compare/v1.17.6...v1.18.0) (2025-02-02)
+
+### Features
+
+* add ai tool getSurveyByDateRange ([a27ef8f](https://github.com/msgbyte/tianji/commit/a27ef8f38c3518748569befe655a4d88eadca775))
+* add aiToolsSelection which can easy to pick tools ([eec23ec](https://github.com/msgbyte/tianji/commit/eec23ec506dc5cb1498a91c81090f4ebcc2dfb18))
+* add busy check ([fea436a](https://github.com/msgbyte/tianji/commit/fea436ac07e61e92c3369af04a8d499e4c7ddd2d))
+* add date picker ([c83c43d](https://github.com/msgbyte/tianji/commit/c83c43d73fd316cf1002324eb0e35561be31ab4d))
+* add date unit support ([453c8f2](https://github.com/msgbyte/tianji/commit/453c8f25e2e907b312d7818a15ed45e120c16314))
+* add event calc math method: by session ([8c6bb24](https://github.com/msgbyte/tianji/commit/8c6bb24143566fcc7c2ea222831fdeac8cd7813f))
+* add hover state of metrics block ([4d5b098](https://github.com/msgbyte/tianji/commit/4d5b098f9f41a5af5c14f9143f732a937e6814de))
+* add insights chart render and backend fetch ([343e2b3](https://github.com/msgbyte/tianji/commit/343e2b353e855843b58e70d1097c13b146f608ec))
+* add insights in chart ([1c777b7](https://github.com/msgbyte/tianji/commit/1c777b754bf4ef6b946ee1e30137d7b2389e6806))
+* add new entry for website insights ([82972f5](https://github.com/msgbyte/tianji/commit/82972f51c5472ccfd1092e7c8727eca991c7983a))
+* add resizable panel ([61af19b](https://github.com/msgbyte/tianji/commit/61af19bba5fbed4313e859598d73f3a99c95f051))
+* add survey detail sheet panel ([5752762](https://github.com/msgbyte/tianji/commit/57527625cbbfa2089648f0748327e6716813b1f1))
+* add survey prompt, credit calc logic and context ([a651f5d](https://github.com/msgbyte/tianji/commit/a651f5d977a7a87ecd642b8435f9aa2462cb0c32))
+* add table pinning ([572e551](https://github.com/msgbyte/tianji/commit/572e5512b55ab75f3391233a62fb2ecaab1b2234))
+* add table view for insights ([05a7def](https://github.com/msgbyte/tianji/commit/05a7def550b587b831235a2e95ca07a52dc8983e))
+* add tianji app reviewer ([5da38b4](https://github.com/msgbyte/tianji/commit/5da38b4c0f49f7619495f4cd12c917e232717f49))
+* add useAIStoreContext which allow change current page ai store context ([f70dde0](https://github.com/msgbyte/tianji/commit/f70dde03bcc3d12468c19ae3913c9b867a9b4980))
+* insights add filter logic ([c1b0812](https://github.com/msgbyte/tianji/commit/c1b081282cce8da41942089099e2941523042eb1))
+* metrics add delete item support ([9779885](https://github.com/msgbyte/tianji/commit/9779885720e479d0a077b95c00ef4bc8739d6315))
+
+### Bug Fixes
+
+* [#146](https://github.com/msgbyte/tianji/issues/146) fix typo ([e1ed6e3](https://github.com/msgbyte/tianji/commit/e1ed6e35633cd5aef1705a11f0d6aeb918c316ef))
+* fix a issue which will make openai key is required(original should be optional) [#139](https://github.com/msgbyte/tianji/issues/139) ([f0fba13](https://github.com/msgbyte/tianji/commit/f0fba13179115aa68741ab8b66f7375f1cab2aac))
+* fix session data can not save problem ([9405884](https://github.com/msgbyte/tianji/commit/94058840df5626e94cf7a53a793c060ad664b160))
+
+### Document
+
+* add event track documents ([d815adf](https://github.com/msgbyte/tianji/commit/d815adfa720c30d3340a5e790519b55c2ed80ac1))
+* add interactive hover button in get start button ([a40fe6e](https://github.com/msgbyte/tianji/commit/a40fe6e646d009506ae5674e09cd2393e0c1b88d))
+* add tweet card in website ([f6e443f](https://github.com/msgbyte/tianji/commit/f6e443fae504d1c34befffdc12648a59e374a300))
+* upgrade docusaurus-i18n and update website translation ([892e650](https://github.com/msgbyte/tianji/commit/892e650d3ce0bba2ac5f365e474d39b8176b3e80))
+
+### Others
+
+* add empty state for chart render component ([208daf0](https://github.com/msgbyte/tianji/commit/208daf0259afcd1296adec23e19f32a43ebda5c1))
+* add identify in example repo ([a61d28f](https://github.com/msgbyte/tianji/commit/a61d28fda55941f6e178548d209dcd10e6128eb3))
+* add metrics block no content tip ([0d91bad](https://github.com/msgbyte/tianji/commit/0d91badc41830c7921d8314c5bbcbe1cece01ea5))
+* add more example playground events ([ce70092](https://github.com/msgbyte/tianji/commit/ce7009248a97287d8b567f15465607ae68dc5cae))
+* add null ip process ([59eac90](https://github.com/msgbyte/tianji/commit/59eac903c3e09f4b09d807f21bab471055d16f6c))
+* add openai tool choose support ([a0d170d](https://github.com/msgbyte/tianji/commit/a0d170de36eae12fec32faa4db444e575de9f737))
+* add openapi sdk options ([ea4b04c](https://github.com/msgbyte/tianji/commit/ea4b04cd6eab399a7ba4fe4264b94e8ef7338b5f))
+* add optional in channel ([ae4c2bb](https://github.com/msgbyte/tianji/commit/ae4c2bb89bae03389441fa07cfddb4943be3c16e))
+* add type support for ai store context ([b548341](https://github.com/msgbyte/tianji/commit/b548341dccf9c8ba431f0b7a4eea73d56729032b))
+* disable ai feature if not enable ai feature in server ([6a5753e](https://github.com/msgbyte/tianji/commit/6a5753e487547efc637e5e47ddaac4c0088b2756))
+* example repo add send tianji report support ([d8e642b](https://github.com/msgbyte/tianji/commit/d8e642be953d8cd02199d91d73d76308e49a5b9d))
+* fix ci problem ([2f70afd](https://github.com/msgbyte/tianji/commit/2f70afdeaa20b2ad9ea1be4ed9ce9774bf61f49e))
+* fix ci problem ([2e47cc4](https://github.com/msgbyte/tianji/commit/2e47cc44d3e94970d082613c3d5699d25c71daa5))
+* fix ci problem ([f9bda19](https://github.com/msgbyte/tianji/commit/f9bda19d828e517ca4be7503c686f1ac27745019))
+* fix datatable component array keys problem ([be90c3d](https://github.com/msgbyte/tianji/commit/be90c3d5e2f21e61674a8bacff2b3e7df11e580a))
+* fix trpc-to-openapi use incorrect middleware problem ([b91cb44](https://github.com/msgbyte/tianji/commit/b91cb4458f3e4ddccdb05ba981f8e263c7221071))
+* improve insights style ([ff5b777](https://github.com/msgbyte/tianji/commit/ff5b7773921d6382cc751cb5195629cc323e331e))
+* improve metric block display and create logic, improve user experience ([dae37b5](https://github.com/msgbyte/tianji/commit/dae37b5bb4c578913c19e10da288dfc1d146479d))
+* improve sdk package ([ebb69a4](https://github.com/msgbyte/tianji/commit/ebb69a421998376559d6fbec692972e62851ca8a))
+* improve some detail ([c131078](https://github.com/msgbyte/tianji/commit/c1310784dad5abf907fbc64c25b74f8229252e9e))
+* improve tip and style ([13ee7f5](https://github.com/msgbyte/tianji/commit/13ee7f5a0644d6d0effaef3d03e1a2a5bd08656a))
+* init example repo ([55fc93d](https://github.com/msgbyte/tianji/commit/55fc93da7ed6a20d01b1d7b5ae7548d6e26c45ee))
+* move insights to other router ([074aa56](https://github.com/msgbyte/tianji/commit/074aa56898b232d6c7e730e143f4ef3cc6107998))
+* refactor metric block and add reused part of dropdown ([e855fb6](https://github.com/msgbyte/tianji/commit/e855fb68d644200fe0be7f981426e4323d7dd696))
+* release v1.17.7 ([081f102](https://github.com/msgbyte/tianji/commit/081f1025ba1fa3a70421838cb086de41ccdb057e))
+* release v1.17.8 ([7dbfb6f](https://github.com/msgbyte/tianji/commit/7dbfb6f7db1738b4078a01eee81baaddfce20e15))
+* release v1.17.9 ([6cceb40](https://github.com/msgbyte/tianji/commit/6cceb407a8907acbb626bef84e9184f2ca40d4b7))
+* update react version in example repo ([313f909](https://github.com/msgbyte/tianji/commit/313f9093d8f4eb459ee6d941580a34f9d6379d47))
+* update translation ([7a714b5](https://github.com/msgbyte/tianji/commit/7a714b56abcb8b91d7336e9ecd8079f269f9bae2))
+* update translation ([74f62e2](https://github.com/msgbyte/tianji/commit/74f62e20b732620b03af498c67cccc83112e598c))
+* upgrade execa version ([1321986](https://github.com/msgbyte/tianji/commit/1321986930cda06b60e9c6c9a8b1ac6d48963f72))
+* upgrade react-icons version v4 -> v5 ([bc1a9d2](https://github.com/msgbyte/tianji/commit/bc1a9d28728daac4d315c80171d9f77a52fd4bab))
+
+## [1.17.9](https://github.com/msgbyte/tianji/compare/v1.17.8...v1.17.9) (2025-01-21)
+
+### Others
+
+* fix trpc-to-openapi use incorrect middleware problem ([707d6fa](https://github.com/msgbyte/tianji/commit/707d6fa800dc917a8673927b973565995fdb398a))
+
+## [1.17.8](https://github.com/msgbyte/tianji/compare/v1.17.7...v1.17.8) (2025-01-21)
+
+### Others
+
+* add null ip process ([2789ec7](https://github.com/msgbyte/tianji/commit/2789ec7d95b0658a6742ef3b98a77318e647e15b))
+
+## [1.17.7](https://github.com/msgbyte/tianji/compare/v1.17.6...v1.17.7) (2025-01-19)
+
+### Bug Fixes
+
+* fix a issue which will make openai key is required(original should be optional) [#139](https://github.com/msgbyte/tianji/issues/139) ([1ed859b](https://github.com/msgbyte/tianji/commit/1ed859b56c0fb68b536ad83ad2c9b649cc0a853b))
+
+## [1.17.6](https://github.com/msgbyte/tianji/compare/v1.17.5...v1.17.6) (2025-01-04)
+
+### Features
+
+* add auto refetch logic in status page and refactor status page header ([9ccae18](https://github.com/msgbyte/tianji/commit/9ccae18b2b00882a5634237078443e008dc607f4))
+* add openai endpoint ([cc41483](https://github.com/msgbyte/tianji/commit/cc41483d93294bde2dd0c81657c028b849ff0364))
+* add openai sse api ([4b1f6c2](https://github.com/msgbyte/tianji/commit/4b1f6c218219f6b83fb87b784d2ed5bc0d18ec70))
+* add timezone support in trpc ctx and monitor.publicSummary ([890bf18](https://github.com/msgbyte/tianji/commit/890bf182d71023b2ba4fa050e2fb49f34099e5a4))
+* add workspace bill model ([58a04aa](https://github.com/msgbyte/tianji/commit/58a04aa0eaff4391733cf77b7bb43e1d6e447d8a))
+* allow register command in page ([e7297b1](https://github.com/msgbyte/tianji/commit/e7297b1a5781349ed87d6cb8ea0a84975e978e50))
+
+### Others
+
+* fix ci problem ([67c4fa3](https://github.com/msgbyte/tianji/commit/67c4fa305af8ffc60d31c6f598aad2434811de81))
+* migrate react query to v5 ([45c91f8](https://github.com/msgbyte/tianji/commit/45c91f805314d787e8d888c15720200c7afa7fef))
+* upgrade trpc version to next ([dfec38c](https://github.com/msgbyte/tianji/commit/dfec38cce440b77c7bc281cad8fdefb614c0cf09))
+
+## [1.17.5](https://github.com/msgbyte/tianji/compare/v1.17.4...v1.17.5) (2024-12-25)
+
+### Features
+
+* add default header preset in http monitor ([60a1d84](https://github.com/msgbyte/tianji/commit/60a1d847497604be32a7f89e2e274c997cdaaa5f))
+* add insight route in dev ([04e93bf](https://github.com/msgbyte/tianji/commit/04e93bf542594e4bbfa85d0cd44dac0617f8faa3))
+* add new login background ([6f367c2](https://github.com/msgbyte/tianji/commit/6f367c2c48c9621e3070055bea42229f136093a6))
+* add paused tip ([d688a78](https://github.com/msgbyte/tianji/commit/d688a787427d1fd6d349a7576468021c8a795d13))
+* add survey stats chart ([536e3b1](https://github.com/msgbyte/tianji/commit/536e3b1c6212d59b438f75ed6795e8b9e3c7f5e2))
+
+### Document
+
+* add aapanel install guide ([ba39fab](https://github.com/msgbyte/tianji/commit/ba39fab4dfa3ea95f114f2961a9eeae3dfda24cf))
+* add cloud link ([0ac3f41](https://github.com/msgbyte/tianji/commit/0ac3f414f9212eccfdaec0699eb3e5c7d7eab390))
+* update aapanel version and name of china ([1cf43cc](https://github.com/msgbyte/tianji/commit/1cf43cc2a5fe83a9f6b2a3aa0c76674cc06c87fd))
+* update changelog ([a0c54ba](https://github.com/msgbyte/tianji/commit/a0c54ba01bac691823c45f00781b73b7d72ded09))
+* update website and make cloud entry more strong ([4df9a5f](https://github.com/msgbyte/tianji/commit/4df9a5f6867e33a61ceacba074179f38d6aa6431))
+
+### Others
+
+* add clickhouse config ([8daabe3](https://github.com/msgbyte/tianji/commit/8daabe322e761aea1257c39e9947a7c7d7196a7e))
+* add dev container for insights feature ([f8ba1dc](https://github.com/msgbyte/tianji/commit/f8ba1dc4d00db347e59d50612d9530643834555c))
+* fix typo ([6b34f10](https://github.com/msgbyte/tianji/commit/6b34f10bfd3d00a5bf8b0a5706422a8ee75455df))
+* move k8s folder to docker/k8s folder. ([08b37ce](https://github.com/msgbyte/tianji/commit/08b37ce16b1494731bf5140465a09659d2c186a4))
+* move TimeEventChart component ([e5cc2ee](https://github.com/msgbyte/tianji/commit/e5cc2eebf84eb7aaba6747939d0a14d42f337de0))
+* update monitor page style ([691bc4b](https://github.com/msgbyte/tianji/commit/691bc4bdb3fc4cc5d030616cb272ce2153b88e5f))
+
+## [1.17.4](https://github.com/msgbyte/tianji/compare/v1.17.3...v1.17.4) (2024-11-29)
+
+### Document
+
+* update npm config ([ed591e2](https://github.com/msgbyte/tianji/commit/ed591e207d00d86b08989407d22ace1400bd0fd3))
+* update openapi document [#130](https://github.com/msgbyte/tianji/issues/130) ([0f3168e](https://github.com/msgbyte/tianji/commit/0f3168e340ab292cbf905b9d89dc666da809b96f))
+* update roadmap ([c7bd2e6](https://github.com/msgbyte/tianji/commit/c7bd2e6fb960996111cca091fa8dac1307457980))
+
+### Others
+
+* change init state of global config ([e0da48f](https://github.com/msgbyte/tianji/commit/e0da48f4d438676ea094b39ea87e0d04248d83ca))
+* update code style ([99db3d0](https://github.com/msgbyte/tianji/commit/99db3d02e370b9d252919d216ad0e1b36540d199))
+
+## [1.17.3](https://github.com/msgbyte/tianji/compare/v1.17.2...v1.17.3) (2024-11-27)
+
+### Features
+
+* add email login ([cc1cc95](https://github.com/msgbyte/tianji/commit/cc1cc9536e6626a232cdab4d31a5c6b7b8717061))
+
+### Others
+
+* a not cool solution, refresh state again after 5s. ([5ed182b](https://github.com/msgbyte/tianji/commit/5ed182b7f8d7169d4336fd957f14a4f74ab77455))
+* update translations ([26d555f](https://github.com/msgbyte/tianji/commit/26d555f9fae8dc6f72cdaafb9c16b891025a17be))
+* upgrade package version to reduce vulnerabilities ([72458fe](https://github.com/msgbyte/tianji/commit/72458fe301267d5e9bcfd2b3903907439bd4d143))
+* upgrade release-it version ([947f364](https://github.com/msgbyte/tianji/commit/947f364a36ca035f797f210ae72a75ceff6d775e))
+
+## [1.17.2](https://github.com/msgbyte/tianji/compare/v1.17.1...v1.17.2) (2024-11-25)
+
+
+### Features
+
+* add free tier tip component ([1fc4d15](https://github.com/msgbyte/tianji/commit/1fc4d15c35e1c7b161aab968c4c8e595ef6c80b7))
+* add workspace usage check which can update when tier has updated ([bf0598d](https://github.com/msgbyte/tianji/commit/bf0598dd25b8e1b868a5f3ea3fad53a58d8c9dd4))
+
+
+### Bug Fixes
+
+* fix a bug that would accidentally pause the workspace ([420860f](https://github.com/msgbyte/tianji/commit/420860f1b6e25928d9444c9b64f7308dde83a472))
+
+
+### Others
+
+* update translation ([df12949](https://github.com/msgbyte/tianji/commit/df1294977fcfd1e1005919d8d5cf8b9c926b0473))
+
+## [1.17.1](https://github.com/msgbyte/tianji/compare/v1.17.0...v1.17.1) (2024-11-21)
+
+
+### Others
+
+* improve install script which make easy to install in non-root user ([53777b3](https://github.com/msgbyte/tianji/commit/53777b36c6387f7cd06833a28bf479d38ab00162))
+* update limit check logic ([927eac1](https://github.com/msgbyte/tianji/commit/927eac1da3c56be9bfabc1513b74ae26b3c6e01c))
+* update subscription redirect tip ([21ac087](https://github.com/msgbyte/tianji/commit/21ac0878f90194ca140044b69c07fc085c72cac3))
+
+## [1.17.0](https://github.com/msgbyte/tianji/compare/v1.16.5...v1.17.0) (2024-11-19)
+
+
+### Features
+
+* add <UsageCard /> component which can render usage data and progress ([a12fa3e](https://github.com/msgbyte/tianji/commit/a12fa3e6feedb3c7d83a097e187aa9945ff9bb10))
+* add api key and usage to command panel ([71f75c2](https://github.com/msgbyte/tianji/commit/71f75c27ddf83ec3ac3855a07b03db5d4182c514))
+* add api key fe and usage counter ([6a4bdd3](https://github.com/msgbyte/tianji/commit/6a4bdd324c2a2fd64219edf637dcfe2fa0959067))
+* add audit log clear feature ([3bf86b3](https://github.com/msgbyte/tianji/commit/3bf86b3e6e6c5e86cbeb3cd9b7aaa41a53dd5439))
+* add auto language detect for browser ([1629546](https://github.com/msgbyte/tianji/commit/162954606a36219c58cd5a36c4a32a325b9a80cb))
+* add create feed and website limit which in max tier limit ([c8d4063](https://github.com/msgbyte/tianji/commit/c8d4063dafe24c8bec0501459bc77af71a848cd1))
+* add cronjob to check workspace limit which will pause workspace ([31ad64c](https://github.com/msgbyte/tianji/commit/31ad64cd955e5dd31167ae5fca6c0e49b7475977))
+* add lemonsqueezy  subscription ([74d391a](https://github.com/msgbyte/tianji/commit/74d391afc15a251a7098e4a5c8716bad3b756bd0))
+* add monitor error message ([e23258a](https://github.com/msgbyte/tianji/commit/e23258ac484de777a3c4a952df7b7307153a0b4a))
+* add more usage stats ([b71bf65](https://github.com/msgbyte/tianji/commit/b71bf6542e7312ec6ae0fdcc5008a197c1dc23d2))
+* add subscription selection page ([843a581](https://github.com/msgbyte/tianji/commit/843a581d429b11cb6959e6aee2d50eb9e144f3e5))
+* add user api key backend support ([f7b1d33](https://github.com/msgbyte/tianji/commit/f7b1d33c5d5bcd6d3ff8215412a4635495b35b7c))
+* add workspace pause tips ([b4bee32](https://github.com/msgbyte/tianji/commit/b4bee321ae512d49768522419996b430d569a3f3))
+* add workspace paused check ([77e14d3](https://github.com/msgbyte/tianji/commit/77e14d315f731204f1a38c2294d26d7cbe204ab8))
+* add workspace subscription ([e4b98b1](https://github.com/msgbyte/tianji/commit/e4b98b1c36f5362b88b73ff759378cc02185a836))
+* subscription switch and cancel handler() ([f2f8267](https://github.com/msgbyte/tianji/commit/f2f8267fef98accfd145f56c1c3a6ebab91d45cb))
+
+
+### Bug Fixes
+
+* fix ci probelm ([c7ef57b](https://github.com/msgbyte/tianji/commit/c7ef57b4c6bdcd79f95c499a02127d16916b3370))
+* fix isUser middleware will call twice problem ([c70e698](https://github.com/msgbyte/tianji/commit/c70e69879fe5ddc7f0dffcd546c79e79b50f034b))
+* fix url too long problem [#125](https://github.com/msgbyte/tianji/issues/125) ([c33d5bb](https://github.com/msgbyte/tianji/commit/c33d5bbedeb7890c06fbada71892c22639766a91))
+
+
+### Others
+
+* add alert ([ea75ed7](https://github.com/msgbyte/tianji/commit/ea75ed7f88f8ffc2290c85096c332b25f98305d9))
+* add apikey check before setup ([f0ddf6c](https://github.com/msgbyte/tianji/commit/f0ddf6c5ddbba871496eb77a02bf515e732809fa))
+* add usage limit and update card style ([34f9fe6](https://github.com/msgbyte/tianji/commit/34f9fe6957a53b46397f47210ec27dabcfc5f482))
+* change check workspace pause logic ([aed707a](https://github.com/msgbyte/tianji/commit/aed707a76146126a89e2edcf3a84e8307ba52806))
+* move billing mode inside folder ([fa1ff3b](https://github.com/msgbyte/tianji/commit/fa1ff3b5f6d93cce615b64bfeac0006f57291820))
+* move monitor action to hooks, reduce file size. ([ae33b52](https://github.com/msgbyte/tianji/commit/ae33b52d45f60d3abfc912b8c8d789a67c06e073))
+* remove passport package ([ae5f5a9](https://github.com/msgbyte/tianji/commit/ae5f5a97d99406df68ef92b2c5b958ec5ac2099c))
+* remove unused script ([fffc989](https://github.com/msgbyte/tianji/commit/fffc989336e8733d2f166d6e620fa379e2eb1d59))
+* update translation ([33b2ea5](https://github.com/msgbyte/tianji/commit/33b2ea581b2cbd52541ac983f8d22c5fa81239e6))
+* upgrade package version ([a03c182](https://github.com/msgbyte/tianji/commit/a03c1824f80f7807d8a3fb59cc47b8ebc4ed5ef3))
+
+## [1.16.5](https://github.com/msgbyte/tianji/compare/v1.16.4...v1.16.5) (2024-11-02)
+
+
+### Features
+
+* add webhookSignature in feed channel ([6b3631e](https://github.com/msgbyte/tianji/commit/6b3631eae186b9cacf64d0ddcfbb66378e041281))
+
+
+### Bug Fixes
+
+* add key to Fragment in map for monitor items ([9949b97](https://github.com/msgbyte/tianji/commit/9949b973bd63b4ad6b5e71f7b819442f505c09a6))
+* retrieve date as string ([a8a47ed](https://github.com/msgbyte/tianji/commit/a8a47ed94dda87c3fe4cdecc0acb9a31f53f00a5))
+
+
+### Others
+
+* fix ci problem ([59b8746](https://github.com/msgbyte/tianji/commit/59b874644fd3427bc86cd2a7e948054e827de080))
+* refactor status header and add typescript and translation support ([f637ade](https://github.com/msgbyte/tianji/commit/f637ade70f230fbf472bdee84105c9b284d6b8d4))
+* update amount in stripe ([2725056](https://github.com/msgbyte/tianji/commit/272505669e450d882930cbf594dac39a879b2072))
+* update webhooks signature api guide ([266b08f](https://github.com/msgbyte/tianji/commit/266b08f2da16d0457a5a44b4a7a251d28502abc9))
+
+## [1.16.4](https://github.com/msgbyte/tianji/compare/v1.16.3...v1.16.4) (2024-10-27)
+
+
+### Features
+
+* add stripe feed integration ([09d0f02](https://github.com/msgbyte/tianji/commit/09d0f02d844159565e97bb64f076e0bbe218ce98))
+
+
+### Others
+
+* update currency symbols in feed ([98298c4](https://github.com/msgbyte/tianji/commit/98298c43670326b4e2300a6bbdeee3daa53f0eb3))
+
+## [1.16.3](https://github.com/msgbyte/tianji/compare/v1.16.2...v1.16.3) (2024-10-24)
+
+
+### Others
+
+* fix ci problem and upgrade version ([1c5737e](https://github.com/msgbyte/tianji/commit/1c5737e588d19e0657be6437792cf4484b6fdddb))
+
+## [1.16.2](https://github.com/msgbyte/tianji/compare/v1.16.1...v1.16.2) (2024-10-23)
+
+
+### Features
+
+* add prometheus report support ([fcb8f22](https://github.com/msgbyte/tianji/commit/fcb8f221168281ab710d3d3f12064a99d17b39e7))
+
+
+### Bug Fixes
+
+* fix a bug which will match incorrect path [#115](https://github.com/msgbyte/tianji/issues/115) ([79667a9](https://github.com/msgbyte/tianji/commit/79667a9644b78451400acb6a6bbf07b6ca61e6e0))
+
+
+### Document
+
+* update README ([1df32dc](https://github.com/msgbyte/tianji/commit/1df32dc2579f32649afd6c008512c1190a45fd9e))
+
+
+### Others
+
+* fix ci problem ([554f902](https://github.com/msgbyte/tianji/commit/554f9025847defe0b05492cf07a5dc8acc6c3685))
+* update openapi document ([e402ee1](https://github.com/msgbyte/tianji/commit/e402ee1688bb77d83463ce70c5e730c97f68a695))
+
+## [1.16.1](https://github.com/msgbyte/tianji/compare/v1.16.0...v1.16.1) (2024-10-20)
+
+
+### Features
+
+* add test notify ([4e3fd9d](https://github.com/msgbyte/tianji/commit/4e3fd9db64629f7721e6092b86b06144c47f521d))
+* add timezone support [#114](https://github.com/msgbyte/tianji/issues/114) ([c7e20df](https://github.com/msgbyte/tianji/commit/c7e20df516bf3a991ce46c937223948bcdb6b8f0))
+* add workspace settings manage ([3dca8fc](https://github.com/msgbyte/tianji/commit/3dca8fc27c82bd96dbab423b111e4de57f3b4bd8))
+
+
+### Others
+
+* update cronjob clear time ([83850f2](https://github.com/msgbyte/tianji/commit/83850f2981ded0b6624556ee3430f684752b8ea3))
+
+## [1.16.0](https://github.com/msgbyte/tianji/compare/v1.15.8...v1.16.0) (2024-10-19)
+
+
+### Features
+
+* add click event for status page item which allow hide/show chart ([279e616](https://github.com/msgbyte/tianji/commit/279e616bee510ee5b0c5a3c9a3705a79efd5d3cb))
+* add daily monitor data display for public ([dcff57f](https://github.com/msgbyte/tianji/commit/dcff57fe69273c7f9b3dd9c28e8acc9cb6e430a9))
+* add monitor summary function ([bbb8d88](https://github.com/msgbyte/tianji/commit/bbb8d881168df695ccc70743f46320b39c1d7718))
+* add MonitorLatestResponse and up status summary ([316b954](https://github.com/msgbyte/tianji/commit/316b95467d49b3ebe93d03006d4b90f9ca482262))
+
+
+### Bug Fixes
+
+* fix reporter memory leak problem [#103](https://github.com/msgbyte/tianji/issues/103) ([7f70557](https://github.com/msgbyte/tianji/commit/7f70557c776c35e4e01a5533d2c05cecc711e113))
+
+
+### Others
+
+* add border radius in smtp template ([f553f15](https://github.com/msgbyte/tianji/commit/f553f157dd9708d553c9d6cfca4d119a62d849c3))
+* change public summary display logic ([e5e77db](https://github.com/msgbyte/tianji/commit/e5e77dbdeeeecb773237b84e3c671dd16e61d458))
+* fix ci problem ([820b25b](https://github.com/msgbyte/tianji/commit/820b25baedc6fec02010ca19b43e4da99bf4b820))
+* ignore unknown sentry log ([527f734](https://github.com/msgbyte/tianji/commit/527f734bc442458018d86df9a7e750a8e8de4495))
+* let version text more prominent ([61980b3](https://github.com/msgbyte/tianji/commit/61980b37d3cecce32fa87b2b9810f4c715990a71))
+* rename old tsconfig paths ([2a503ca](https://github.com/msgbyte/tianji/commit/2a503ca2501e705430c0c35cb7c8279927c1d4d5))
+
+## [1.15.8](https://github.com/msgbyte/tianji/compare/v1.15.7...v1.15.8) (2024-10-13)
+
+
+### Features
+
+* add payload for feed event integration and send function ([572d96b](https://github.com/msgbyte/tianji/commit/572d96babb348858911105659bfe304e869915e4))
+* add ping animation in website realtime visitor ([6da0e6f](https://github.com/msgbyte/tianji/commit/6da0e6f415e863448cd36246eb16e1f09dcd8a79))
+* add plausible tracking(for testing) ([6474cef](https://github.com/msgbyte/tianji/commit/6474cefd896b36b872460786b11005b8deaf4436))
+* add realtime datarange which can visit data more easy ([f3d8f55](https://github.com/msgbyte/tianji/commit/f3d8f5543d4e277fe34940ce98cd552dee45f2a8))
+* add survey curl example code ([5d54ca1](https://github.com/msgbyte/tianji/commit/5d54ca1cbc01b69b9bd03d167edd0db242df350e))
+* add survey webhook ([de57242](https://github.com/msgbyte/tianji/commit/de572426ebf99e99ff97ce49caf0b8ac13b68154))
+* sdk add send feed function export ([f5933ec](https://github.com/msgbyte/tianji/commit/f5933ec0548fb4ac327152b6d7afe7ca2978bade))
+* survey add webhook url field which can send webhook when receive any survey ([f00163b](https://github.com/msgbyte/tianji/commit/f00163b2f107bcf08d4ff398fa5dbd92ac36fda8))
+* time event chart legend add some interaction ([4b78771](https://github.com/msgbyte/tianji/commit/4b7877155fd54416fb9231a02aca0e868aec97d2))
+
+
+### Document
+
+* add shacdn to website ([763810e](https://github.com/msgbyte/tianji/commit/763810e8b7e6cd41fdc0d83d28262dc7d747e4bf))
+* add sitemap to improve SEO ([384224c](https://github.com/msgbyte/tianji/commit/384224cb624030522057df22527312957665d8e9))
+* add website more language: de, fr, ja, zh-Hans ([7bda542](https://github.com/msgbyte/tianji/commit/7bda5420c5f22f6205d2dbd5086dd0bdbbc7f558))
+* change code command line style ([8c5c417](https://github.com/msgbyte/tianji/commit/8c5c417a197531c187452fc4937d034d3bdc05a7))
+* remove used blog directory ([3d9d032](https://github.com/msgbyte/tianji/commit/3d9d03296e9fb26eb363b2dba2f830f2eb9d58f3))
+* resolve build problem with update source document content ([9e6e031](https://github.com/msgbyte/tianji/commit/9e6e03117cc3bd37058563e31817034876d35450))
+* update depenpendency to resolve issue of docusaurus build ([de38363](https://github.com/msgbyte/tianji/commit/de38363315275ecbc7384c935c313940fca1d4fc))
+* upgrade openapi ([1e57905](https://github.com/msgbyte/tianji/commit/1e57905f3239cc4fb3a949b469161dc9c8d2b40c))
+
+
+### Others
+
+* add CodeExample component ([29f184c](https://github.com/msgbyte/tianji/commit/29f184c15d36e42af750261f81ad67b49fe58c0b))
+* comment sitemap to make sure its can build safe ([9b9799e](https://github.com/msgbyte/tianji/commit/9b9799ec6f846eb40762f5ca8cc0aa6c27fb7e02))
+* fix ci problem ([a32f3d9](https://github.com/msgbyte/tianji/commit/a32f3d9824a09a2d8c9e97ba211ee5d44c8e2763))
+* fix isolated-vm version ([43b4c9f](https://github.com/msgbyte/tianji/commit/43b4c9fe3763673dc54b61b01e50bc5b3d24a371))
+* fix version of postman-code-generators ([eaffe3a](https://github.com/msgbyte/tianji/commit/eaffe3ab21022215a76c3441ef0b9b2c37386227))
+* improve display of visitor map if data is too much ([9bc8c63](https://github.com/msgbyte/tianji/commit/9bc8c63fe2ea2ab080e7db3cf7d0c7636fabf8d1))
+* migrate monitor data chart to recharts and remove @ant-design/charts ([c0e2ef0](https://github.com/msgbyte/tianji/commit/c0e2ef0fe8f5520a7b935eeeb44f6be9224e56a4))
+* update ci run trigger path ([7322ad7](https://github.com/msgbyte/tianji/commit/7322ad741dcfc5c033b5057e1862e91d27244f7f))
+* update pnpm lock file to resolve some magic problem ([064dbe9](https://github.com/msgbyte/tianji/commit/064dbe9985767b32492de4264d08c26206318cd4))
+* update survey edit form ([a218c22](https://github.com/msgbyte/tianji/commit/a218c2239725deb5bcdee2e8d2de377e04dec941))
+* upgrade @radix-ui/react-scroll-area version ([9d559b9](https://github.com/msgbyte/tianji/commit/9d559b93d16c130cf58649e0f12edf9e795ba8a5))
+* upgrade @tianji/website docusaurus version ([e46f970](https://github.com/msgbyte/tianji/commit/e46f97097a593fe4bd5a8946237fd2f46fea69f6))
+* use prebuilt rather than deploy build ([e51a880](https://github.com/msgbyte/tianji/commit/e51a88044fcef7727b2e7f17c5dd9eff08329cdc))
+
+## [1.15.7](https://github.com/msgbyte/tianji/compare/v1.15.6...v1.15.7) (2024-10-03)
+
+
+### Bug Fixes
+
+* fix a problem which will make request list incorrect ([2d5a09c](https://github.com/msgbyte/tianji/commit/2d5a09c79cae48f62029b8767bae552376e68639))
+
+
+### Document
+
+* fix update code to new version ([1fe5009](https://github.com/msgbyte/tianji/commit/1fe50092bab5e0824c1b96b70d40d33f751f4135))
+
+
+### Others
+
+* split website from monorepo ([e09d7ee](https://github.com/msgbyte/tianji/commit/e09d7eef8788e27ac651f18dcf4d04de895a35ee))
+* update workspace config and remove unused lock file ([7301eeb](https://github.com/msgbyte/tianji/commit/7301eeb82a4fdc4ae6853dbe98c1f1d7b9b79bca))
+
+## [1.15.6](https://github.com/msgbyte/tianji/compare/v1.15.5...v1.15.6) (2024-10-02)
+
+
+### Others
+
+* add build dependency for build zeromq ([79b75f5](https://github.com/msgbyte/tianji/commit/79b75f55e39c057c330bc1fb0b3b15dc10e28a78))
+* improve install package time in docker build static stage ([1be03cc](https://github.com/msgbyte/tianji/commit/1be03ccf532a7dd6d23334a5666dec34e2e68d77))
+* update NODE_OPTIONS in static layer to make sure build can pass ([5eb7696](https://github.com/msgbyte/tianji/commit/5eb7696ead2da961d6ac5223a2badb48502142ba))
+
+## [1.15.5](https://github.com/msgbyte/tianji/compare/v1.15.4...v1.15.5) (2024-10-01)
+
+
+### Features
+
+* add error message for lighthouse ([bb0c574](https://github.com/msgbyte/tianji/commit/bb0c57489347242300c6153ed3908d1822bb692c))
+* add lighthouse score in database fields ([6c2a093](https://github.com/msgbyte/tianji/commit/6c2a0938423385d67309deefa67a3d971bf8d7c8))
+* add webhook playground ([33a0a60](https://github.com/msgbyte/tianji/commit/33a0a60eee53d1ac08cc9accc2e96f06e56ebb52))
+* add webhook playground entry ([92196e4](https://github.com/msgbyte/tianji/commit/92196e4e5bb9b183cfe85aad876115c0e17f824e))
+* add zeromq to make sure lighthouse can only run one at same time ([50a3573](https://github.com/msgbyte/tianji/commit/50a35732ff202f2452b344c2df17aba677426ec3))
+
+
+### Others
+
+* improve avatar display timing for non-avatar user ([04dc1e9](https://github.com/msgbyte/tianji/commit/04dc1e98dd448c0fd6661559722cf594ab2e751e))
+* refactor time event chart to recharts ([1337eaa](https://github.com/msgbyte/tianji/commit/1337eaa2c0ff55651a05878edd722ac1b46a5067))
+* update style of website page card ([b778f8c](https://github.com/msgbyte/tianji/commit/b778f8c982f7df8328c2fffe67783b15cde51c15))
+* upgrade shadcn cli and add recharts ([055f57e](https://github.com/msgbyte/tianji/commit/055f57e087f002b8f891053509e3cad865f1d52b))
+
+## [1.15.4](https://github.com/msgbyte/tianji/compare/v1.15.3...v1.15.4) (2024-09-30)
+
+
+### Features
+
+* allow rename workspace ([63e6bfe](https://github.com/msgbyte/tianji/commit/63e6bfe0d1a989479a6c4658d01ea9d84fc84b45))
+
+
+### Bug Fixes
+
+* fix login view split incorrect if not any extra login way ([b16a7c3](https://github.com/msgbyte/tianji/commit/b16a7c3c2c203394c94ccfee8e829bc7685a2457))
+* remove workspace name validation ([7c271dc](https://github.com/msgbyte/tianji/commit/7c271dc3c14fc6c751fb69b16adf6f08bfd5ac7b))
+
+
+### Others
+
+* add ignore in docker build ([ee72f74](https://github.com/msgbyte/tianji/commit/ee72f74e2c68c9baec500b78a3b994c8083abeed))
+* add logger for lighthouse ([9d3e9d8](https://github.com/msgbyte/tianji/commit/9d3e9d89db40aad4a78df8b64ad3d7bfccb94d2e))
+* add no sandbox args in puppeteer ([8b6a740](https://github.com/msgbyte/tianji/commit/8b6a74033c2838a6921c56990e13eedfbc8a559a))
+* docker add puppeteer support ([23c6915](https://github.com/msgbyte/tianji/commit/23c691541db0a51b4765dd0943488def7741c0f4))
+* downgrade alpine version to 3.19 to avoid issue ([e6df595](https://github.com/msgbyte/tianji/commit/e6df595af8ecddf734fe7e72a797921d84dad2c3))
+* improve docker build and lighthouse config ([57ebaf6](https://github.com/msgbyte/tianji/commit/57ebaf6ad361cae3403263009b94566cc7de2293))
+* improve websocket log ([b44e57d](https://github.com/msgbyte/tianji/commit/b44e57dde8d027eb05b7e8db20d490d2b62607cc))
+* try to resolve no screenshot problem by remove single process. ([fe432f1](https://github.com/msgbyte/tianji/commit/fe432f13325adf5fb4cde3dbb2f4f1218cb789e7)), closes [/github.com/GoogleChrome/lighthouse/issues/11537#issuecomment-799895027](https://github.com/msgbyte//github.com/GoogleChrome/lighthouse/issues/11537/issues/issuecomment-799895027)
+* unity esbuild version to resolve vulnerabilities which cause by esbuild ([bcc215c](https://github.com/msgbyte/tianji/commit/bcc215ca5d33126b368b58a9056d02fd93d5a99a))
+* update dockerfile, carry back auto install dependency ([de09059](https://github.com/msgbyte/tianji/commit/de09059e6561a27e160f0e39e7987da8ad05edaa))
+* update translation ([9c35bca](https://github.com/msgbyte/tianji/commit/9c35bca68508f2009434ebf578f0488a948e6b75))
+* upgrade axios version to latest to resolve vulnerabilities ([d73fa10](https://github.com/msgbyte/tianji/commit/d73fa108978b3c965b07dda725fbe6ae20bc4140))
+* upgrade puppeteer to make sure can fit with alpine image chromium version ([f59793d](https://github.com/msgbyte/tianji/commit/f59793d6f18625ad66b26d0a74aaa14c604ea812))
+* upgrade puppeteer usage to fit new version ([1322741](https://github.com/msgbyte/tianji/commit/13227416c05e2eae5a1a99e5d5f3396679e83d89))
+* upgrade puppeteer version to 23.4.1 ([e942769](https://github.com/msgbyte/tianji/commit/e942769af2e2570da71eb23f3ad489e8dcb72e95))
+
+## [1.15.3](https://github.com/msgbyte/tianji/compare/v1.15.2...v1.15.3) (2024-09-24)
+
+
+### Features
+
+* add fixed server list ([4f2c112](https://github.com/msgbyte/tianji/commit/4f2c1129a0421934b43d3b6e02b17d629d275614))
+
+
+### Others
+
+* add language fallback to make sure its can be display correct ([31e8ce4](https://github.com/msgbyte/tianji/commit/31e8ce4ab9beec4af730b9302c0c3b861234123e))
+* clear unused code ([cdc3ce1](https://github.com/msgbyte/tianji/commit/cdc3ce122386e632f6b4350bc3dd4bdf4c17e0ed))
+* improve monitor detail style, enhance style difference ([f2ce1fb](https://github.com/msgbyte/tianji/commit/f2ce1fb10c92a2e2583ec3b36866308954958e1e))
+
+## [1.15.2](https://github.com/msgbyte/tianji/compare/v1.15.1...v1.15.2) (2024-09-23)
+
+
+### Features
+
+* add admin role and change most owner permission to admin ([79ed059](https://github.com/msgbyte/tianji/commit/79ed059d995da6eaabc452a0844b9acb69dc981c))
+* add label map for device type in website ([f16ccb5](https://github.com/msgbyte/tianji/commit/f16ccb56895f65dea530be295b19f04a03c8ed99))
+* add lighthouse reporter generate in website ([d29785a](https://github.com/msgbyte/tianji/commit/d29785a31184fe48913f7c49833c2d35a92c244a))
+* add status page incident model ([d182041](https://github.com/msgbyte/tianji/commit/d1820416f4924b2fc1920383b2d22b042f6e0381))
+* add workspace role permission check, hide non permission action ([4f4f9b5](https://github.com/msgbyte/tianji/commit/4f4f9b5d3f36192ea0f416997a43691674aa79fd))
+
+
+### Others
+
+* change default workspace name ([2058647](https://github.com/msgbyte/tianji/commit/205864720cdcbb5f46bee92fa6c577769a05f167))
+* fix light mode color issues ([fb75a8b](https://github.com/msgbyte/tianji/commit/fb75a8b6545a507c81acafa9cb526afccd39cd35))
+* invite add id support ([6a1f413](https://github.com/msgbyte/tianji/commit/6a1f413a384021d3c91e136be36a8c6375c74f99))
+* update README roadmap ([4a1d704](https://github.com/msgbyte/tianji/commit/4a1d704fbb88bb87f7e9db61f3da1364fb7543c0))
+* update translation ([6bf65cb](https://github.com/msgbyte/tianji/commit/6bf65cb529a2b0c52204063f2a10ad33e7b39aa5))
+
+## [1.15.1](https://github.com/msgbyte/tianji/compare/v1.15.0...v1.15.1) (2024-09-19)
+
+
+### Features
+
+* add custom oidc/oauth provider support ([d0afdf5](https://github.com/msgbyte/tianji/commit/d0afdf5c91d2112d177ab7bb0315586cb64ad8d7))
+
+
+### Bug Fixes
+
+* fix website cannot delete problem [#91](https://github.com/msgbyte/tianji/issues/91) ([90953e4](https://github.com/msgbyte/tianji/commit/90953e490ceea8e5256fd564e4d220b2e7da50b3))
+
+
+### Others
+
+* add account provider ([84e4722](https://github.com/msgbyte/tianji/commit/84e4722f2fc8026de25fa33d23e17db61a6d4437))
+* fix ci problem ([63484d0](https://github.com/msgbyte/tianji/commit/63484d0db59e1ccc178c7427ec7d60fd7f1484b0))
+
+## [1.15.0](https://github.com/msgbyte/tianji/compare/v1.14.7...v1.15.0) (2024-09-18)
+
+
+### Features
+
+* add delete workspace feature [#96](https://github.com/msgbyte/tianji/issues/96) ([2b9a14c](https://github.com/msgbyte/tianji/commit/2b9a14c969c824d630452e0e4e30834f2a9a1b47))
+* add group feature in backend ([4d39cb5](https://github.com/msgbyte/tianji/commit/4d39cb5ef4d95626e600289a1e949e78ccd7906f))
+* add lighthouse endpoint ([28d982e](https://github.com/msgbyte/tianji/commit/28d982e497bfd04351c8495ec9ddd58fc205e771))
+* add lighthouse html report endpoint ([943f7f5](https://github.com/msgbyte/tianji/commit/943f7f594ba90aa037ab5cb1b057f496e8a5fcb2))
+* add logout button in switch workspace page ([6ce2f7f](https://github.com/msgbyte/tianji/commit/6ce2f7fd4dbcd56b5a5f493108138e8c8447619b))
+* add sortable group component ([ef30750](https://github.com/msgbyte/tianji/commit/ef307508026bf516d321da933c298d87efd0b902))
+* refactor sortable group component and add edit body component ([946ecaf](https://github.com/msgbyte/tianji/commit/946ecaf9f946dfb2d85541170a7441ba6e782e5a))
+
+
+### Others
+
+* add body spaces ([12b8ba9](https://github.com/msgbyte/tianji/commit/12b8ba95b7720d384f8ae607cea0f4133d5f4fc4))
+* add new editable text component which allow to change group title ([e323e10](https://github.com/msgbyte/tianji/commit/e323e104e03569b7131dc1aac1e15c548ebe8485))
+* add sortable group component which using react-beautiful-dnd ([91ade2a](https://github.com/msgbyte/tianji/commit/91ade2ab555e43dc36ec32c7e9cb2856ffccd5ae))
+* change edit style and logic, create new MonitorPicker component ([72a1e7b](https://github.com/msgbyte/tianji/commit/72a1e7b0249c69510af7650e19bf939ed88cf550))
+* fix ci problem and remove unused code ([95b51ca](https://github.com/msgbyte/tianji/commit/95b51ca2e160bf835aafb770e0a11b8ad0fc5858))
+* improve admin style in status page ([ed2141a](https://github.com/msgbyte/tianji/commit/ed2141af22a6103ea5be850eff57be7f24d9011b))
+* improve some style in server status page ([427e9e3](https://github.com/msgbyte/tianji/commit/427e9e3eb7684a58a4c2cb597283c5a5319d9dd3))
+* refactor server status edit form with react-hook-form ([6160d7b](https://github.com/msgbyte/tianji/commit/6160d7bcb9d3bf2a8b617b422e80fe7df8839967))
+* remove sender name in notification ([f309000](https://github.com/msgbyte/tianji/commit/f309000a0c3a58a4e1df9c44803ea6a0299fe9ac))
+* remove unused code and improve display view in status page ([f5151aa](https://github.com/msgbyte/tianji/commit/f5151aa2a4185714f1f988a2bad336b90f410b69))
+* update translation ([ef3d344](https://github.com/msgbyte/tianji/commit/ef3d34423b71969f9a9afee0f64394e17a66143f))
+* update translation ([8b86dcd](https://github.com/msgbyte/tianji/commit/8b86dcdceaf738cd27bbe6253825c9ef967c675f))
+* update translation ([42f41cd](https://github.com/msgbyte/tianji/commit/42f41cdbcb2a4452fbdcf6013451d6008d6d97f1))
+* upgrade @radix-ui/react-scroll-area version ([fc1e67e](https://github.com/msgbyte/tianji/commit/fc1e67e005fa7f4502807df1ab02c49b863bc4e4))
+
+## [1.14.7](https://github.com/msgbyte/tianji/compare/v1.14.6...v1.14.7) (2024-09-10)
+
+
+### Document
+
+* add document and website entry in app ([f74289f](https://github.com/msgbyte/tianji/commit/f74289ff0539b4cf4141eafbc6fc6cec12529357))
+
+
+### Others
+
+* improve data table resizer width to make it more easy to use ([2e60945](https://github.com/msgbyte/tianji/commit/2e609452b55c6aa957fdff3dd96b6b617bda13ed))
+* improve notification and feed channel filter logic ([e770e42](https://github.com/msgbyte/tianji/commit/e770e428936aa84c4ce0811c820ef4e43c2cdea3))
+* update sentry feed content ([1895ac7](https://github.com/msgbyte/tianji/commit/1895ac772cec64c92c490a1a06d78df2eae05191))
+
+## [1.14.6](https://github.com/msgbyte/tianji/compare/v1.14.5...v1.14.6) (2024-09-09)
+
+
+### Features
+
+* add unknown integration log ([d2afa54](https://github.com/msgbyte/tianji/commit/d2afa54301bcdd6a40fe5116b8191196c9b7bb33))
+
+## [1.14.5](https://github.com/msgbyte/tianji/compare/v1.14.4...v1.14.5) (2024-09-07)
+
+
+### Bug Fixes
+
+* fix row header style issue ([cf4531c](https://github.com/msgbyte/tianji/commit/cf4531c5ddc1758a2d11776f058559622771b311))
+
+## [1.14.4](https://github.com/msgbyte/tianji/compare/v1.14.3...v1.14.4) (2024-09-03)
+
+
+### Document
+
+* fix edit page url ([8ccace1](https://github.com/msgbyte/tianji/commit/8ccace127ba6aae012e5c164dbcaa42ee299196c))
+* update manual install to include code update ([2cc098a](https://github.com/msgbyte/tianji/commit/2cc098a5f1f184fa8e627e3d8d65a7910d9967c6))
+
+
+### Others
+
+* fix ci problem which cause build failed ([c4211c2](https://github.com/msgbyte/tianji/commit/c4211c270ffd6b1a6355a871676f0abed0f1e24f))
+
+## [1.14.3](https://github.com/msgbyte/tianji/compare/v1.14.2...v1.14.3) (2024-09-02)
+
+
+### Features
+
+* add feed event url support ([8534ab7](https://github.com/msgbyte/tianji/commit/8534ab7ba029e4c98a642f4c927902455e97d4a9))
+* add sentry webhook integration ([546055e](https://github.com/msgbyte/tianji/commit/546055e5559cf460e7d0f1dcce835e905baafc1e))
+
+
+### Bug Fixes
+
+* fix health bar style problem in page ([01d774d](https://github.com/msgbyte/tianji/commit/01d774d3958abd5ee15631eb771e22d5771f405a))
+
+## [1.14.2](https://github.com/msgbyte/tianji/compare/v1.14.1...v1.14.2) (2024-09-02)
+
+
+### Features
+
+* add archive feature ([3270164](https://github.com/msgbyte/tianji/commit/3270164710179a534692eabca77285dd28d887a7))
+* add curl feed api guide ([5588aca](https://github.com/msgbyte/tianji/commit/5588aca522646d88b7c9ddb5bff98e23c1d3bc15))
+* add feed archive page ([87b4000](https://github.com/msgbyte/tianji/commit/87b4000c4791a935a0f9247d1c219529105d0801))
+* add socket state ([e095a08](https://github.com/msgbyte/tianji/commit/e095a081b949880a088fd3e2512005d71d024769))
+* feishu add markdown syntax support ([33de808](https://github.com/msgbyte/tianji/commit/33de808f3e4e6a763fc36de96f24e01055907aba))
+
+
+### Document
+
+* update Chinese translation ([9fcc6dd](https://github.com/msgbyte/tianji/commit/9fcc6dda60a6496fb1909cdc5facd0ebb60e9448))
+
+
+### Others
+
+* improve feed event report style ([88f47db](https://github.com/msgbyte/tianji/commit/88f47db118968aa323b6ee0eac6b14e4fe9aa608))
+* update translations ([9966c12](https://github.com/msgbyte/tianji/commit/9966c1277c6bc8df74d9c3ca742b9e98c7577087))
+
+## [1.14.1](https://github.com/msgbyte/tianji/compare/v1.14.0...v1.14.1) (2024-08-29)
+
+
+### Others
+
+* update pnpm version ([b9f5582](https://github.com/msgbyte/tianji/commit/b9f5582a02afffaff5777c85126e91e243ef82aa))
+
+## [1.14.0](https://github.com/msgbyte/tianji/compare/v1.13.1...v1.14.0) (2024-08-29)
+
+
+### Features
+
+* add create workspace and switch workspace ([fac0838](https://github.com/msgbyte/tianji/commit/fac0838d8c7b14c7940170b733db0a33ca297b73))
+* add delete workspace endpoint ([6fecde0](https://github.com/msgbyte/tianji/commit/6fecde0caa422c25ddbb9ec564afb44031b761da))
+* add invite endpoint ([8c8b960](https://github.com/msgbyte/tianji/commit/8c8b960f61926aae415954dbef772e263d738ec5))
+* add invite user form ([e0e0449](https://github.com/msgbyte/tianji/commit/e0e044945f02451ad2b1db8041e91a738589cd5d))
+* add tick trpc endpoint ([7f33e2d](https://github.com/msgbyte/tianji/commit/7f33e2de0d0e0e1b4c2ff5d172f5d6c89e8dcd15))
+* add unstar feed ([446ddaf](https://github.com/msgbyte/tianji/commit/446ddafa0afb534e02f767457973a1594a190f8f))
+* add workspace page ([4918071](https://github.com/msgbyte/tianji/commit/491807165c7a4bd27b30961fdb3d525187d05ca3))
+
+
+### Bug Fixes
+
+* fix a style issue which workspace switch style broken with long name ([cbdb1c4](https://github.com/msgbyte/tianji/commit/cbdb1c4a079fcd19f03750dc3379f3e1aaaeb772))
+* fix some case(maybe) can not key problem ([b64ca8b](https://github.com/msgbyte/tianji/commit/b64ca8b300f2bcbbbcbdf95b4e0d9780c1f64b1b))
+* fix virtualize table loading and column style problem ([bb84661](https://github.com/msgbyte/tianji/commit/bb846616127e8ef823441b945390327a87b2f689))
+
+
+### Document
+
+* add private-policy page ([d136460](https://github.com/msgbyte/tianji/commit/d136460e39a69510e66952e76d42bca4016337a4))
+* update openapi files ([79a7a92](https://github.com/msgbyte/tianji/commit/79a7a923d247a2581cca5b0e912bcbe35a892851))
+* update website feed feature list ([ebd1e5e](https://github.com/msgbyte/tianji/commit/ebd1e5eb6648a424f078047125f31ce3a93bff03))
+
+
+### Others
+
+* add default error style problem ([3cc678f](https://github.com/msgbyte/tianji/commit/3cc678f09ec8d743f17b7b2f296475b2d37c8841))
+* fix ci problem ([f7e1c81](https://github.com/msgbyte/tianji/commit/f7e1c8114b38c740f37e69125bd31fb26e1c2a1f))
+* fix tsconfig problem in tsx ([40df49e](https://github.com/msgbyte/tianji/commit/40df49e1dbb5afda4a2d01b94e298e4f2dfaa2d5))
+* improve healthbar display, will responsive with container size ([3990b0a](https://github.com/msgbyte/tianji/commit/3990b0a872d963900f52a97e869e7f26227c8107))
+* update translation ([e983092](https://github.com/msgbyte/tianji/commit/e9830920378c71371946d526ef20335176cc8f18))
+* upgrade @radix-ui/react-scroll-area to resolve scroll problem ([b862dd7](https://github.com/msgbyte/tianji/commit/b862dd74273faa78c65de916dce0a8fdafe9e834))
+* upgrade package manager ([fa328fb](https://github.com/msgbyte/tianji/commit/fa328fb0bfe9ef47cce1d44ae16aee2628921e30))
+* workspace switcher style and submit form reset ([5f47831](https://github.com/msgbyte/tianji/commit/5f47831f8e3f8df48fd287f6c4a23cb65270c21b))
+
 ## [1.13.1](https://github.com/msgbyte/tianji/compare/v1.13.0...v1.13.1) (2024-08-16)
 
 

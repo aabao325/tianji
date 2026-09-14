@@ -1,45 +1,135 @@
-import { initTRPC, inferAsyncReturnType, TRPCError } from '@trpc/server';
+import { initTRPC, TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { jwtVerify } from '../middleware/auth.js';
 import { getWorkspaceUser } from '../model/workspace.js';
 import { ROLES, SYSTEM_ROLES } from '@tianji/shared';
-import type { Request } from 'express';
-import { OpenApiMeta } from 'trpc-openapi';
+import { OpenApiMeta } from 'trpc-to-openapi';
 import { getSession } from '@auth/express';
 import { authConfig } from '../model/auth.js';
 import { get } from 'lodash-es';
+import { promTrpcRequest } from '../utils/prometheus/client.js';
+import { verifyUserApiKey } from '../model/user.js';
+import { CreateExpressContextOptions } from '@trpc/server/adapters/express';
+import { parse as languageParse } from 'accept-language-parser';
+import { createWorkspaceMutationAuditLog } from '../model/auditLog.js';
 
-export async function createContext({ req }: { req: Request }) {
+const WORKSPACE_MUTATION_AUDIT_EXCLUDED_PATHS = new Set([
+  'aiGateway.testConnection',
+  'insights.warehouse.query.execute',
+  'monitor.testCustomScript',
+  'monitor.testNotifyScript',
+  'notification.test',
+  'sharedModule.validate',
+  'worker.testCode',
+  'workspace.previewCron',
+]);
+
+const WORKSPACE_MUTATION_AUDIT_EXISTING_PATHS = new Set([
+  'monitor.changeActive',
+  'monitor.regeneratePushToken',
+  'monitor.triggerMonitor',
+  'sharedModule.archive',
+  'sharedModule.publish',
+  'shortlink.create',
+  'shortlink.delete',
+  'shortlink.update',
+  'worker.delete',
+  'worker.execute',
+  'worker.rollbackToRevision',
+  'worker.toggleActive',
+  'worker.upsert',
+  'workspace.delete',
+  'workspace.tick',
+  'workspace.updateMemberRole',
+]);
+
+export async function createContext({ req }: CreateExpressContextOptions) {
   const authorization = req.headers['authorization'] ?? '';
   const token = authorization.replace('Bearer ', '');
+  const timezone = req.headers['timezone']
+    ? String(req.headers['timezone'])
+    : 'utc';
+  const language =
+    get(languageParse(req.headers['accept-language']), [0, 'code']) ?? 'en';
 
-  return { token, req };
+  let origin = '';
+  if (req.headers['origin']) {
+    origin = String(req.headers['origin']);
+  } else if (req.headers['x-forwarded-proto'] && req.headers['host']) {
+    origin = `${req.headers['x-forwarded-proto']}://${req.headers['host']}`;
+  } else if (req.headers['host']) {
+    origin = `${req.protocol}://${req.headers['host']}`;
+  }
+
+  return { token, timezone, language, req, origin };
 }
 
-type Context = inferAsyncReturnType<typeof createContext>;
+type Context = Awaited<ReturnType<typeof createContext>>;
 const t = initTRPC.context<Context>().meta<OpenApiMeta>().create();
 
 export type OpenApiMetaInfo = NonNullable<OpenApiMeta['openapi']>;
 
 export const middleware = t.middleware;
 export const router = t.router;
-export const publicProcedure = t.procedure;
+
+const prom = middleware(async (opts) => {
+  const path = opts.path;
+  const type = opts.type;
+
+  const endRequest = promTrpcRequest.startTimer({
+    route: path,
+    type,
+  });
+
+  try {
+    const res = await opts.next();
+
+    endRequest({
+      status: 'success',
+    });
+    return res;
+  } catch (err) {
+    endRequest({
+      status: 'error',
+    });
+
+    throw err;
+  }
+});
+
+export const publicProcedure = t.procedure.use(prom);
 
 const isUser = middleware(async (opts) => {
   // auth with token
   const token = opts.ctx.token;
 
   if (token) {
-    try {
-      const user = jwtVerify(token);
+    if (token.startsWith('sk_')) {
+      // auth with api key
+      const user = await verifyUserApiKey(token);
 
       return opts.next({
         ctx: {
-          user,
+          user: {
+            id: user.id,
+            username: user.username,
+            role: user.role,
+          },
         },
       });
-    } catch (err) {
-      throw new TRPCError({ code: 'UNAUTHORIZED', message: 'TokenInvalid' });
+    } else {
+      // auth with jwt
+      try {
+        const user = jwtVerify(token);
+
+        return opts.next({
+          ctx: {
+            user,
+          },
+        });
+      } catch (err) {
+        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'TokenInvalid' });
+      }
     }
   }
 
@@ -62,7 +152,7 @@ const isUser = middleware(async (opts) => {
   throw new TRPCError({ code: 'UNAUTHORIZED', message: 'No Token or Session' });
 });
 
-export const protectProedure = t.procedure.use(isUser);
+export const protectProedure = t.procedure.use(prom).use(isUser);
 
 const isSystemAdmin = isUser.unstable_pipe(async (opts) => {
   const { ctx, input } = opts;
@@ -74,26 +164,39 @@ const isSystemAdmin = isUser.unstable_pipe(async (opts) => {
   return opts.next();
 });
 
-export const systemAdminProcedure = t.procedure.use(isSystemAdmin);
-export const workspaceProcedure = protectProedure
+export const systemAdminProcedure = t.procedure.use(prom).use(isSystemAdmin);
+export const workspaceProcedure = publicProcedure
   .input(
     z.object({
-      workspaceId: z.string().cuid2(),
+      workspaceId: z.cuid2(),
     })
   )
-  .use(createWorkspacePermissionMiddleware());
-export const workspaceOwnerProcedure = protectProedure
+  .use(createWorkspacePermissionMiddleware([], true));
+
+export const workspaceAdminProcedure = publicProcedure
   .input(
     z.object({
-      workspaceId: z.string().cuid2(),
+      workspaceId: z.cuid2(),
     })
   )
-  .use(createWorkspacePermissionMiddleware([ROLES.owner]));
+  .use(createWorkspacePermissionMiddleware([ROLES.owner, ROLES.admin], true));
+
+export const workspaceOwnerProcedure = publicProcedure
+  .input(
+    z.object({
+      workspaceId: z.cuid2(),
+    })
+  )
+  .use(createWorkspacePermissionMiddleware([ROLES.owner], true));
 
 /**
  * Create a trpc middleware which help user check workspace permission
+ * NOTE: this middleware already include user auth, so we dont need use it under protectProedure which will trigger user auth twice.
  */
-function createWorkspacePermissionMiddleware(roles: ROLES[] = []) {
+function createWorkspacePermissionMiddleware(
+  roles: ROLES[] = [],
+  auditMutations = false
+) {
   return isUser.unstable_pipe(async (opts) => {
     const { ctx, input } = opts;
 
@@ -131,6 +234,29 @@ function createWorkspacePermissionMiddleware(roles: ROLES[] = []) {
       }
     }
 
-    return opts.next();
+    const result = await opts.next();
+
+    if (
+      auditMutations &&
+      result.ok &&
+      opts.type === 'mutation' &&
+      shouldAuditWorkspaceMutation(opts.path)
+    ) {
+      await createWorkspaceMutationAuditLog({
+        workspaceId,
+        path: opts.path,
+        input: await opts.getRawInput(),
+        actor: ctx.user,
+      });
+    }
+
+    return result;
   });
+}
+
+function shouldAuditWorkspaceMutation(path: string) {
+  return (
+    !WORKSPACE_MUTATION_AUDIT_EXCLUDED_PATHS.has(path) &&
+    !WORKSPACE_MUTATION_AUDIT_EXISTING_PATHS.has(path)
+  );
 }

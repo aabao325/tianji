@@ -17,11 +17,19 @@ export function parseTime(val: number) {
 }
 
 export function formatNumber(n: number): string {
+  if (typeof n !== 'number') {
+    n = Number(n);
+  }
+
   return millify(n, {
     lowercase: true,
   });
 }
 
+/**
+ * @deprecated
+ * maybe replace with package `pretty-ms`
+ */
 export function formatShortTime(val: number, formats = ['m', 's'], space = '') {
   const { days, hours, minutes, seconds, ms } = parseTime(val);
   let t = '';
@@ -48,4 +56,23 @@ export function generateRandomString(length: number): string {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
+}
+
+/**
+ * Remove falsy values from an object (undefined, null, '', 0, false)
+ */
+export function cleanObject(
+  obj: Record<string, any> | null = {}
+): Record<string, any> {
+  if (!obj) return {};
+
+  return Object.entries(obj).reduce(
+    (acc, [key, value]) => {
+      if (value) {
+        acc[key] = value;
+      }
+      return acc;
+    },
+    {} as Record<string, any>
+  );
 }

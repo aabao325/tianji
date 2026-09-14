@@ -39,31 +39,57 @@ export function useAuth() {
     }
   );
 
-  const loginWithOAuth = useEvent(async (provider: BuiltInProviderType) => {
-    let res: SignInResponse | undefined;
-    try {
-      res = await signIn(provider, {
-        redirect: false,
-      });
-      console.log('res', res);
-    } catch (err) {
-      toast.error(t('Login failed'));
-      throw err;
-    }
+  const loginWithEmail = useEvent(
+    async (email: string, callbackUrl?: string) => {
+      let res: SignInResponse | undefined;
+      try {
+        res = await signIn('email', {
+          email,
+          callbackUrl,
+          redirect: false,
+        });
+      } catch (err) {
+        toast.error(t('Login failed'));
+        throw err;
+      }
 
-    if (res?.error) {
-      toast.error(t('Login failed'));
-      throw new Error('Login failed');
-    }
+      if (res?.error) {
+        toast.error(t('Login failed, please check your email'));
+        throw new Error('Login failed');
+      }
 
-    const userInfo = await trpcUtils.user.info.fetch();
-    if (!userInfo) {
-      toast.error(t('Can not get current user info'));
-      throw new Error('Login failed, ');
+      return res?.url;
     }
+  );
 
-    return userInfo;
-  });
+  const loginWithOAuth = useEvent(
+    async (provider: BuiltInProviderType | 'custom', callbackUrl?: string) => {
+      let res: SignInResponse | undefined;
+      try {
+        res = await signIn(provider, {
+          callbackUrl,
+          redirect: false,
+        });
+        console.log('loginWithOAuth', res);
+      } catch (err) {
+        toast.error(t('Login failed'));
+        throw err;
+      }
+
+      if (res?.error) {
+        toast.error(t('Login failed'));
+        throw new Error('Login failed');
+      }
+
+      const userInfo = await trpcUtils.user.info.fetch();
+      if (!userInfo) {
+        toast.error(t('Can not get current user info'));
+        throw new Error('Login failed, ');
+      }
+
+      return userInfo;
+    }
+  );
 
   const logout = useEvent(async () => {
     await signOut({
@@ -76,6 +102,7 @@ export function useAuth() {
 
   return {
     loginWithPassword,
+    loginWithEmail,
     loginWithOAuth,
     logout,
   };

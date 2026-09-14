@@ -6,6 +6,8 @@ import { useCurrentWorkspaceId } from '../../store/user';
 import { sum } from 'lodash-es';
 import { formatNumber } from '../../utils/common';
 import { useTranslation } from '@i18next-toolkit/react';
+import { useCountryMap } from '@/utils/country';
+import { LoadingView } from '../LoadingView';
 
 type MetricsItemType = AppRouterOutput['website']['metrics'][number];
 
@@ -21,7 +23,12 @@ interface MetricsTableProps {
     | 'os'
     | 'device'
     | 'country'
-    | 'event';
+    | 'event'
+    | 'utm_source'
+    | 'utm_medium'
+    | 'utm_campaign'
+    | 'utm_term'
+    | 'utm_content';
   startAt: number;
   endAt: number;
 }
@@ -30,6 +37,14 @@ export const WebsiteMetricsTable: React.FC<MetricsTableProps> = React.memo(
     const { websiteId, title, type, startAt, endAt } = props;
     const workspaceId = useCurrentWorkspaceId();
     const { t } = useTranslation();
+    const countryMap = useCountryMap();
+    const labelMap: Record<string, string> = {
+      desktop: t('Desktop'),
+      laptop: t('Laptop'),
+      tablet: t('Tablet'),
+      mobile: t('Mobile'),
+      ...countryMap,
+    };
 
     const { isLoading, data: metrics = [] } = trpc.website.metrics.useQuery({
       workspaceId,
@@ -47,7 +62,11 @@ export const WebsiteMetricsTable: React.FC<MetricsTableProps> = React.memo(
         dataIndex: 'x',
         ellipsis: true,
         render: (val) =>
-          val ?? <span className="italic opacity-60">{t('(None)')}</span>,
+          val ? (
+            <span title={val}>{labelMap[val] ?? val}</span>
+          ) : (
+            <span className="italic opacity-60">{t('(None)')}</span>
+          ),
       },
       {
         title: title[1],
@@ -74,18 +93,19 @@ export const WebsiteMetricsTable: React.FC<MetricsTableProps> = React.memo(
     ];
 
     return (
-      <Table
-        rowKey="x"
-        loading={isLoading}
-        dataSource={metrics}
-        columns={columns}
-        pagination={{
-          pageSize: 10,
-          hideOnSinglePage: true,
-          showSizeChanger: false,
-        }}
-        size="small"
-      />
+      <LoadingView isLoading={isLoading}>
+        <Table
+          rowKey="x"
+          dataSource={metrics}
+          columns={columns}
+          pagination={{
+            pageSize: 10,
+            hideOnSinglePage: true,
+            showSizeChanger: false,
+          }}
+          size="small"
+        />
+      </LoadingView>
     );
   }
 );

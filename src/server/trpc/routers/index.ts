@@ -11,20 +11,38 @@ import { billingRouter } from './billing.js';
 import { telemetryRouter } from './telemetry.js';
 import { surveyRouter } from './survey.js';
 import { feedRouter } from './feed/index.js';
+import { aiRouter } from './ai.js';
+import { insightsRouter } from './insights/index.js';
+import { applicationRouter } from './application.js';
+import { aiGatewayRouter } from './aiGateway.js';
+import { aiRouterRouter } from './aiRouter.js';
+import { workerRouter } from './worker.js';
+import { shortlinkRouter } from './shortlink.js';
+import { pageRouter } from './page.js';
+import { sharedModuleRouter } from './sharedModule.js';
 
 export const appRouter = router({
+  ai: aiRouter,
+  aiGateway: aiGatewayRouter,
+  aiRouter: aiRouterRouter,
   global: globalRouter,
   user: userRouter,
   workspace: workspaceRouter,
   website: websiteRouter,
+  application: applicationRouter,
+  insights: insightsRouter,
   notification: notificationRouter,
   monitor: monitorRouter,
+  page: pageRouter,
   telemetry: telemetryRouter,
   survey: surveyRouter,
   serverStatus: serverStatusRouter,
   auditLog: auditLogRouter,
   billing: billingRouter,
   feed: feedRouter,
+  worker: workerRouter,
+  sharedModule: sharedModuleRouter,
+  shortlink: shortlinkRouter,
 });
 
 export type AppRouter = typeof appRouter;

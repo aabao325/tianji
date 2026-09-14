@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import type { WebsiteEventPayload } from '../model/website.js';
+import type { WebsiteEventPayload } from '../model/website/index.js';
 import { getClientIp } from 'request-ip';
 import isLocalhost from 'is-localhost-ip';
 import { browserName, detectOS, OperatingSystem } from 'detect-browser';
@@ -79,10 +79,34 @@ export function getIpAddress(req: IncomingMessage): string {
 }
 
 let lookup: Reader<CityResponse>;
+
+type LocationResult = {
+  country: string | undefined;
+  subdivision1: string | undefined;
+  subdivision2: string | undefined;
+  city: string | undefined;
+  longitude: number | undefined;
+  latitude: number | undefined;
+  accuracyRadius: number | undefined;
+};
+
+const locationCache = new Map<string, LocationResult | undefined>();
+const LOCATION_CACHE_MAX_SIZE = 10000;
+
 export async function getLocation(ip: string) {
+  // Ignore null
+  if (!ip) {
+    return;
+  }
+
   // Ignore local ips
   if (await isLocalhost(ip)) {
     return;
+  }
+
+  // Check cache first
+  if (locationCache.has(ip)) {
+    return locationCache.get(ip);
   }
 
   // Database lookup
@@ -93,10 +117,11 @@ export async function getLocation(ip: string) {
   const result = lookup.get(ip);
 
   if (!result) {
+    locationCache.set(ip, undefined);
     return;
   }
 
-  return {
+  const location: LocationResult = {
     country: result.country?.iso_code ?? result?.registered_country?.iso_code,
     subdivision1: result.subdivisions?.[0]?.iso_code,
     subdivision2: result.subdivisions?.[1]?.names?.en,
@@ -105,6 +130,18 @@ export async function getLocation(ip: string) {
     latitude: result.location?.latitude,
     accuracyRadius: result.location?.accuracy_radius,
   };
+
+  // Prevent cache from growing indefinitely
+  if (locationCache.size >= LOCATION_CACHE_MAX_SIZE) {
+    const firstKey = locationCache.keys().next().value;
+    if (firstKey) {
+      locationCache.delete(firstKey);
+    }
+  }
+
+  locationCache.set(ip, location);
+
+  return location;
 }
 
 function getRegionCode(

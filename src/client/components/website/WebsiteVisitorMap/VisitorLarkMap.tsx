@@ -1,3 +1,4 @@
+import { MapLibre } from '@antv/l7';
 import {
   FullscreenControl,
   LarkMap,
@@ -5,10 +6,11 @@ import {
   PointLayer,
   PointLayerProps,
 } from '@antv/larkmap';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { AppRouterOutput } from '../../../api/trpc';
 import { useGlobalConfig } from '../../../hooks/useConfig';
-import { useSettingsStore } from '../../../store/settings';
+import { useTheme } from '../../../store/settings';
+import './VisitorLarkMap.less';
 import { mapCenter } from './utils';
 
 const layerOptions: Omit<PointLayerProps, 'source'> = {
@@ -30,16 +32,58 @@ const layerOptions: Omit<PointLayerProps, 'source'> = {
   },
 };
 
-function useMapConfig(mapType: 'Mapbox' | 'Gaode' = 'Mapbox'): LarkMapProps {
+function useMapConfig(
+  mapType: 'Mapbox' | 'Gaode' | 'MapLibre' = 'Mapbox'
+): LarkMapProps {
   const { amapToken, mapboxToken } = useGlobalConfig();
-  const colorScheme = useSettingsStore((state) => state.colorScheme);
+  const colorScheme = useTheme();
 
   const baseOption: LarkMapProps['mapOptions'] = {
     center: [mapCenter.lng, mapCenter.lat],
     zoom: 0,
   };
 
-  if (mapType === 'Gaode') {
+  if (mapType === 'MapLibre') {
+    const style =
+      colorScheme === 'light'
+        ? 'https://tiles.openfreemap.org/styles/positron'
+        : 'https://tiles.openfreemap.org/styles/dark';
+
+    return {
+      map: new MapLibre({
+        ...baseOption,
+        style,
+        attributionControl: false,
+      }),
+      mapOptions: { style },
+      logoVisible: false,
+      onSceneLoaded: (scene) => {
+        const attribution = new (window as any).maplibregl.AttributionControl({
+          compact: true,
+        });
+        const map = scene.map as any;
+        const collapseAttribution = () => {
+          if (
+            !attribution._container.classList.contains(
+              'maplibregl-compact-show'
+            )
+          ) {
+            return;
+          }
+
+          attribution._updateCompactMinimize();
+          attribution._container.open = false;
+          map.off('sourcedata', collapseAttribution);
+          map.off('styledata', collapseAttribution);
+        };
+
+        map.addControl(attribution);
+        map.on('sourcedata', collapseAttribution);
+        map.on('styledata', collapseAttribution);
+        collapseAttribution();
+      },
+    };
+  } else if (mapType === 'Gaode') {
     return {
       mapType: 'Gaode',
       mapOptions: {
@@ -67,7 +111,8 @@ function useMapConfig(mapType: 'Mapbox' | 'Gaode' = 'Mapbox'): LarkMapProps {
 
 export const VisitorLarkMap: React.FC<{
   data: AppRouterOutput['website']['geoStats'];
-  mapType: 'Mapbox' | 'Gaode';
+  mapType: 'Mapbox' | 'Gaode' | 'MapLibre';
+  fullScreen?: boolean;
 }> = React.memo((props) => {
   const config = useMapConfig(props.mapType);
 
@@ -76,10 +121,22 @@ export const VisitorLarkMap: React.FC<{
     parser: { type: 'json', x: 'longitude', y: 'latitude' },
   };
 
+  const size = useMemo(() => {
+    if (props.data.length > 5000) {
+      return 3;
+    }
+
+    return 5;
+  }, [props.data.length]);
+
   return (
-    <LarkMap {...config} style={{ height: '60vh' }}>
+    <LarkMap
+      {...config}
+      className="visitor-lark-map"
+      style={{ height: props.fullScreen ? '100%' : '60vh' }}
+    >
       <FullscreenControl />
-      <PointLayer {...layerOptions} source={source} />
+      <PointLayer {...layerOptions} size={size} source={source} />
     </LarkMap>
   );
 });

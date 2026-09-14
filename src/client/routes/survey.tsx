@@ -6,9 +6,10 @@ import { Button } from '@/components/ui/button';
 import { useDataReady } from '@/hooks/useDataReady';
 import { useEvent } from '@/hooks/useEvent';
 import { Layout } from '@/components/layout';
-import { useCurrentWorkspaceId } from '@/store/user';
+import { useCurrentWorkspaceId, useHasAdminPermission } from '@/store/user';
 import { routeAuthBeforeLoad } from '@/utils/route';
 import { cn } from '@/utils/style';
+import { formatNumber } from '@/utils/common';
 import { useTranslation } from '@i18next-toolkit/react';
 import {
   createFileRoute,
@@ -28,18 +29,16 @@ function PageComponent() {
   const { data = [], isLoading } = trpc.survey.all.useQuery({
     workspaceId,
   });
-  const { data: allResultCount = {} } = trpc.survey.allResultCount.useQuery({
-    workspaceId,
-  });
   const navigate = useNavigate();
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
+  const hasAdminPermission = useHasAdminPermission();
 
   const items = data.map((item) => ({
     id: item.id,
     title: item.name,
-    number: allResultCount[item.id] ?? 0,
+    content: <SurveyResultCount surveyId={item.id} />,
     href: `/survey/${item.id}`,
   }));
 
@@ -71,14 +70,18 @@ function PageComponent() {
             <CommonHeader
               title={t('Survey')}
               actions={
-                <Button
-                  className={cn(pathname === '/survey/add' && '!bg-muted')}
-                  variant="outline"
-                  Icon={LuPlus}
-                  onClick={handleClickAdd}
-                >
-                  {t('Add')}
-                </Button>
+                <>
+                  {hasAdminPermission && (
+                    <Button
+                      className={cn(pathname === '/survey/add' && '!bg-muted')}
+                      variant="outline"
+                      Icon={LuPlus}
+                      onClick={handleClickAdd}
+                    >
+                      {t('Add')}
+                    </Button>
+                  )}
+                </>
               }
             />
           }
@@ -86,6 +89,7 @@ function PageComponent() {
           <CommonList
             hasSearch={true}
             items={items}
+            direction="horizontal"
             isLoading={isLoading}
             emptyDescription={t(
               'Not have any survey yet, create a survey to collect user feedback about your user service.'
@@ -94,5 +98,30 @@ function PageComponent() {
         </CommonWrapper>
       }
     />
+  );
+}
+
+function SurveyResultCount({ surveyId }: { surveyId: string }) {
+  const workspaceId = useCurrentWorkspaceId();
+  const { data: count } = trpc.survey.count.useQuery(
+    {
+      workspaceId,
+      surveyId,
+    },
+    {
+      trpc: {
+        context: {
+          skipBatch: true,
+        },
+      },
+    }
+  );
+
+  if (!count || count <= 0) return null;
+
+  return (
+    <span className="opacity-60" title={String(count)}>
+      {formatNumber(count)}
+    </span>
   );
 }

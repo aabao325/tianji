@@ -1,13 +1,15 @@
+import { TRPCError } from '@trpc/server';
+import { createId } from '@paralleldrive/cuid2';
 import { z } from 'zod';
 import {
   OpenApiMetaInfo,
   publicProcedure,
   router,
-  workspaceOwnerProcedure,
+  workspaceAdminProcedure,
   workspaceProcedure,
 } from '../../trpc.js';
 import { OPENAPI_TAG } from '../../../utils/const.js';
-import { OpenApiMeta } from 'trpc-openapi';
+import { OpenApiMeta } from 'trpc-to-openapi';
 import {
   FeedChannelModelSchema,
   FeedEventModelSchema,
@@ -18,7 +20,17 @@ import {
   feedIntegrationRouter,
 } from './integration.js';
 import { fetchDataByCursor } from '../../../utils/prisma.js';
-import { delFeedEventNotifyCache } from '../../../model/feed/event.js';
+import { delFeedEventNotifyCache } from '../../../model/feed/shared.js';
+import { getWorkspaceTierLimit } from '../../../model/billing/limit.js';
+import { isWorkspacePaused } from '../../../model/billing/workspace.js';
+import { feedStateRouter } from './state.js';
+import { requireWorkspaceFeedChannel } from './shared.js';
+
+const PublicFeedChannelSchema = FeedChannelModelSchema.pick({
+  id: true,
+  name: true,
+  publicShareId: true,
+});
 
 export const feedRouter = router({
   channels: workspaceProcedure
@@ -26,9 +38,9 @@ export const feedRouter = router({
       buildFeedOpenapi({
         method: 'GET',
         path: '/channels',
+        summary: 'Get all channels',
       })
     )
-    .input(z.object({}))
     .output(
       z.array(
         FeedChannelModelSchema.merge(
@@ -50,7 +62,11 @@ export const feedRouter = router({
         include: {
           _count: {
             select: {
-              events: true,
+              events: {
+                where: {
+                  archived: false,
+                },
+              },
             },
           },
         },
@@ -63,6 +79,7 @@ export const feedRouter = router({
       buildFeedOpenapi({
         method: 'GET',
         path: '/{channelId}/info',
+        summary: 'Get channel info',
       })
     )
     .input(
@@ -109,6 +126,7 @@ export const feedRouter = router({
       buildFeedOpenapi({
         method: 'POST',
         path: '/{channelId}/update',
+        summary: 'Update channel',
       })
     )
     .input(
@@ -120,6 +138,7 @@ export const feedRouter = router({
         .merge(
           FeedChannelModelSchema.pick({
             name: true,
+            webhookSignature: true,
             notifyFrequency: true,
           })
         )
@@ -133,8 +152,14 @@ export const feedRouter = router({
         .nullable()
     )
     .mutation(async ({ input }) => {
-      const { channelId, workspaceId, name, notifyFrequency, notificationIds } =
-        input;
+      const {
+        channelId,
+        workspaceId,
+        name,
+        webhookSignature,
+        notifyFrequency,
+        notificationIds,
+      } = input;
 
       const channel = await prisma.feedChannel.update({
         where: {
@@ -143,6 +168,7 @@ export const feedRouter = router({
         },
         data: {
           name,
+          webhookSignature,
           notifyFrequency,
           notifications: {
             set: notificationIds.map((id) => ({
@@ -165,12 +191,69 @@ export const feedRouter = router({
       buildFeedOpenapi({
         method: 'GET',
         path: '/{channelId}/fetchEventsByCursor',
+        summary: 'Fetch events',
         description: 'Fetch workspace feed channel events',
       })
     )
     .input(
       z.object({
         channelId: z.string(),
+        limit: z.number().min(1).max(100).default(50),
+        cursor: z.string().optional(),
+        archived: z.boolean().default(false),
+      })
+    )
+    .output(
+      z.object({
+        items: z.array(FeedEventModelSchema),
+        nextCursor: z.string().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const { workspaceId, channelId, cursor, limit, archived } = input;
+
+      await requireWorkspaceFeedChannel(workspaceId, channelId);
+
+      const { items, nextCursor } = await fetchDataByCursor(prisma.feedEvent, {
+        where: {
+          channelId,
+          archived,
+        },
+        select: {
+          id: true,
+          channelId: true,
+          createdAt: true,
+          updatedAt: true,
+          eventName: true,
+          eventContent: true,
+          tags: true,
+          source: true,
+          senderId: true,
+          senderName: true,
+          url: true,
+          important: true,
+          archived: true,
+        },
+        limit,
+        cursor,
+      });
+
+      return {
+        items,
+        nextCursor,
+      };
+    }),
+  fetchPublicEventsByCursor: publicProcedure
+    .meta(
+      buildFeedPublicOpenapi({
+        method: 'GET',
+        path: '/public/{shareId}/events',
+        description: 'Fetch public feed channel events by shareId',
+      })
+    )
+    .input(
+      z.object({
+        shareId: z.string(),
         limit: z.number().min(1).max(100).default(50),
         cursor: z.string().optional(),
       })
@@ -182,11 +265,40 @@ export const feedRouter = router({
       })
     )
     .query(async ({ input }) => {
-      const { channelId, cursor, limit } = input;
+      const { shareId, limit, cursor } = input;
+
+      const channel = await prisma.feedChannel.findFirst({
+        where: {
+          publicShareId: shareId,
+        },
+      });
+
+      if (!channel) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Channel not found',
+        });
+      }
 
       const { items, nextCursor } = await fetchDataByCursor(prisma.feedEvent, {
         where: {
-          channelId,
+          channelId: channel.id,
+          archived: false,
+        },
+        select: {
+          id: true,
+          channelId: true,
+          createdAt: true,
+          updatedAt: true,
+          eventName: true,
+          eventContent: true,
+          tags: true,
+          source: true,
+          senderId: true,
+          senderName: true,
+          url: true,
+          important: true,
+          archived: true,
         },
         limit,
         cursor,
@@ -197,11 +309,49 @@ export const feedRouter = router({
         nextCursor,
       };
     }),
-  createChannel: workspaceOwnerProcedure
+  getChannelByShareId: publicProcedure
+    .meta(
+      buildFeedPublicOpenapi({
+        method: 'GET',
+        path: '/public/{shareId}/info',
+        description: 'Fetch public feed channel info by shareId',
+      })
+    )
+    .input(
+      z.object({
+        shareId: z.string(),
+      })
+    )
+    .output(PublicFeedChannelSchema)
+    .query(async ({ input }) => {
+      const { shareId } = input;
+
+      const channel = await prisma.feedChannel.findFirst({
+        where: {
+          publicShareId: shareId,
+        },
+        select: {
+          id: true,
+          name: true,
+          publicShareId: true,
+        },
+      });
+
+      if (!channel?.publicShareId) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Channel not found',
+        });
+      }
+
+      return channel;
+    }),
+  createChannel: workspaceAdminProcedure
     .meta(
       buildFeedOpenapi({
         method: 'POST',
         path: '/createChannel',
+        summary: 'Create channel',
       })
     )
     .input(
@@ -224,11 +374,27 @@ export const feedRouter = router({
     .mutation(async ({ input }) => {
       const { name, workspaceId, notifyFrequency, notificationIds } = input;
 
+      const [limit, feedChannelCount] = await Promise.all([
+        getWorkspaceTierLimit(workspaceId),
+        prisma.feedChannel.count({
+          where: {
+            workspaceId,
+          },
+        }),
+      ]);
+      if (
+        limit.maxFeedChannelCount !== -1 &&
+        feedChannelCount >= limit.maxFeedChannelCount
+      ) {
+        throw new Error('You have reached your website limit');
+      }
+
       const channel = await prisma.feedChannel.create({
         data: {
           workspaceId,
           name,
           notifyFrequency,
+          publicShareId: createId(),
           notifications: {
             connect: notificationIds.map((id) => ({ id })),
           },
@@ -247,11 +413,86 @@ export const feedRouter = router({
         notificationIds: channel?.notifications.map((n) => n.id),
       };
     }),
-  deleteChannel: workspaceOwnerProcedure
+  refreshPublicShareId: workspaceAdminProcedure
+    .meta(
+      buildFeedOpenapi({
+        method: 'POST',
+        path: '/{channelId}/refreshPublicShare',
+        summary: 'Refresh public share',
+        description: 'Regenerate public share id for feed channel',
+      })
+    )
+    .input(
+      z.object({
+        channelId: z.string(),
+      })
+    )
+    .output(
+      z.object({
+        publicShareId: z.string().nullable(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { channelId, workspaceId } = input;
+
+      const channel = await prisma.feedChannel.update({
+        where: {
+          workspaceId,
+          id: channelId,
+        },
+        data: {
+          publicShareId: createId(),
+        },
+        select: {
+          publicShareId: true,
+        },
+      });
+
+      return channel;
+    }),
+  disablePublicShareId: workspaceAdminProcedure
+    .meta(
+      buildFeedOpenapi({
+        method: 'POST',
+        path: '/{channelId}/disablePublicShare',
+        summary: 'Disable public share',
+        description: 'Disable public share for feed channel',
+      })
+    )
+    .input(
+      z.object({
+        channelId: z.string(),
+      })
+    )
+    .output(
+      z.object({
+        publicShareId: z.string().nullable(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { channelId, workspaceId } = input;
+
+      const channel = await prisma.feedChannel.update({
+        where: {
+          workspaceId,
+          id: channelId,
+        },
+        data: {
+          publicShareId: null,
+        },
+        select: {
+          publicShareId: true,
+        },
+      });
+
+      return channel;
+    }),
+  deleteChannel: workspaceAdminProcedure
     .meta(
       buildFeedOpenapi({
         method: 'DELETE',
-        path: '/{channelId}',
+        path: '/{channelId}/del',
+        summary: 'Delete channel',
       })
     )
     .input(
@@ -288,15 +529,44 @@ export const feedRouter = router({
         senderId: true,
         senderName: true,
         important: true,
+        payload: true,
       }).merge(
         z.object({
           channelId: z.string(),
+          tags: z.array(z.string()).default([]),
         })
       )
     )
     .output(FeedEventModelSchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { channelId, ...data } = input;
+
+      const channel = await prisma.feedChannel.findUnique({
+        where: {
+          id: channelId,
+        },
+      });
+
+      if (!channel) {
+        throw new Error('Channel not found');
+      }
+
+      if (await isWorkspacePaused(channel.workspaceId)) {
+        throw new Error('Workspace is paused.');
+      }
+
+      if (channel.webhookSignature) {
+        const signature = ctx.req.headers['x-webhook-signature'];
+        if (!signature) {
+          throw new Error(
+            'This channel configured with webhook signature, but no signature found'
+          );
+        }
+
+        if (channel.webhookSignature !== signature) {
+          throw new Error('Invalid webhook signature');
+        }
+      }
 
       const event = await prisma.feedEvent.create({
         data: {
@@ -305,9 +575,95 @@ export const feedRouter = router({
         },
       });
 
-      return event;
+      return event as z.infer<typeof FeedEventModelSchema>;
+    }),
+  archiveEvent: workspaceAdminProcedure
+    .meta(
+      buildFeedPublicOpenapi({
+        method: 'PATCH',
+        path: '/{channelId}/{eventId}/archive',
+      })
+    )
+    .input(
+      z.object({
+        channelId: z.string(),
+        eventId: z.string(),
+      })
+    )
+    .output(z.void())
+    .mutation(async ({ input }) => {
+      const { workspaceId, channelId, eventId } = input;
+
+      await requireWorkspaceFeedChannel(workspaceId, channelId);
+
+      await prisma.feedEvent.update({
+        data: {
+          archived: true,
+        },
+        where: {
+          id: eventId,
+          channelId,
+        },
+      });
+    }),
+  unarchiveEvent: workspaceAdminProcedure
+    .meta(
+      buildFeedPublicOpenapi({
+        method: 'PATCH',
+        path: '/{channelId}/{eventId}/unarchive',
+      })
+    )
+    .input(
+      z.object({
+        channelId: z.string(),
+        eventId: z.string(),
+      })
+    )
+    .output(z.void())
+    .mutation(async ({ input }) => {
+      const { workspaceId, channelId, eventId } = input;
+
+      await requireWorkspaceFeedChannel(workspaceId, channelId);
+
+      await prisma.feedEvent.update({
+        data: {
+          archived: false,
+        },
+        where: {
+          id: eventId,
+          channelId,
+        },
+      });
+    }),
+  clearAllArchivedEvents: workspaceAdminProcedure
+    .meta(
+      buildFeedPublicOpenapi({
+        method: 'PATCH',
+        path: '/{channelId}/clearAllArchivedEvents',
+      })
+    )
+    .input(
+      z.object({
+        channelId: z.string(),
+      })
+    )
+    .output(z.number())
+    .mutation(async ({ input }) => {
+      const { workspaceId, channelId } = input;
+
+      await requireWorkspaceFeedChannel(workspaceId, channelId);
+
+      const res = await prisma.feedEvent.deleteMany({
+        where: {
+          channelId,
+          archived: true,
+        },
+      });
+
+      return res.count;
     }),
   integration: feedIntegrationRouter,
+  state: feedStateRouter,
 });
 
 function buildFeedOpenapi(meta: OpenApiMetaInfo): OpenApiMeta {

@@ -3,7 +3,12 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useTranslation } from '@i18next-toolkit/react';
 import { CommonWrapper } from '@/components/CommonWrapper';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useCurrentWorkspace } from '../../store/user';
+import {
+  useCurrentWorkspace,
+  useIsWorkspaceOwner,
+  useHasAdminPermission,
+  useUserStore,
+} from '../../store/user';
 import { CommonHeader } from '@/components/CommonHeader';
 import {
   Card,
@@ -12,16 +17,8 @@ import {
   CardHeader,
 } from '@/components/ui/card';
 import { Typography } from 'antd';
-import {
-  AppRouterOutput,
-  defaultErrorHandler,
-  defaultSuccessHandler,
-  trpc,
-} from '@/api/trpc';
-import { createColumnHelper, DataTable } from '@/components/DataTable';
+import { defaultErrorHandler, defaultSuccessHandler, trpc } from '@/api/trpc';
 import { useMemo, useState } from 'react';
-import { get } from 'lodash-es';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import {
   Form,
@@ -34,9 +31,26 @@ import {
 } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
-import { useEventWithLoading } from '@/hooks/useEvent';
+import { useEvent, useEventWithLoading } from '@/hooks/useEvent';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { AlertConfirm } from '@/components/AlertConfirm';
+import { ROLES } from '@tianji/shared';
+import { cn } from '@/utils/style';
+import { Separator } from '@/components/ui/separator';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { getTimezoneList } from '@/utils/date';
+import { useWorkspaceMembers } from '@/components/workspace/useWorkspaceMembers';
+import { useGlobalConfig } from '@/hooks/useConfig';
+import { SimpleTooltip } from '@/components/ui/tooltip';
+import { LuTriangleAlert } from 'react-icons/lu';
+import { toast } from 'sonner';
 
 export const Route = createFileRoute('/settings/workspace')({
   beforeLoad: routeAuthBeforeLoad,
@@ -44,74 +58,93 @@ export const Route = createFileRoute('/settings/workspace')({
 });
 
 const inviteFormSchema = z.object({
-  email: z.string().email(),
+  emailOrId: z.string(),
 });
 
 type InviteFormValues = z.infer<typeof inviteFormSchema>;
 
-type MemberInfo = AppRouterOutput['workspace']['members'][number];
-const columnHelper = createColumnHelper<MemberInfo>();
-
 function PageComponent() {
   const { t } = useTranslation();
-  const { id: workspaceId, name } = useCurrentWorkspace();
-  const { data: members = [], refetch: refetchMembers } =
-    trpc.workspace.members.useQuery({
-      workspaceId,
-    });
+  const { id: workspaceId, name, role, settings } = useCurrentWorkspace();
+  const hasAdminPermission = useHasAdminPermission();
+  const isWorkspaceOwner = useIsWorkspaceOwner();
+  const trpcUtils = trpc.useUtils();
+  const updateCurrentWorkspaceName = useUserStore(
+    (state) => state.updateCurrentWorkspaceName
+  );
+  const updateCurrentWorkspaceSettings = useUserStore(
+    (state) => state.updateCurrentWorkspaceSettings
+  );
+  const globalConfig = useGlobalConfig();
+  const smtpUnavailableMessage = t(
+    'SMTP service is not configured on the server, invitation emails will not be sent'
+  );
+
+  const { tableEl: workspaceMembersTable } = useWorkspaceMembers();
   const form = useForm<InviteFormValues>({
     resolver: zodResolver(inviteFormSchema),
     defaultValues: {
-      email: '',
+      emailOrId: '',
     },
   });
   const inviteMutation = trpc.workspace.invite.useMutation({
     onSuccess: defaultSuccessHandler,
     onError: defaultErrorHandler,
   });
+  const renameWorkspaceMutation = trpc.workspace.rename.useMutation({
+    onSuccess: defaultSuccessHandler,
+    onError: defaultErrorHandler,
+  });
+  const deleteWorkspaceMutation = trpc.workspace.delete.useMutation({
+    onSuccess: defaultSuccessHandler,
+    onError: defaultErrorHandler,
+  });
+  const updateSettings = trpc.workspace.updateSettings.useMutation({
+    onSuccess: defaultSuccessHandler,
+    onError: defaultErrorHandler,
+  });
+  const recheckPauseStatusMutation =
+    trpc.workspace.recheckPauseStatus.useMutation({
+      onSuccess: defaultSuccessHandler,
+      onError: defaultErrorHandler,
+    });
 
-  const [handleInvite, isLoading] = useEventWithLoading(
+  const [renameWorkspaceName, setRenameWorkspaceName] = useState('');
+  const [handleRename, isRenameLoading] = useEventWithLoading(async () => {
+    await renameWorkspaceMutation.mutateAsync({
+      workspaceId,
+      name: renameWorkspaceName,
+    });
+
+    updateCurrentWorkspaceName(renameWorkspaceName);
+  });
+
+  const [handleInvite, isInviteLoading] = useEventWithLoading(
     async (values: InviteFormValues) => {
       await inviteMutation.mutateAsync({
         workspaceId,
-        targetUserEmail: values.email,
+        emailOrId: values.emailOrId,
       });
       form.reset();
 
-      refetchMembers();
+      trpcUtils.workspace.members.invalidate({
+        workspaceId,
+      });
     }
   );
 
-  const columns = useMemo(() => {
-    return [
-      columnHelper.accessor(
-        (data) =>
-          get(data, ['user', 'nickname']) || get(data, ['user', 'username']),
-        {
-          header: t('Name'),
-          size: 300,
-        }
-      ),
-      columnHelper.accessor('user.email', {
-        header: t('Email'),
-        size: 130,
-        cell: (props) => {
-          return (
-            <span>
-              {props.getValue()}
-              {props.row.original.user.emailVerified && (
-                <Badge className="ml-1">{t('Verified')}</Badge>
-              )}
-            </span>
-          );
-        },
-      }),
-      columnHelper.accessor('role', {
-        header: t('Role'),
-        size: 130,
-      }),
-    ];
-  }, [t]);
+  const handleUpdateSettings = useEvent(async (key: string, value: string) => {
+    const { settings } = await updateSettings.mutateAsync({
+      workspaceId,
+      settings: {
+        [key]: value,
+      },
+    });
+
+    updateCurrentWorkspaceSettings(settings);
+  });
+
+  const timezoneList = useMemo(() => getTimezoneList(), []);
 
   return (
     <CommonWrapper header={<CommonHeader title={t('Workspace')} />}>
@@ -123,6 +156,10 @@ function PageComponent() {
             </CardHeader>
             <CardContent>
               <div>
+                <span className="mr-2">{t('Current Role')}:</span>
+                <span className="font-semibold">{role}</span>
+              </div>
+              <div>
                 <span className="mr-2">{t('Workspace ID')}:</span>
                 <span>
                   <Typography.Text code={true} copyable={true}>
@@ -133,21 +170,74 @@ function PageComponent() {
             </CardContent>
           </Card>
 
+          <Card>
+            <CardHeader className="text-lg font-bold">
+              {t('General')}
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-4">
+                <div className="flex-1">{t('Timezone')}</div>
+                <div>
+                  <Select
+                    value={settings['timezone'] ?? 'utc'}
+                    onValueChange={(value) =>
+                      handleUpdateSettings('timezone', value)
+                    }
+                  >
+                    <SelectTrigger className="w-[240px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {timezoneList.map((item) => (
+                        <SelectItem key={item.value} value={item.value}>
+                          {item.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleInvite)}>
+            <form
+              onSubmit={form.handleSubmit(handleInvite)}
+              className={cn(!hasAdminPermission && 'opacity-50')}
+            >
               <Card>
                 <CardHeader className="text-lg font-bold">
-                  {t('Invite new members by email address')}
+                  <div className="flex items-center gap-2">
+                    <span>{t('Invite new members by email address')}</span>
+                    {!globalConfig.smtpAvailable && (
+                      <SimpleTooltip content={smtpUnavailableMessage}>
+                        <span
+                          role="img"
+                          aria-label={smtpUnavailableMessage}
+                          tabIndex={0}
+                          className="inline-flex cursor-help"
+                        >
+                          <LuTriangleAlert
+                            aria-hidden="true"
+                            className="h-4 w-4 text-yellow-500"
+                          />
+                        </span>
+                      </SimpleTooltip>
+                    )}
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <FormField
                     control={form.control}
-                    name="email"
+                    name="emailOrId"
                     render={({ field }) => (
                       <FormItem className="max-w-[320px]">
                         <FormLabel />
                         <FormControl>
-                          <Input placeholder="jane@example.com" {...field} />
+                          <Input
+                            placeholder="jane@example.com or userId"
+                            {...field}
+                          />
                         </FormControl>
                         <FormDescription />
                         <FormMessage />
@@ -157,7 +247,11 @@ function PageComponent() {
                 </CardContent>
 
                 <CardFooter>
-                  <Button type="submit" loading={isLoading}>
+                  <Button
+                    type="submit"
+                    loading={isInviteLoading}
+                    disabled={!hasAdminPermission}
+                  >
                     {t('Invite')}
                   </Button>
                 </CardFooter>
@@ -169,10 +263,98 @@ function PageComponent() {
             <CardHeader className="text-lg font-bold">
               {t('Members')}
             </CardHeader>
-            <CardContent>
-              <DataTable columns={columns} data={members} />
-            </CardContent>
+            <CardContent>{workspaceMembersTable}</CardContent>
           </Card>
+
+          {role === ROLES.owner && (
+            <Card>
+              <CardHeader className="text-lg font-bold">
+                {t('Danger Zone')}
+              </CardHeader>
+              <CardContent>
+                <div>
+                  <div className="flex items-center gap-2 text-left">
+                    <Input
+                      className="w-60"
+                      placeholder={t('New Workspace Name')}
+                      value={renameWorkspaceName}
+                      onChange={(e) => setRenameWorkspaceName(e.target.value)}
+                    />
+
+                    <AlertConfirm
+                      title={'Confirm to rename this workspace?'}
+                      description={`${name} => ${renameWorkspaceName}`}
+                      onConfirm={handleRename}
+                    >
+                      <Button
+                        type="button"
+                        loading={isRenameLoading}
+                        disabled={
+                          !renameWorkspaceName || name === renameWorkspaceName
+                        }
+                      >
+                        {t('Rename')}
+                      </Button>
+                    </AlertConfirm>
+                  </div>
+
+                  <Separator className="my-4" />
+
+                  {isWorkspaceOwner && (
+                    <div>
+                      <div className="text-muted-foreground mb-2 text-sm">
+                        {t(
+                          'Manually check workspace usage and update pause status based on current limits'
+                        )}
+                      </div>
+                      <Button
+                        type="button"
+                        loading={recheckPauseStatusMutation.isPending}
+                        onClick={async () => {
+                          await recheckPauseStatusMutation.mutateAsync({
+                            workspaceId,
+                          });
+                          toast.success(
+                            t(
+                              'Recheck Pause Status Success, please reload window.'
+                            )
+                          );
+                        }}
+                      >
+                        {t('Recheck Pause Status')}
+                      </Button>
+                    </div>
+                  )}
+
+                  <Separator className="my-4" />
+
+                  <AlertConfirm
+                    title={'Confirm to delete this workspace'}
+                    description={t(
+                      'All content in this workspace will be destory and can not recover.'
+                    )}
+                    onConfirm={async () => {
+                      await deleteWorkspaceMutation.mutateAsync({
+                        workspaceId,
+                      });
+
+                      setTimeout(() => {
+                        window.location.reload();
+                      }, 1000);
+                    }}
+                  >
+                    <Button
+                      type="button"
+                      loading={deleteWorkspaceMutation.isPending}
+                      variant="destructive"
+                    >
+                      {t('Delete Workspace')}
+                    </Button>
+                  </AlertConfirm>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </ScrollArea>
     </CommonWrapper>

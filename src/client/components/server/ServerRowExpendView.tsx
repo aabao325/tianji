@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import {
   ServerStatusInfo,
   ServerStatusDockerContainerPayload,
+  ProcessInfo,
 } from '../../../types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Empty } from 'antd';
@@ -13,8 +14,15 @@ import { filesize } from 'filesize';
 import { UpDownCounter } from '../UpDownCounter';
 import dayjs from 'dayjs';
 import { Switch } from '../ui/switch';
+import { trpc } from '@/api/trpc';
+import { useCurrentWorkspaceId } from '@/store/user';
+import {
+  TimeEventChart,
+  useTimeEventChartConfig,
+} from '../chart/TimeEventChart';
 
 const columnHelper = createColumnHelper<ServerStatusDockerContainerPayload>();
+const processColumnHelper = createColumnHelper<ProcessInfo>();
 
 export const ServerRowExpendView: React.FC<{ row: ServerStatusInfo }> =
   React.memo((props) => {
@@ -116,18 +124,57 @@ export const ServerRowExpendView: React.FC<{ row: ServerStatusInfo }> =
       ];
     }, [t]);
 
+    const cpuColumns = useMemo(() => {
+      return [
+        processColumnHelper.accessor('name', { header: t('Name'), size: 150 }),
+        processColumnHelper.accessor('pid', { header: 'PID', size: 80 }),
+        processColumnHelper.accessor('cpu', {
+          header: 'CPU(%)',
+          size: 90,
+          cell: (props) => `${props.getValue().toFixed(1)}%`,
+        }),
+      ];
+    }, [t]);
+
+    const memColumns = useMemo(() => {
+      return [
+        processColumnHelper.accessor('name', { header: t('Name'), size: 150 }),
+        processColumnHelper.accessor('pid', { header: 'PID', size: 80 }),
+        processColumnHelper.accessor('memory', {
+          header: t('Memory'),
+          size: 120,
+          cell: (props) => filesize(props.getValue() * 1024, { base: 2 }),
+        }),
+      ];
+    }, [t]);
+
     const data = showAll
       ? row.payload.docker
       : row.payload.docker?.filter((item) => item.state === 'running');
+
+    const workspaceId = useCurrentWorkspaceId();
+    const { data: history = [] } = trpc.serverStatus.history.useQuery({
+      workspaceId,
+      name: row.name,
+    });
+
+    const chartData = useMemo(() => {
+      return history.map((h) => ({
+        date: dayjs(h.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
+        cpu: h.payload.cpu,
+        memory: (h.payload.memory_used / h.payload.memory_total) * 100,
+      }));
+    }, [history]);
+
+    const chartConfig = useTimeEventChartConfig(chartData);
 
     return (
       <div className="p-2">
         <Tabs defaultValue="docker">
           <TabsList>
             <TabsTrigger value="docker">Docker</TabsTrigger>
-            <TabsTrigger value="history" disabled={true}>
-              History(Comming Soon)
-            </TabsTrigger>
+            <TabsTrigger value="process">{t('Process')}</TabsTrigger>
+            <TabsTrigger value="history">{t('History')}</TabsTrigger>
           </TabsList>
           <TabsContent value="docker">
             {!row.payload.docker ? (
@@ -147,7 +194,46 @@ export const ServerRowExpendView: React.FC<{ row: ServerStatusInfo }> =
               </div>
             )}
           </TabsContent>
-          <TabsContent value="history">Comming Soon</TabsContent>
+          <TabsContent value="process">
+            <div className="space-y-4">
+              <div>
+                <div className="mb-2 font-medium">
+                  {t('Top CPU Processes')}
+                </div>
+                <DataTable
+                  columns={cpuColumns}
+                  data={row.payload.top_cpu_processes ?? []}
+                />
+              </div>
+              <div>
+                <div className="mb-2 font-medium">
+                  {t('Top Memory Processes')}
+                </div>
+                <DataTable
+                  columns={memColumns}
+                  data={row.payload.top_memory_processes ?? []}
+                />
+              </div>
+            </div>
+          </TabsContent>
+          <TabsContent value="history">
+            {chartData.length === 0 ? (
+              <div className="text-muted-foreground flex h-32 items-center justify-center">
+                {t('No Data')}
+              </div>
+            ) : (
+              <TimeEventChart
+                className="h-[400px] w-full"
+                data={chartData}
+                unit="minute"
+                drawDashLine={false}
+                chartConfig={chartConfig}
+                chartType="line"
+                yAxisDomain={[0, 100]}
+                valueFormatter={(v) => `${v.toFixed(2)}%`}
+              />
+            )}
+          </TabsContent>
         </Tabs>
       </div>
     );

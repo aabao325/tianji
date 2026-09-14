@@ -4,7 +4,7 @@ import { MonitorModelSchema } from '../../prisma/zod/index.js';
 // Match prisma `JsonValue`
 export const jsonFieldSchema = z.union([
   z.null(),
-  z.record(z.any()),
+  z.record(z.string(), z.any()),
   z.array(z.any()),
   z.string(),
   z.boolean(),
@@ -19,6 +19,8 @@ export const workspaceDashboardLayoutSchema = z.object({
 export const workspaceSchema = z.object({
   id: z.string(),
   name: z.string(),
+  settings: z.record(z.string(), z.any()),
+  paused: z.boolean(),
 });
 
 export const userInfoSchema = z.object({
@@ -31,7 +33,7 @@ export const userInfoSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
-  currentWorkspace: workspaceSchema,
+  currentWorkspaceId: z.string().nullable(),
   workspaces: z.array(
     z.object({
       role: z.string(),

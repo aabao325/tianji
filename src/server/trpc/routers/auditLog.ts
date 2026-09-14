@@ -1,10 +1,14 @@
 import { z } from 'zod';
-import { OpenApiMetaInfo, router, workspaceProcedure } from '../trpc.js';
+import {
+  OpenApiMetaInfo,
+  router,
+  workspaceProcedure,
+} from '../trpc.js';
 import { OPENAPI_TAG } from '../../utils/const.js';
 import { WorkspaceAuditLogModelSchema } from '../../prisma/zod/index.js';
 import { prisma } from '../../model/_client.js';
 import { fetchDataByCursor } from '../../utils/prisma.js';
-import { OpenApiMeta } from 'trpc-openapi';
+import { OpenApiMeta } from 'trpc-to-openapi';
 
 export const auditLogRouter = router({
   fetchByCursor: workspaceProcedure
@@ -12,6 +16,7 @@ export const auditLogRouter = router({
       buildAuditLogOpenapi({
         method: 'GET',
         path: '/fetchByCursor',
+        summary: 'Fetch audit log',
         description: 'Fetch workspace audit log',
       })
     )

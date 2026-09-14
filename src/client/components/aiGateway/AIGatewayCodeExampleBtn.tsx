@@ -1,0 +1,481 @@
+import React, { useMemo, useState } from 'react';
+import {
+  DialogHeader,
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { useTranslation } from '@i18next-toolkit/react';
+import { LuCodeXml } from 'react-icons/lu';
+import { trpc } from '@/api/trpc';
+import { useCurrentWorkspaceId } from '@/store/user';
+import { CodeExample } from '../CodeExample';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  ANTHROPIC_EXAMPLE_MODEL,
+  GEMINI_EXAMPLE_MODEL,
+  OPENAI_EXAMPLE_MODEL,
+  OPENROUTER_OPENAI_EXAMPLE_MODEL,
+} from '@/components/aiModelExamples';
+
+interface AIGatewayCodeExampleBtnProps {
+  gatewayId: string;
+}
+
+// Define AI provider types
+type AIProvider =
+  | 'openai'
+  | 'deepseek'
+  | 'openrouter'
+  | 'anthropic'
+  | 'gemini-cli'
+  | 'gemini'
+  | 'custom';
+
+// Define interface and models for each AI provider
+interface ProviderConfig {
+  baseUrl: string; // Base URL
+  defaultModel: string; // Default model
+  description?: string; // Description
+  label: string; // Display name
+}
+
+export const AIGatewayCodeExampleBtn: React.FC<AIGatewayCodeExampleBtnProps> =
+  React.memo((props) => {
+    const { gatewayId } = props;
+    const workspaceId = useCurrentWorkspaceId();
+    const { t } = useTranslation();
+    const [selectedProvider, setSelectedProvider] =
+      useState<AIProvider>('openai');
+
+    const { data: gateway } = trpc.aiGateway.info.useQuery({
+      workspaceId,
+      gatewayId,
+    });
+
+    // Define configurations for different providers
+    const providerConfigs: Record<AIProvider, ProviderConfig> = useMemo(
+      () => ({
+        openai: {
+          baseUrl: '/api/ai/${workspaceId}/${gatewayId}/openai',
+          defaultModel: OPENAI_EXAMPLE_MODEL,
+          description: t('OpenAI API compatible'),
+          label: 'OpenAI API',
+        },
+        deepseek: {
+          baseUrl: '/api/ai/${workspaceId}/${gatewayId}/deepseek',
+          defaultModel: 'deepseek-chat',
+          description: t('Deepseek API compatible'),
+          label: 'Deepseek API',
+        },
+        openrouter: {
+          baseUrl: '/api/ai/${workspaceId}/${gatewayId}/openrouter',
+          defaultModel: OPENROUTER_OPENAI_EXAMPLE_MODEL,
+          description: t('OpenRouter API compatible'),
+          label: 'OpenRouter API',
+        },
+        anthropic: {
+          baseUrl: '/api/ai/${workspaceId}/${gatewayId}/anthropic',
+          defaultModel: ANTHROPIC_EXAMPLE_MODEL,
+          description: t('Anthropic API compatible'),
+          label: 'Anthropic API',
+        },
+        'gemini-cli': {
+          baseUrl: '/api/ai/${workspaceId}/${gatewayId}/custom',
+          defaultModel: GEMINI_EXAMPLE_MODEL,
+          label: 'Gemini CLI',
+        },
+        gemini: {
+          baseUrl: '/api/ai/${workspaceId}/${gatewayId}/custom',
+          defaultModel: GEMINI_EXAMPLE_MODEL,
+          label: 'Gemini API',
+        },
+        custom: {
+          baseUrl: '/api/ai/${workspaceId}/${gatewayId}/custom',
+          defaultModel: 'custom-model',
+          description: t('Custom model API with your own settings'),
+          label: 'Custom API',
+        },
+      }),
+      [t]
+    );
+
+    const isAnthropicNative = (provider: AIProvider) =>
+      provider === 'anthropic';
+
+    const generateOpenAITemplate = (
+      baseUrl: string,
+      model: string,
+      language: string
+    ) => {
+      switch (language) {
+        case 'nodejs':
+          return `const axios = require('axios');
+
+async function callAIGateway() {
+  try {
+    const response = await axios.post(
+      '${window.location.origin}${baseUrl}/v1/chat/completions',
+      {
+        messages: [
+          {
+            role: "system",
+            content: "You are an AI assistant"
+          },
+          {
+            role: "user",
+            content: "Hello"
+          }
+        ],
+        model: "${model}"
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer <YOUR_API_KEY>"
+        }
+      }
+    );
+    console.log(response.data);
+  } catch (error) {
+    console.error('Request failed:', error);
+  }
+}
+
+callAIGateway();`;
+
+        case 'python':
+          return `import requests
+import json
+
+def call_ai_gateway():
+    url = '${window.location.origin}${baseUrl}/v1/chat/completions'
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer <YOUR_API_KEY>"
+    }
+
+    data = {
+        "messages": [
+            {
+                "role": "system",
+                "content": "You are an AI assistant"
+            },
+            {
+                "role": "user",
+                "content": "Hello"
+            }
+        ],
+        "model": "${model}"
+    }
+
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+
+    if response.status_code == 200:
+        print(response.json())
+    else:
+        print(f'Request failed: {response.status_code}')
+
+call_ai_gateway()`;
+
+        case 'curl':
+          return `curl -X POST '${window.location.origin}${baseUrl}/v1/chat/completions' \\
+  -H 'Content-Type: application/json' \\
+  -H 'Authorization: Bearer <YOUR_API_KEY>' \\
+  -d '{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an AI assistant"
+    },
+    {
+      "role": "user",
+      "content": "Hello"
+    }
+  ],
+  "model": "${model}"
+}'`;
+
+        default:
+          return '';
+      }
+    };
+
+    const generateAnthropicTemplate = (
+      baseUrl: string,
+      model: string,
+      language: string
+    ) => {
+      switch (language) {
+        case 'nodejs':
+          return `const Anthropic = require('@anthropic-ai/sdk');
+
+const client = new Anthropic({
+  apiKey: '<YOUR_API_KEY>',
+  baseURL: '${window.location.origin}${baseUrl}',
+});
+
+async function callAIGateway() {
+  const message = await client.messages.create({
+    model: '${model}',
+    max_tokens: 1024,
+    system: 'You are an AI assistant',
+    messages: [
+      { role: 'user', content: 'Hello' }
+    ],
+  });
+  console.log(message.content);
+}
+
+callAIGateway();
+
+// Claude Code: set ANTHROPIC_BASE_URL=${window.location.origin}${baseUrl}`;
+
+        case 'python':
+          return `import anthropic
+
+client = anthropic.Anthropic(
+    api_key="<YOUR_API_KEY>",
+    base_url="${window.location.origin}${baseUrl}",
+)
+
+message = client.messages.create(
+    model="${model}",
+    max_tokens=1024,
+    system="You are an AI assistant",
+    messages=[
+        {"role": "user", "content": "Hello"}
+    ],
+)
+
+print(message.content)
+
+# Claude Code: set ANTHROPIC_BASE_URL=${window.location.origin}${baseUrl}`;
+
+        case 'curl':
+          return `curl -X POST '${window.location.origin}${baseUrl}/v1/messages' \\
+  -H 'Content-Type: application/json' \\
+  -H 'x-api-key: <YOUR_API_KEY>' \\
+  -H 'anthropic-version: 2023-06-01' \\
+  -d '{
+  "model": "${model}",
+  "max_tokens": 1024,
+  "system": "You are an AI assistant",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hello"
+    }
+  ]
+}'`;
+
+        default:
+          return '';
+      }
+    };
+
+    const generateCode = (provider: AIProvider, language: string) => {
+      const config = providerConfigs[provider];
+      const baseUrl = config.baseUrl
+        .replace('${workspaceId}', workspaceId)
+        .replace('${gatewayId}', gatewayId);
+      const model = config.defaultModel;
+
+      if (provider === 'gemini-cli' || provider === 'gemini') {
+        const quote = (value: string) => `'${value.replaceAll("'", "'\\''")}'`;
+        const geminiModel = gateway?.customModelName || model;
+        if (provider === 'gemini-cli') {
+          return `export GOOGLE_GEMINI_BASE_URL=${quote(window.location.origin + baseUrl)}
+export GEMINI_API_KEY='<YOUR_API_KEY>'
+export GEMINI_MODEL=${quote(geminiModel)}
+gemini`;
+        }
+        const modelPath = geminiModel
+          .split('/')
+          .map(encodeURIComponent)
+          .join('/');
+        return `curl -N ${quote(`${window.location.origin}${baseUrl}/v1beta/models/${modelPath}:streamGenerateContent?alt=sse`)} \\
+  -H 'Content-Type: application/json' \\
+  -H 'x-goog-api-key: <YOUR_API_KEY>' \\
+  -d '{"contents":[{"role":"user","parts":[{"text":"Hello"}]}]}'`;
+      }
+      if (isAnthropicNative(provider)) {
+        return generateAnthropicTemplate(baseUrl, model, language);
+      }
+      return generateOpenAITemplate(baseUrl, model, language);
+    };
+
+    const currentConfig = providerConfigs[selectedProvider];
+    const isGemini =
+      selectedProvider === 'gemini-cli' || selectedProvider === 'gemini';
+
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline" size="icon" Icon={LuCodeXml} />
+        </DialogTrigger>
+        <DialogContent className="flex max-h-[90vh] max-w-3xl flex-col overflow-y-auto">
+          <DialogHeader className="mb-4">
+            <DialogTitle>{t('AI Gateway Usage')}</DialogTitle>
+            <DialogDescription>
+              {t(
+                'Use these code examples to integrate the AI Gateway in your project'
+              )}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex-1 overflow-auto">
+            <div className="space-y-4">
+              {/* Basic information area */}
+              <div className="rounded-md bg-gray-50 p-3 text-sm dark:bg-gray-800">
+                <h3 className="mb-2 font-medium text-gray-700 dark:text-gray-300">
+                  {t('Gateway Information')}
+                </h3>
+                <div className="space-y-1">
+                  <p>
+                    <strong>{t('Gateway Name')}:</strong> {gateway?.name}
+                  </p>
+                  <p>
+                    <strong>{t('Gateway ID')}:</strong> {gatewayId}
+                  </p>
+                </div>
+              </div>
+
+              {/* Provider selector */}
+              <div className="flex items-center justify-between">
+                <h3 className="text-base font-medium">
+                  {t('Select API Provider')}
+                </h3>
+                <Select
+                  value={selectedProvider}
+                  onValueChange={(value) =>
+                    setSelectedProvider(value as AIProvider)
+                  }
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder={t('Select API Provider')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(providerConfigs).map(([key, config]) => (
+                      <SelectItem key={key} value={key}>
+                        {t(config.label)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Current selected provider information */}
+              <div className="rounded-md bg-blue-50 p-3 text-sm text-blue-800 dark:bg-blue-950 dark:text-blue-200">
+                <h3 className="mb-2 font-medium">{t(currentConfig.label)}</h3>
+                <p>
+                  <strong>{t('Base URL')}:</strong>{' '}
+                  <code className="break-all rounded bg-blue-100 px-1 py-0.5 text-blue-900 dark:bg-blue-900 dark:text-blue-100">
+                    {window.location.origin}
+                    {currentConfig.baseUrl
+                      .replace('${workspaceId}', workspaceId)
+                      .replace('${gatewayId}', gatewayId)}
+                  </code>
+                </p>
+              </div>
+
+              {/* Code example area */}
+              <div className="overflow-hidden">
+                <CodeExample
+                  key={selectedProvider}
+                  className="overflow-hidden"
+                  example={
+                    isGemini
+                      ? {
+                          curl: {
+                            label:
+                              selectedProvider === 'gemini-cli'
+                                ? t('Shell')
+                                : t('cURL'),
+                            code: generateCode(selectedProvider, 'curl'),
+                          },
+                        }
+                      : {
+                          curl: {
+                            label: 'cURL',
+                            code: generateCode(selectedProvider, 'curl'),
+                          },
+                          python: {
+                            label: 'Python',
+                            code: generateCode(selectedProvider, 'python'),
+                          },
+                          nodejs: {
+                            label: 'Node.js',
+                            code: generateCode(selectedProvider, 'nodejs'),
+                          },
+                        }
+                  }
+                />
+              </div>
+
+              {/* Important information tips */}
+              <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                <p className="font-medium">{t('Important Notes')}:</p>
+                <ul className="ml-5 mt-1 list-disc space-y-1">
+                  {isGemini && (
+                    <>
+                      <li>
+                        {t(
+                          'Configure a native Gemini upstream. Its base URL must end before /v1 or /v1beta.'
+                        )}
+                      </li>
+                      <li>
+                        {t(
+                          'In Gemini CLI, select Use Gemini API Key. Google login and Vertex AI are not supported by this endpoint.'
+                        )}
+                      </li>
+                      <li>
+                        {t(
+                          'If the gateway stores an upstream key, use a Tianji API key belonging to a workspace member. Otherwise, use your upstream API key.'
+                        )}
+                      </li>
+                      <li>
+                        {t(
+                          'Test Connection only checks OpenAI compatibility, not Gemini compatibility.'
+                        )}
+                      </li>
+                      {gateway?.customModelName && (
+                        <li>
+                          {t(
+                            'The configured model overrides all requested models, including Gemini CLI auxiliary requests.'
+                          )}
+                        </li>
+                      )}
+                    </>
+                  )}
+                  <li>
+                    {t('Replace "YOUR_API_KEY" with your actual API key')}
+                  </li>
+                  <li>
+                    {t('The model name may vary based on your configuration')}
+                  </li>
+                  <li>
+                    {t(
+                      'Each provider may have different request format requirements'
+                    )}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  });
+
+AIGatewayCodeExampleBtn.displayName = 'AIGatewayCodeExampleBtn';

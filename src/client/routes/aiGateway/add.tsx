@@ -1,0 +1,62 @@
+import { routeAuthBeforeLoad } from '@/utils/route';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useTranslation } from '@i18next-toolkit/react';
+import { useEvent } from '@/hooks/useEvent';
+import { useCurrentWorkspaceId } from '@/store/user';
+import { defaultErrorHandler, trpc } from '@/api/trpc';
+import { CommonWrapper } from '@/components/CommonWrapper';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  AIGatewayEditForm,
+  AIGatewayEditFormValues,
+} from '@/components/aiGateway/AIGatewayEditForm';
+import { parseAIGatewayCustomModelStrategy } from '@/components/aiGateway/AIGatewayStrategyEditor.utils';
+
+export const Route = createFileRoute('/aiGateway/add')({
+  beforeLoad: routeAuthBeforeLoad,
+  component: AIGatewayAddComponent,
+});
+
+function AIGatewayAddComponent() {
+  const { t } = useTranslation();
+  const workspaceId = useCurrentWorkspaceId();
+  const addGatewayMutation = trpc.aiGateway.create.useMutation({
+    onError: defaultErrorHandler,
+  });
+  const navigate = useNavigate();
+  const trpcUtils = trpc.useUtils();
+
+  const handleSubmit = useEvent(async (values: AIGatewayEditFormValues) => {
+    const res = await addGatewayMutation.mutateAsync({
+      workspaceId,
+      name: values.name,
+      modelApiKey: values.modelApiKey ?? null,
+      customModelBaseUrl: values.customModelBaseUrl ?? null,
+      customModelName: values.customModelName ?? null,
+      customModelStrategy: parseAIGatewayCustomModelStrategy(
+        values.customModelStrategy
+      ),
+      customModelInputPrice: values.customModelInputPrice ?? null,
+      customModelOutputPrice: values.customModelOutputPrice ?? null,
+    });
+
+    trpcUtils.aiGateway.all.refetch(); // TODO: Uncomment when API is available
+
+    navigate({
+      to: '/aiGateway/$gatewayId',
+      params: {
+        gatewayId: res.id,
+      },
+    });
+  });
+
+  return (
+    <CommonWrapper
+      header={<h1 className="text-xl font-bold">{t('Add AI Gateway')}</h1>}
+    >
+      <ScrollArea className="h-full overflow-hidden p-4">
+        <AIGatewayEditForm onSubmit={handleSubmit} />
+      </ScrollArea>
+    </CommonWrapper>
+  );
+}

@@ -4,8 +4,10 @@ import {
   getCoreRowModel,
   useReactTable,
   createColumnHelper,
-  getExpandedRowModel,
   ExpandedState,
+  RowData,
+  Column,
+  ColumnPinningState,
 } from '@tanstack/react-table';
 
 import {
@@ -17,7 +19,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Empty } from 'antd';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Button } from './ui/button';
 import { LuChevronRight } from 'react-icons/lu';
 import { cn } from '@/utils/style';
@@ -25,15 +27,23 @@ import { cn } from '@/utils/style';
 export type { ColumnDef };
 export { createColumnHelper };
 
+declare module '@tanstack/react-table' {
+  interface ColumnMeta<TData extends RowData, TValue> {
+    className?: string;
+  }
+}
+
 interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
   data: TData[];
+  columnPinning?: ColumnPinningState;
   ExpandComponent?: React.ComponentType<{ row: TData }>;
 }
 
 export function DataTable<TData>({
   columns,
   data,
+  columnPinning = { left: [], right: [] },
   ExpandComponent,
 }: DataTableProps<TData>) {
   const [expanded, setExpanded] = React.useState<ExpandedState>({});
@@ -44,6 +54,7 @@ export function DataTable<TData>({
     columns,
     state: {
       expanded,
+      columnPinning,
     },
     onExpandedChange: setExpanded,
     getCoreRowModel: getCoreRowModel(),
@@ -53,8 +64,8 @@ export function DataTable<TData>({
   const columnLen = canExpand ? columns.length + 1 : columns.length;
 
   return (
-    <div className="rounded-md border">
-      <Table>
+    <div className="overflow-hidden rounded-md border">
+      <Table style={{ width: table.getCenterTotalSize(), minWidth: '100%' }}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -75,7 +86,19 @@ export function DataTable<TData>({
 
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id} className="text-nowrap">
+                  <TableHead
+                    key={header.id}
+                    className={cn(
+                      'text-nowrap',
+                      getCommonPinningClassName(header.column),
+                      header.column.columnDef.meta?.className
+                    )}
+                    style={{
+                      ...getCommonPinningStyles(header.column),
+                      width: header.getSize(),
+                      minWidth: header.getSize(),
+                    }}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -92,10 +115,7 @@ export function DataTable<TData>({
           {table.getRowModel().rows?.length > 0 ? (
             table.getRowModel().rows.map((row) => {
               const renderedRow = (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
+                <TableRow data-state={row.getIsSelected() && 'selected'}>
                   {row.getCanExpand() && (
                     <TableCell className="w-9">
                       <Button
@@ -112,7 +132,15 @@ export function DataTable<TData>({
                   )}
 
                   {row.getVisibleCells().map((cell, i) => (
-                    <TableCell key={cell.id} className="text-nowrap">
+                    <TableCell
+                      key={cell.id}
+                      className={cn(
+                        'text-nowrap',
+                        getCommonPinningClassName(cell.column),
+                        cell.column.columnDef.meta?.className
+                      )}
+                      style={{ ...getCommonPinningStyles(cell.column) }}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -123,17 +151,20 @@ export function DataTable<TData>({
               );
 
               return (
-                <>
+                <Fragment key={row.id}>
                   {renderedRow}
 
                   {row.getIsExpanded() && ExpandComponent && (
-                    <TableRow key={row.id + 'expand'}>
+                    <TableRow
+                      key={row.id + 'expand'}
+                      className="hover:bg-transparent"
+                    >
                       <TableCell colSpan={columnLen}>
                         <ExpandComponent row={row.original} />
                       </TableCell>
                     </TableRow>
                   )}
-                </>
+                </Fragment>
               );
             })
           ) : (
@@ -149,3 +180,34 @@ export function DataTable<TData>({
   );
 }
 DataTable.displayName = 'DataTable';
+
+function getCommonPinningClassName<TData>(column: Column<TData>): string {
+  const isPinned = column.getIsPinned();
+
+  return isPinned
+    ? 'group-hover/tr:bg-muted bg-background transition-colors'
+    : '';
+}
+
+function getCommonPinningStyles<TData>(
+  column: Column<TData>
+): React.CSSProperties {
+  const isPinned = column.getIsPinned();
+  const isLastLeftPinnedColumn =
+    isPinned === 'left' && column.getIsLastColumn('left');
+  const isFirstRightPinnedColumn =
+    isPinned === 'right' && column.getIsFirstColumn('right');
+
+  return {
+    boxShadow: isLastLeftPinnedColumn
+      ? '-4px 0 4px -4px gray inset'
+      : isFirstRightPinnedColumn
+        ? '4px 0 4px -4px gray inset'
+        : undefined,
+    left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
+    right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
+    position: isPinned ? 'sticky' : 'relative',
+    width: column.getSize(),
+    zIndex: isPinned ? 1 : 0,
+  };
+}

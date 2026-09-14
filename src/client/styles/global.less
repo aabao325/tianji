@@ -4,16 +4,16 @@
     top: 0;
     height: 100%;
     right: 0;
-    width: 2px;
+    width: 4px;
     cursor: col-resize;
     user-select: none;
     touch-action: none;
 
-    @apply dark:bg-muted bg-neutral-300 transition-all;
+    @apply dark:bg-zinc-700 bg-zinc-300 transition-all;
   }
 
   .resizer.isResizing {
-    @apply opacity-100 dark:bg-muted bg-neutral-300;
+    @apply opacity-100 dark:bg-zinc-700 bg-zinc-300;
   }
 
   @media (hover: hover) {

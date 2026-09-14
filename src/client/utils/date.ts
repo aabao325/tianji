@@ -21,6 +21,10 @@ function createDateUnitFn(unit: DateUnit) {
   };
 }
 
+/**
+ * @deprecated
+ * replace with `@tianji/shared`
+ */
 export function getDateArray(
   data: { x: string; y: number }[],
   startDate: dayjs.ConfigType,
@@ -67,4 +71,56 @@ export function formatDateWithUnit(val: dayjs.ConfigType, unit: DateUnit) {
   }
 
   return formatDate(val);
+}
+
+function formatOffset(offset: number) {
+  const sign = offset >= 0 ? '+' : '-';
+  const absOffset = Math.abs(offset);
+  const hours = String(Math.floor(absOffset / 60)).padStart(2, '0');
+  const minutes = String(absOffset % 60).padStart(2, '0');
+
+  return `${sign}${hours}:${minutes}`;
+}
+
+export function getTimezoneList() {
+  const timezones = Intl.supportedValuesOf('timeZone');
+
+  return [
+    {
+      label: 'UTC',
+      value: 'utc',
+    },
+    ...timezones.map((timezone) => {
+      const offset = dayjs().tz(timezone).utcOffset();
+
+      return {
+        label: `${timezone} (${formatOffset(offset)})`,
+        value: timezone,
+      };
+    }),
+  ];
+}
+
+export function getShortTextByUnit(date: dayjs.ConfigType, dateUnit: DateUnit) {
+  if (dateUnit === 'minute') {
+    return dayjs(date).format('HH:mm');
+  }
+
+  if (dateUnit === 'hour') {
+    return dayjs(date).format('MMM D, ha');
+  }
+
+  if (dateUnit === 'day') {
+    return dayjs(date).format('MMM D');
+  }
+
+  if (dateUnit === 'month') {
+    return dayjs(date).format('MMM YYYY');
+  }
+
+  if (dateUnit === 'year') {
+    return dayjs(date).format('YYYY');
+  }
+
+  return dayjs(date, 'YYYY-MM-DD HH:mm:ss');
 }

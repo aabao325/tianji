@@ -3,6 +3,7 @@ import {
   protectProedure,
   publicProcedure,
   router,
+  workspaceAdminProcedure,
   workspaceOwnerProcedure,
   workspaceProcedure,
 } from '../trpc.js';
@@ -11,18 +12,38 @@ import { prisma } from '../../model/_client.js';
 import {
   userInfoSchema,
   workspaceDashboardLayoutSchema,
+  workspaceSchema,
 } from '../../model/_schema/index.js';
 import { Prisma } from '@prisma/client';
 import { OPENAPI_TAG } from '../../utils/const.js';
-import { OpenApiMeta } from 'trpc-openapi';
+import { OpenApiMeta } from 'trpc-to-openapi';
 import { getServerCount } from '../../model/serverStatus.js';
-import { ROLES, slugRegex } from '@tianji/shared';
+import { ROLES } from '@tianji/shared';
 import {
   createUserSelect,
   joinWorkspace,
   leaveWorkspace,
 } from '../../model/user.js';
 import { WorkspacesOnUsersModelSchema } from '../../prisma/zod/workspacesonusers.js';
+import { monitorManager } from '../../model/monitor/index.js';
+import { get, merge } from 'lodash-es';
+import { promWorkspaceCounter } from '../../utils/prometheus/client.js';
+import {
+  clearWorkspaceSettingsCache,
+  getWorkspaceServiceCount,
+} from '../../model/workspace.js';
+import {
+  createAuditLog,
+  createWorkspaceMutationAuditLog,
+} from '../../model/auditLog.js';
+import {
+  acceptInvitation,
+  createWorkspaceInvitation,
+  sendInvitationEmail,
+} from '../../model/invitation.js';
+import { workspaceConfigRouter } from './workspaceConfig.js';
+import Cron from 'croner';
+import { checkWorkspaceUsageAndUpdateStatus } from '../../model/billing/workspace.js';
 
 export const workspaceRouter = router({
   create: protectProedure
@@ -30,15 +51,12 @@ export const workspaceRouter = router({
       buildWorkspaceOpenapi({
         method: 'POST',
         path: '/create',
+        summary: 'Create workspace',
       })
     )
     .input(
       z.object({
-        name: z
-          .string()
-          .max(60)
-          .min(4)
-          .regex(slugRegex, { message: 'no a valid name' }),
+        name: z.string().max(60).min(4),
       })
     )
     .output(userInfoSchema)
@@ -63,6 +81,8 @@ export const workspaceRouter = router({
           },
         });
 
+        promWorkspaceCounter.inc();
+
         return await p.user.update({
           data: {
             currentWorkspaceId: newWorkspace.id,
@@ -80,6 +100,17 @@ export const workspaceRouter = router({
         });
       });
 
+      if (userInfo.currentWorkspaceId) {
+        await createWorkspaceMutationAuditLog({
+          workspaceId: userInfo.currentWorkspaceId,
+          path: 'workspace.create',
+          input,
+          actor: ctx.user,
+          relatedId: userInfo.currentWorkspaceId,
+          relatedType: 'Workspace',
+        });
+      }
+
       return userInfo;
     }),
   switch: protectProedure
@@ -87,6 +118,7 @@ export const workspaceRouter = router({
       buildWorkspaceOpenapi({
         method: 'POST',
         path: '/switch',
+        summary: 'Switch workspace',
       })
     )
     .input(
@@ -104,7 +136,7 @@ export const workspaceRouter = router({
           id: workspaceId,
           users: {
             some: {
-              userId,
+              userId, // make sure is member of this workspace
             },
           },
         },
@@ -124,13 +156,51 @@ export const workspaceRouter = router({
         select: createUserSelect,
       });
 
+      await createWorkspaceMutationAuditLog({
+        workspaceId,
+        path: 'workspace.switch',
+        input: { currentWorkspaceId: workspaceId },
+        actor: ctx.user,
+        relatedId: userId,
+        relatedType: 'User',
+      });
+
       return userInfo;
+    }),
+  rename: workspaceOwnerProcedure
+    .meta(
+      buildWorkspaceOpenapi({
+        method: 'PATCH',
+        path: '/rename',
+        summary: 'Rename workspace',
+      })
+    )
+    .input(
+      z.object({
+        name: z.string().max(60).min(4),
+      })
+    )
+    .output(workspaceSchema)
+    .mutation(async ({ input }) => {
+      const { workspaceId, name } = input;
+
+      const workspace = await prisma.workspace.update({
+        where: {
+          id: workspaceId,
+        },
+        data: {
+          name,
+        },
+      });
+
+      return workspace;
     }),
   delete: workspaceOwnerProcedure
     .meta(
       buildWorkspaceOpenapi({
         method: 'DELETE',
-        path: '/{workspaceId}',
+        path: '/{workspaceId}/del',
+        summary: 'Delete workspace',
       })
     )
     .input(
@@ -143,23 +213,47 @@ export const workspaceRouter = router({
       const { workspaceId } = input;
       const userId = ctx.user.id;
 
-      await prisma.workspace.delete({
+      const monitors = await prisma.monitor.findMany({
         where: {
-          id: workspaceId,
-          users: {
-            some: {
-              userId,
-              role: ROLES.owner,
-            },
-          },
+          workspaceId,
+        },
+        select: {
+          id: true,
         },
       });
+
+      await Promise.all(
+        monitors.map((m) => monitorManager.delete(workspaceId, m.id))
+      );
+
+      await prisma.$transaction([
+        prisma.workspaceAuditLog.create({
+          data: {
+            workspaceId,
+            relatedId: workspaceId,
+            relatedType: 'Workspace',
+            content: `Workspace deleted by ${String(ctx.user.username)}(${userId})`,
+          },
+        }),
+        prisma.workspace.delete({
+          where: {
+            id: workspaceId,
+            users: {
+              some: {
+                userId,
+                role: ROLES.owner,
+              },
+            },
+          },
+        }),
+      ]);
     }),
   members: workspaceProcedure
     .meta(
       buildWorkspaceOpenapi({
         method: 'GET',
         path: '/{workspaceId}/members',
+        summary: 'Get members',
       })
     )
     .output(
@@ -169,6 +263,7 @@ export const workspaceRouter = router({
             user: z.object({
               username: z.string(),
               nickname: z.string().nullable(),
+              avatar: z.string().nullable(),
               email: z.string().nullable(),
               emailVerified: z.date().nullable(),
             }),
@@ -188,6 +283,7 @@ export const workspaceRouter = router({
             select: {
               username: true,
               nickname: true,
+              avatar: true,
               email: true,
               emailVerified: true,
             },
@@ -197,40 +293,189 @@ export const workspaceRouter = router({
 
       return list;
     }),
-  invite: workspaceOwnerProcedure
+  updateSettings: workspaceAdminProcedure
     .meta(
       buildWorkspaceOpenapi({
         method: 'POST',
-        path: '/{workspaceId}/invite',
+        path: '/{workspaceId}/updateSettings',
+        summary: 'Update settings',
       })
     )
     .input(
       z.object({
-        targetUserEmail: z.string(),
+        settings: z.object({}).passthrough(),
+      })
+    )
+    .output(workspaceSchema)
+    .mutation(async ({ input }) => {
+      const { workspaceId, settings } = input;
+
+      const prev = await prisma.workspace.findUniqueOrThrow({
+        where: {
+          id: workspaceId,
+        },
+        select: {
+          settings: true,
+        },
+      });
+
+      const res = await prisma.workspace.update({
+        where: {
+          id: workspaceId,
+        },
+        data: {
+          settings: merge({}, prev.settings, settings),
+        },
+      });
+
+      if (
+        'timezone' in settings &&
+        get(prev, ['settings', 'timezone']) !== settings.timezone
+      ) {
+        // should be restart all monitor
+        await monitorManager.restartWithWorkspaceId(workspaceId);
+      }
+
+      clearWorkspaceSettingsCache(workspaceId);
+
+      return res;
+    }),
+  invite: workspaceAdminProcedure
+    .meta(
+      buildWorkspaceOpenapi({
+        method: 'POST',
+        path: '/{workspaceId}/invite',
+        summary: 'Invite member',
+      })
+    )
+    .input(
+      z.object({
+        emailOrId: z.string(),
+        role: z.enum([ROLES.admin, ROLES.readOnly]).default(ROLES.readOnly),
       })
     )
     .output(z.void())
-    .mutation(async ({ input }) => {
-      const { targetUserEmail, workspaceId } = input;
-      const targetUser = await prisma.user.findUnique({
+    .mutation(async ({ ctx, input }) => {
+      const { emailOrId, workspaceId } = input;
+      const userId = ctx.user.id;
+      const targetUser = await prisma.user.findFirst({
         where: {
-          email: targetUserEmail,
+          OR: [
+            {
+              email: emailOrId,
+            },
+            {
+              id: emailOrId,
+            },
+          ],
         },
       });
+
+      if (input.role === ROLES.admin) {
+        // Need to check if the user is the owner of the workspace
+        const userWorkspace = await prisma.workspacesOnUsers.findUnique({
+          where: {
+            userId_workspaceId: {
+              userId: userId,
+              workspaceId: input.workspaceId,
+            },
+          },
+        });
+
+        if (userWorkspace?.role !== ROLES.owner) {
+          throw new Error(
+            'You do not have permission to invite members to this workspace'
+          );
+        }
+      }
 
       if (targetUser) {
         // if user exist
         await joinWorkspace(targetUser.id, workspaceId);
+      } else if (emailOrId.includes('@')) {
+        // user not exist, and is email invite user with send email
+        const invitation = await createWorkspaceInvitation(
+          input.workspaceId,
+          userId,
+          emailOrId,
+          input.role
+        );
+
+        const baseUrl = `${ctx.req.protocol}://${ctx.req.get('host')}`;
+        await sendInvitationEmail(invitation.id, baseUrl);
       } else {
-        // user not exist
         throw new Error('Target user not existed');
       }
+    }),
+  // Accept invitation
+  acceptInvitation: protectProedure
+    .input(z.object({ token: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const result = await acceptInvitation(input.token, ctx.user.id);
+
+      await createWorkspaceMutationAuditLog({
+        workspaceId: result.workspaceId,
+        path: 'workspace.acceptInvitation',
+        input: { role: result.role },
+        actor: ctx.user,
+        relatedId: ctx.user.id,
+        relatedType: 'User',
+      });
+
+      return result;
+    }),
+
+  // Get invitation info (no login required)
+  getInvitationInfo: publicProcedure
+    .input(z.object({ token: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const invitation = await prisma.workspaceInvitation.findUnique({
+        where: {
+          token: input.token,
+        },
+        select: {
+          email: true,
+          expiresAt: true,
+          status: true,
+          workspace: {
+            select: {
+              name: true,
+            },
+          },
+          inviter: {
+            select: {
+              username: true,
+              nickname: true,
+            },
+          },
+        },
+      });
+
+      if (!invitation) {
+        throw new Error('Invitation does not exist');
+      }
+
+      if (invitation.status !== 'pending') {
+        throw new Error('Invitation has been processed');
+      }
+
+      if (invitation.expiresAt < new Date()) {
+        throw new Error('Invitation has expired');
+      }
+
+      return {
+        email: invitation.email,
+        workspace: invitation.workspace.name,
+        inviter: invitation.inviter.nickname || invitation.inviter.username,
+        expiresAt: invitation.expiresAt,
+      };
     }),
   tick: workspaceOwnerProcedure
     .meta(
       buildWorkspaceOpenapi({
         method: 'DELETE',
         path: '/{workspaceId}/tick',
+        summary: 'Kick member',
         description: 'Administrator kicks a user out of a workspace.',
       })
     )
@@ -240,10 +485,73 @@ export const workspaceRouter = router({
       })
     )
     .output(z.void())
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { targetUserId, workspaceId } = input;
 
-      leaveWorkspace(targetUserId, workspaceId);
+      await leaveWorkspace(targetUserId, workspaceId);
+
+      await createAuditLog({
+        workspaceId,
+        relatedId: targetUserId,
+        relatedType: 'User',
+        content: `Member(${targetUserId}) kicked by ${String(ctx.user.username)}(${ctx.user.id})`,
+      });
+    }),
+
+  updateMemberRole: workspaceOwnerProcedure
+    .meta(
+      buildWorkspaceOpenapi({
+        method: 'PATCH',
+        path: '/{workspaceId}/updateMemberRole',
+        summary: 'Update member role',
+        description: 'Update workspace member role',
+      })
+    )
+    .input(
+      z.object({
+        userId: z.string(),
+        role: z.nativeEnum(ROLES),
+      })
+    )
+    .output(z.void())
+    .mutation(async ({ input, ctx }) => {
+      const { userId, workspaceId, role } = input;
+
+      const member = await prisma.workspacesOnUsers.findUnique({
+        where: {
+          userId_workspaceId: {
+            userId,
+            workspaceId,
+          },
+        },
+      });
+
+      if (!member) {
+        throw new Error('Member not found');
+      }
+
+      if (member.role === ROLES.owner) {
+        throw new Error("Cannot change owner's role");
+      }
+
+      await prisma.workspacesOnUsers.update({
+        where: {
+          userId_workspaceId: {
+            userId,
+            workspaceId,
+          },
+        },
+        data: {
+          role,
+        },
+      });
+
+      await createAuditLog({
+        workspaceId,
+        relatedId: userId,
+        relatedType: 'User',
+        content: `Member(${userId}) role changed to ${role} by ${String(ctx.user.username)}(${ctx.user.id})`,
+      });
     }),
   getUserWorkspaceRole: publicProcedure
     .input(
@@ -272,66 +580,60 @@ export const workspaceRouter = router({
       buildWorkspaceOpenapi({
         method: 'GET',
         path: '/{workspaceId}/getServiceCount',
+        summary: 'Get service count',
       })
     )
     .output(
       z.object({
         website: z.number(),
+        application: z.number(),
         monitor: z.number(),
         server: z.number(),
         telemetry: z.number(),
         page: z.number(),
         survey: z.number(),
         feed: z.number(),
+        shortLink: z.number(),
+        aiGateway: z.number(),
+        aiRouter: z.number(),
+        functionWorker: z.number(),
       })
     )
     .query(async ({ input }) => {
       const { workspaceId } = input;
 
-      const [website, monitor, telemetry, page, survey, feed] =
-        await Promise.all([
-          prisma.website.count({
-            where: {
-              workspaceId,
-            },
-          }),
-          prisma.monitor.count({
-            where: {
-              workspaceId,
-            },
-          }),
-          prisma.telemetry.count({
-            where: {
-              workspaceId,
-            },
-          }),
-          prisma.monitorStatusPage.count({
-            where: {
-              workspaceId,
-            },
-          }),
-          prisma.survey.count({
-            where: {
-              workspaceId,
-            },
-          }),
-          prisma.feedChannel.count({
-            where: {
-              workspaceId,
-            },
-          }),
-        ]);
+      const [serviceCount, server] = await Promise.all([
+        getWorkspaceServiceCount(workspaceId),
+        getServerCount(workspaceId),
+      ]);
 
-      const server = getServerCount(workspaceId);
+      const {
+        website,
+        application,
+        monitor,
+        telemetry,
+        page,
+        survey,
+        feed,
+        shortLink,
+        aiGateway,
+        aiRouter,
+        functionWorker,
+      } = serviceCount;
 
       return {
         website,
+        application,
         monitor,
         server,
         telemetry,
         page,
         survey,
         feed,
+        shortLink,
+        aiGateway,
+        aiRouter,
+        functionWorker,
       };
     }),
   /**
@@ -376,6 +678,57 @@ export const workspaceRouter = router({
         },
       });
     }),
+  previewCron: workspaceProcedure
+    .input(
+      z.object({
+        cronExpression: z.string(),
+        count: z.number().default(5),
+      })
+    )
+    .output(
+      z.object({
+        nextRuns: z.string().array(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { workspaceId, cronExpression, count } = input;
+
+      const workspace = await prisma.workspace.findUniqueOrThrow({
+        where: {
+          id: workspaceId,
+        },
+      });
+
+      const timezone =
+        get(workspace, ['settings', 'timezone']) || ctx.timezone || 'utc';
+
+      const cron = new Cron(cronExpression, {
+        timezone,
+        paused: true,
+      });
+
+      return {
+        nextRuns: cron.nextRuns(count).map((run) => run.toISOString()),
+      };
+    }),
+
+  recheckPauseStatus: workspaceOwnerProcedure
+    .meta(
+      buildWorkspaceOpenapi({
+        method: 'POST',
+        path: '/{workspaceId}/recheckPauseStatus',
+        summary: 'Recheck workspace pause status',
+        description: 'Manually trigger workspace pause status check based on usage limits',
+      })
+    )
+    .output(z.void())
+    .mutation(async ({ input }) => {
+      const { workspaceId } = input;
+
+      await checkWorkspaceUsageAndUpdateStatus(workspaceId);
+    }),
+
+  config: workspaceConfigRouter,
 });
 
 function buildWorkspaceOpenapi(meta: OpenApiMetaInfo): OpenApiMeta {
@@ -384,7 +737,7 @@ function buildWorkspaceOpenapi(meta: OpenApiMetaInfo): OpenApiMeta {
       tags: [OPENAPI_TAG.WORKSPACE],
       protect: true,
       ...meta,
-      path: `/workspace/${meta.path}`,
+      path: `/workspace${meta.path}`,
     },
   };
 }

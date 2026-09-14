@@ -14,8 +14,10 @@ import { AppRouterOutput, trpc } from '../../api/trpc';
 import { getUserTimezone } from '../../api/model/user';
 import { useGlobalStateStore } from '../../store/global';
 import { useTranslation } from '@i18next-toolkit/react';
-import { TimeEventChart } from '../TimeEventChart';
+import { TimeEventChart } from '../chart/TimeEventChart';
 import { Link } from '@tanstack/react-router';
+import { LoadingView } from '../LoadingView';
+import { toast } from 'sonner';
 
 export const WebsiteOverview: React.FC<{
   website: WebsiteInfo;
@@ -25,6 +27,7 @@ export const WebsiteOverview: React.FC<{
   const { t } = useTranslation();
   const { website, showDateFilter = false, actions } = props;
   const { startDate, endDate, unit, refresh } = useGlobalRangeDate();
+  const trpcUtils = trpc.useUtils();
   const showPreviousPeriod = useGlobalStateStore(
     (state) => state.showPreviousPeriod
   );
@@ -33,27 +36,48 @@ export const WebsiteOverview: React.FC<{
     data: chartData = [],
     isLoading: isLoadingPageview,
     refetch: refetchPageview,
-  } = trpc.website.pageviews.useQuery(
+  } = trpc.insights.query.useQuery(
     {
       workspaceId: website.workspaceId,
-      websiteId: website.id,
-      startAt: startDate.valueOf(),
-      endAt: endDate.valueOf(),
-      unit,
-      timezone: getUserTimezone(),
+      insightId: website.id,
+      insightType: 'website',
+      metrics: [
+        { name: '$page_view', math: 'events', alias: 'A' },
+        { name: '$page_view', math: 'sessions', alias: 'B' },
+      ],
+      filters: [],
+      groups: [],
+      time: {
+        startAt: startDate.valueOf(),
+        endAt: endDate.valueOf(),
+        unit,
+        timezone: getUserTimezone(),
+      },
     },
     {
       select(data) {
-        const pageviews = data.pageviews ?? [];
-        const sessions = data.sessions ?? [];
+        const pvSeries = data?.[0]?.data ?? [];
+        const uvSeries = data?.[1]?.data ?? [];
 
-        const pageviewsArr = getDateArray(pageviews, startDate, endDate, unit);
-        const sessionsArr = getDateArray(sessions, startDate, endDate, unit);
+        const pvMap = new Map<string, number>(
+          pvSeries.map((d) => [d.date, Number(d.value) || 0])
+        );
+        const uvMap = new Map<string, number>(
+          uvSeries.map((d) => [d.date, Number(d.value) || 0])
+        );
 
-        return [
-          ...pageviewsArr.map((item) => ({ ...item, type: 'pageview' })),
-          ...sessionsArr.map((item) => ({ ...item, type: 'session' })),
-        ];
+        const dates: string[] = pvSeries.map((d) => d.date);
+
+        return dates.map((date) => ({
+          pv: pvMap.get(date) ?? 0,
+          uv: uvMap.get(date) ?? 0,
+          date,
+        }));
+      },
+      trpc: {
+        context: {
+          skipBatch: true,
+        },
       },
     }
   );
@@ -62,27 +86,43 @@ export const WebsiteOverview: React.FC<{
     data: stats,
     isLoading: isLoadingStats,
     refetch: refetchStats,
-  } = trpc.website.stats.useQuery({
-    workspaceId: website.workspaceId,
-    websiteId: website.id,
-    startAt: startDate.unix() * 1000,
-    endAt: endDate.unix() * 1000,
-    timezone: getUserTimezone(),
-    unit,
-  });
+  } = trpc.website.stats.useQuery(
+    {
+      workspaceId: website.workspaceId,
+      websiteId: website.id,
+      startAt: startDate.unix() * 1000,
+      endAt: endDate.unix() * 1000,
+      timezone: getUserTimezone(),
+      unit,
+    },
+    {
+      trpc: {
+        context: {
+          skipBatch: true,
+        },
+      },
+    }
+  );
 
   const handleRefresh = useEvent(async () => {
     refresh();
 
-    await Promise.all([refetchPageview(), refetchStats()]);
+    await Promise.all([
+      refetchPageview(),
+      refetchStats(),
+      trpcUtils.website.retention.invalidate({
+        workspaceId: website.workspaceId,
+        websiteId: website.id,
+      }),
+    ]);
 
-    message.success(t('Refreshed'));
+    toast.success(t('Refreshed'));
   });
 
   const loading = isLoadingPageview || isLoadingStats;
 
   return (
-    <Spin spinning={loading}>
+    <LoadingView isLoading={loading}>
       <div className="flex flex-col-reverse sm:flex-row">
         <div className="flex flex-1 flex-col gap-2 text-2xl font-bold sm:flex-row sm:items-center">
           <span className="mr-2" title={website.domain ?? ''}>
@@ -91,7 +131,7 @@ export const WebsiteOverview: React.FC<{
 
           {website.monitorId && (
             <Link
-              className="cursor-pointer"
+              className="w-20 cursor-pointer"
               to="/monitor/$monitorId"
               params={{ monitorId: website.monitorId }}
             >
@@ -146,7 +186,7 @@ export const WebsiteOverview: React.FC<{
       <div>
         <TimeEventChart data={chartData} unit={unit} />
       </div>
-    </Spin>
+    </LoadingView>
   );
 });
 WebsiteOverview.displayName = 'WebsiteOverview';

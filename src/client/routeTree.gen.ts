@@ -11,42 +11,108 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as WorkerImport } from './routes/worker'
 import { Route as WebsiteImport } from './routes/website'
 import { Route as TelemetryImport } from './routes/telemetry'
+import { Route as SwitchWorkspaceImport } from './routes/switchWorkspace'
 import { Route as SurveyImport } from './routes/survey'
+import { Route as ShortlinkImport } from './routes/shortlink'
 import { Route as SettingsImport } from './routes/settings'
 import { Route as ServerImport } from './routes/server'
 import { Route as RegisterImport } from './routes/register'
+import { Route as PlaygroundImport } from './routes/playground'
 import { Route as PageImport } from './routes/page'
 import { Route as MonitorImport } from './routes/monitor'
 import { Route as LoginImport } from './routes/login'
+import { Route as InsightsImport } from './routes/insights'
 import { Route as FeedImport } from './routes/feed'
+import { Route as ApplicationImport } from './routes/application'
+import { Route as AiRouterImport } from './routes/aiRouter'
+import { Route as AiGatewayImport } from './routes/aiGateway'
 import { Route as IndexImport } from './routes/index'
+import { Route as WorkerIndexImport } from './routes/worker/index'
+import { Route as TelemetryIndexImport } from './routes/telemetry/index'
+import { Route as SurveyIndexImport } from './routes/survey/index'
+import { Route as ShortlinkIndexImport } from './routes/shortlink/index'
+import { Route as PageIndexImport } from './routes/page/index'
+import { Route as MonitorIndexImport } from './routes/monitor/index'
+import { Route as InsightsIndexImport } from './routes/insights/index'
+import { Route as FeedIndexImport } from './routes/feed/index'
+import { Route as ApplicationIndexImport } from './routes/application/index'
+import { Route as AiRouterIndexImport } from './routes/aiRouter/index'
+import { Route as AiGatewayIndexImport } from './routes/aiGateway/index'
+import { Route as WorkerAddImport } from './routes/worker/add'
 import { Route as WebsiteOverviewImport } from './routes/website/overview'
 import { Route as WebsiteAddImport } from './routes/website/add'
 import { Route as TelemetryAddImport } from './routes/telemetry/add'
 import { Route as TelemetryTelemetryIdImport } from './routes/telemetry/$telemetryId'
 import { Route as SurveyAddImport } from './routes/survey/add'
 import { Route as StatusSlugImport } from './routes/status/$slug'
+import { Route as ShortlinkAddImport } from './routes/shortlink/add'
 import { Route as SettingsWorkspaceImport } from './routes/settings/workspace'
+import { Route as SettingsWarehouseImport } from './routes/settings/warehouse'
 import { Route as SettingsUsageImport } from './routes/settings/usage'
 import { Route as SettingsProfileImport } from './routes/settings/profile'
 import { Route as SettingsNotificationsImport } from './routes/settings/notifications'
 import { Route as SettingsAuditLogImport } from './routes/settings/auditLog'
+import { Route as SettingsApiKeyImport } from './routes/settings/apiKey'
 import { Route as PageAddImport } from './routes/page/add'
-import { Route as PageSlugImport } from './routes/page/$slug'
+import { Route as PSlugImport } from './routes/p/$slug'
 import { Route as MonitorAddImport } from './routes/monitor/add'
+import { Route as InsightsEventsImport } from './routes/insights/events'
+import { Route as InsightsCohortsImport } from './routes/insights/cohorts'
+import { Route as FeedPlaygroundImport } from './routes/feed_/playground'
 import { Route as FeedAddImport } from './routes/feed/add'
+import { Route as ApplicationOverviewImport } from './routes/application/overview'
+import { Route as ApplicationCompareImport } from './routes/application/compare'
+import { Route as ApplicationAddImport } from './routes/application/add'
+import { Route as AiRouterAddImport } from './routes/aiRouter/add'
+import { Route as AiGatewayAddImport } from './routes/aiGateway/add'
+import { Route as WorkerModulesIndexImport } from './routes/worker/modules/index'
+import { Route as WorkerWorkerIdIndexImport } from './routes/worker/$workerId/index'
 import { Route as WebsiteWebsiteIdIndexImport } from './routes/website/$websiteId/index'
 import { Route as SurveySurveyIdIndexImport } from './routes/survey/$surveyId/index'
+import { Route as ShortlinkShortLinkIdIndexImport } from './routes/shortlink/$shortLinkId/index'
+import { Route as SettingsBillingIndexImport } from './routes/settings/billing/index'
+import { Route as PageSlugIndexImport } from './routes/page/$slug/index'
 import { Route as MonitorMonitorIdIndexImport } from './routes/monitor/$monitorId/index'
+import { Route as InsightsWarehouseIndexImport } from './routes/insights/warehouse/index'
 import { Route as FeedChannelIdIndexImport } from './routes/feed/$channelId/index'
+import { Route as ApplicationApplicationIdIndexImport } from './routes/application/$applicationId/index'
+import { Route as AiRouterRouterIdIndexImport } from './routes/aiRouter/$routerId/index'
+import { Route as AiGatewayGatewayIdIndexImport } from './routes/aiGateway/$gatewayId/index'
+import { Route as WorkerWorkerIdEditorImport } from './routes/worker_/$workerId/editor'
+import { Route as WorkerModulesAddImport } from './routes/worker/modules/add'
+import { Route as WorkerWorkerIdEditImport } from './routes/worker/$workerId/edit'
+import { Route as WebsiteVisitorMapWebsiteIdImport } from './routes/website_/visitor-map/$websiteId'
+import { Route as WebsitePublicShareIdImport } from './routes/website_/public/$shareId'
 import { Route as WebsiteWebsiteIdConfigImport } from './routes/website/$websiteId/config'
 import { Route as SurveySurveyIdEditImport } from './routes/survey/$surveyId/edit'
+import { Route as ShortlinkShortLinkIdEditImport } from './routes/shortlink/$shortLinkId/edit'
+import { Route as SettingsBillingHistoryImport } from './routes/settings/billing/history'
+import { Route as PageSlugEditorImport } from './routes/page_/$slug/editor'
+import { Route as PageSlugEditImport } from './routes/page/$slug/edit'
 import { Route as MonitorMonitorIdEditImport } from './routes/monitor/$monitorId/edit'
+import { Route as InvitationAcceptTokenImport } from './routes/invitation/accept/$token'
+import { Route as FeedPublicShareIdImport } from './routes/feed_/public/$shareId'
 import { Route as FeedChannelIdEditImport } from './routes/feed/$channelId/edit'
+import { Route as ApplicationApplicationIdEditImport } from './routes/application/$applicationId/edit'
+import { Route as AiRouterRouterIdEditImport } from './routes/aiRouter/$routerId/edit'
+import { Route as AiGatewayGatewayIdObserverImport } from './routes/aiGateway_/$gatewayId/observer'
+import { Route as AiGatewayGatewayIdEditImport } from './routes/aiGateway/$gatewayId/edit'
+import { Route as WorkerModulesModuleIdIndexImport } from './routes/worker/modules/$moduleId/index'
+import { Route as InsightsWarehouseConnectionsIndexImport } from './routes/insights/warehouse/connections/index'
+import { Route as SurveyWorkspaceIdSurveyIdPublicImport } from './routes/survey_/$workspaceId/$surveyId/public'
+import { Route as InsightsWarehouseDatabaseIdQueryImport } from './routes/insights_/warehouse/$databaseId/query'
+import { Route as InsightsWarehouseConnectionsCreateImport } from './routes/insights/warehouse/connections/create'
+import { Route as InsightsWarehouseConnectionsConnectionIdTableImport } from './routes/insights/warehouse/connections/$connectionId/table'
 
 // Create/Update Routes
+
+const WorkerRoute = WorkerImport.update({
+  path: '/worker',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const WebsiteRoute = WebsiteImport.update({
   path: '/website',
@@ -58,8 +124,18 @@ const TelemetryRoute = TelemetryImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const SwitchWorkspaceRoute = SwitchWorkspaceImport.update({
+  path: '/switchWorkspace',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const SurveyRoute = SurveyImport.update({
   path: '/survey',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ShortlinkRoute = ShortlinkImport.update({
+  path: '/shortlink',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -78,6 +154,11 @@ const RegisterRoute = RegisterImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const PlaygroundRoute = PlaygroundImport.update({
+  path: '/playground',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const PageRoute = PageImport.update({
   path: '/page',
   getParentRoute: () => rootRoute,
@@ -93,14 +174,94 @@ const LoginRoute = LoginImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const InsightsRoute = InsightsImport.update({
+  path: '/insights',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const FeedRoute = FeedImport.update({
   path: '/feed',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ApplicationRoute = ApplicationImport.update({
+  path: '/application',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AiRouterRoute = AiRouterImport.update({
+  path: '/aiRouter',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AiGatewayRoute = AiGatewayImport.update({
+  path: '/aiGateway',
   getParentRoute: () => rootRoute,
 } as any)
 
 const IndexRoute = IndexImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const WorkerIndexRoute = WorkerIndexImport.update({
+  path: '/',
+  getParentRoute: () => WorkerRoute,
+} as any)
+
+const TelemetryIndexRoute = TelemetryIndexImport.update({
+  path: '/',
+  getParentRoute: () => TelemetryRoute,
+} as any)
+
+const SurveyIndexRoute = SurveyIndexImport.update({
+  path: '/',
+  getParentRoute: () => SurveyRoute,
+} as any)
+
+const ShortlinkIndexRoute = ShortlinkIndexImport.update({
+  path: '/',
+  getParentRoute: () => ShortlinkRoute,
+} as any)
+
+const PageIndexRoute = PageIndexImport.update({
+  path: '/',
+  getParentRoute: () => PageRoute,
+} as any)
+
+const MonitorIndexRoute = MonitorIndexImport.update({
+  path: '/',
+  getParentRoute: () => MonitorRoute,
+} as any)
+
+const InsightsIndexRoute = InsightsIndexImport.update({
+  path: '/',
+  getParentRoute: () => InsightsRoute,
+} as any)
+
+const FeedIndexRoute = FeedIndexImport.update({
+  path: '/',
+  getParentRoute: () => FeedRoute,
+} as any)
+
+const ApplicationIndexRoute = ApplicationIndexImport.update({
+  path: '/',
+  getParentRoute: () => ApplicationRoute,
+} as any)
+
+const AiRouterIndexRoute = AiRouterIndexImport.update({
+  path: '/',
+  getParentRoute: () => AiRouterRoute,
+} as any)
+
+const AiGatewayIndexRoute = AiGatewayIndexImport.update({
+  path: '/',
+  getParentRoute: () => AiGatewayRoute,
+} as any)
+
+const WorkerAddRoute = WorkerAddImport.update({
+  path: '/add',
+  getParentRoute: () => WorkerRoute,
 } as any)
 
 const WebsiteOverviewRoute = WebsiteOverviewImport.update({
@@ -133,8 +294,18 @@ const StatusSlugRoute = StatusSlugImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const ShortlinkAddRoute = ShortlinkAddImport.update({
+  path: '/add',
+  getParentRoute: () => ShortlinkRoute,
+} as any)
+
 const SettingsWorkspaceRoute = SettingsWorkspaceImport.update({
   path: '/workspace',
+  getParentRoute: () => SettingsRoute,
+} as any)
+
+const SettingsWarehouseRoute = SettingsWarehouseImport.update({
+  path: '/warehouse',
   getParentRoute: () => SettingsRoute,
 } as any)
 
@@ -158,14 +329,19 @@ const SettingsAuditLogRoute = SettingsAuditLogImport.update({
   getParentRoute: () => SettingsRoute,
 } as any)
 
+const SettingsApiKeyRoute = SettingsApiKeyImport.update({
+  path: '/apiKey',
+  getParentRoute: () => SettingsRoute,
+} as any)
+
 const PageAddRoute = PageAddImport.update({
   path: '/add',
   getParentRoute: () => PageRoute,
 } as any)
 
-const PageSlugRoute = PageSlugImport.update({
-  path: '/$slug',
-  getParentRoute: () => PageRoute,
+const PSlugRoute = PSlugImport.update({
+  path: '/p/$slug',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const MonitorAddRoute = MonitorAddImport.update({
@@ -173,9 +349,59 @@ const MonitorAddRoute = MonitorAddImport.update({
   getParentRoute: () => MonitorRoute,
 } as any)
 
+const InsightsEventsRoute = InsightsEventsImport.update({
+  path: '/events',
+  getParentRoute: () => InsightsRoute,
+} as any)
+
+const InsightsCohortsRoute = InsightsCohortsImport.update({
+  path: '/cohorts',
+  getParentRoute: () => InsightsRoute,
+} as any)
+
+const FeedPlaygroundRoute = FeedPlaygroundImport.update({
+  path: '/feed/playground',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const FeedAddRoute = FeedAddImport.update({
   path: '/add',
   getParentRoute: () => FeedRoute,
+} as any)
+
+const ApplicationOverviewRoute = ApplicationOverviewImport.update({
+  path: '/overview',
+  getParentRoute: () => ApplicationRoute,
+} as any)
+
+const ApplicationCompareRoute = ApplicationCompareImport.update({
+  path: '/compare',
+  getParentRoute: () => ApplicationRoute,
+} as any)
+
+const ApplicationAddRoute = ApplicationAddImport.update({
+  path: '/add',
+  getParentRoute: () => ApplicationRoute,
+} as any)
+
+const AiRouterAddRoute = AiRouterAddImport.update({
+  path: '/add',
+  getParentRoute: () => AiRouterRoute,
+} as any)
+
+const AiGatewayAddRoute = AiGatewayAddImport.update({
+  path: '/add',
+  getParentRoute: () => AiGatewayRoute,
+} as any)
+
+const WorkerModulesIndexRoute = WorkerModulesIndexImport.update({
+  path: '/modules/',
+  getParentRoute: () => WorkerRoute,
+} as any)
+
+const WorkerWorkerIdIndexRoute = WorkerWorkerIdIndexImport.update({
+  path: '/$workerId/',
+  getParentRoute: () => WorkerRoute,
 } as any)
 
 const WebsiteWebsiteIdIndexRoute = WebsiteWebsiteIdIndexImport.update({
@@ -188,14 +414,77 @@ const SurveySurveyIdIndexRoute = SurveySurveyIdIndexImport.update({
   getParentRoute: () => SurveyRoute,
 } as any)
 
+const ShortlinkShortLinkIdIndexRoute = ShortlinkShortLinkIdIndexImport.update({
+  path: '/$shortLinkId/',
+  getParentRoute: () => ShortlinkRoute,
+} as any)
+
+const SettingsBillingIndexRoute = SettingsBillingIndexImport.update({
+  path: '/billing/',
+  getParentRoute: () => SettingsRoute,
+} as any)
+
+const PageSlugIndexRoute = PageSlugIndexImport.update({
+  path: '/$slug/',
+  getParentRoute: () => PageRoute,
+} as any)
+
 const MonitorMonitorIdIndexRoute = MonitorMonitorIdIndexImport.update({
   path: '/$monitorId/',
   getParentRoute: () => MonitorRoute,
 } as any)
 
+const InsightsWarehouseIndexRoute = InsightsWarehouseIndexImport.update({
+  path: '/warehouse/',
+  getParentRoute: () => InsightsRoute,
+} as any)
+
 const FeedChannelIdIndexRoute = FeedChannelIdIndexImport.update({
   path: '/$channelId/',
   getParentRoute: () => FeedRoute,
+} as any)
+
+const ApplicationApplicationIdIndexRoute =
+  ApplicationApplicationIdIndexImport.update({
+    path: '/$applicationId/',
+    getParentRoute: () => ApplicationRoute,
+  } as any)
+
+const AiRouterRouterIdIndexRoute = AiRouterRouterIdIndexImport.update({
+  path: '/$routerId/',
+  getParentRoute: () => AiRouterRoute,
+} as any)
+
+const AiGatewayGatewayIdIndexRoute = AiGatewayGatewayIdIndexImport.update({
+  path: '/$gatewayId/',
+  getParentRoute: () => AiGatewayRoute,
+} as any)
+
+const WorkerWorkerIdEditorRoute = WorkerWorkerIdEditorImport.update({
+  path: '/worker/$workerId/editor',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const WorkerModulesAddRoute = WorkerModulesAddImport.update({
+  path: '/modules/add',
+  getParentRoute: () => WorkerRoute,
+} as any)
+
+const WorkerWorkerIdEditRoute = WorkerWorkerIdEditImport.update({
+  path: '/$workerId/edit',
+  getParentRoute: () => WorkerRoute,
+} as any)
+
+const WebsiteVisitorMapWebsiteIdRoute = WebsiteVisitorMapWebsiteIdImport.update(
+  {
+    path: '/website/visitor-map/$websiteId',
+    getParentRoute: () => rootRoute,
+  } as any,
+)
+
+const WebsitePublicShareIdRoute = WebsitePublicShareIdImport.update({
+  path: '/website/public/$shareId',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const WebsiteWebsiteIdConfigRoute = WebsiteWebsiteIdConfigImport.update({
@@ -208,15 +497,105 @@ const SurveySurveyIdEditRoute = SurveySurveyIdEditImport.update({
   getParentRoute: () => SurveyRoute,
 } as any)
 
+const ShortlinkShortLinkIdEditRoute = ShortlinkShortLinkIdEditImport.update({
+  path: '/$shortLinkId/edit',
+  getParentRoute: () => ShortlinkRoute,
+} as any)
+
+const SettingsBillingHistoryRoute = SettingsBillingHistoryImport.update({
+  path: '/billing/history',
+  getParentRoute: () => SettingsRoute,
+} as any)
+
+const PageSlugEditorRoute = PageSlugEditorImport.update({
+  path: '/page/$slug/editor',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PageSlugEditRoute = PageSlugEditImport.update({
+  path: '/$slug/edit',
+  getParentRoute: () => PageRoute,
+} as any)
+
 const MonitorMonitorIdEditRoute = MonitorMonitorIdEditImport.update({
   path: '/$monitorId/edit',
   getParentRoute: () => MonitorRoute,
+} as any)
+
+const InvitationAcceptTokenRoute = InvitationAcceptTokenImport.update({
+  path: '/invitation/accept/$token',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const FeedPublicShareIdRoute = FeedPublicShareIdImport.update({
+  path: '/feed/public/$shareId',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const FeedChannelIdEditRoute = FeedChannelIdEditImport.update({
   path: '/$channelId/edit',
   getParentRoute: () => FeedRoute,
 } as any)
+
+const ApplicationApplicationIdEditRoute =
+  ApplicationApplicationIdEditImport.update({
+    path: '/$applicationId/edit',
+    getParentRoute: () => ApplicationRoute,
+  } as any)
+
+const AiRouterRouterIdEditRoute = AiRouterRouterIdEditImport.update({
+  path: '/$routerId/edit',
+  getParentRoute: () => AiRouterRoute,
+} as any)
+
+const AiGatewayGatewayIdObserverRoute = AiGatewayGatewayIdObserverImport.update(
+  {
+    path: '/aiGateway/$gatewayId/observer',
+    getParentRoute: () => rootRoute,
+  } as any,
+)
+
+const AiGatewayGatewayIdEditRoute = AiGatewayGatewayIdEditImport.update({
+  path: '/$gatewayId/edit',
+  getParentRoute: () => AiGatewayRoute,
+} as any)
+
+const WorkerModulesModuleIdIndexRoute = WorkerModulesModuleIdIndexImport.update(
+  {
+    path: '/modules/$moduleId/',
+    getParentRoute: () => WorkerRoute,
+  } as any,
+)
+
+const InsightsWarehouseConnectionsIndexRoute =
+  InsightsWarehouseConnectionsIndexImport.update({
+    path: '/warehouse/connections/',
+    getParentRoute: () => InsightsRoute,
+  } as any)
+
+const SurveyWorkspaceIdSurveyIdPublicRoute =
+  SurveyWorkspaceIdSurveyIdPublicImport.update({
+    path: '/survey/$workspaceId/$surveyId/public',
+    getParentRoute: () => rootRoute,
+  } as any)
+
+const InsightsWarehouseDatabaseIdQueryRoute =
+  InsightsWarehouseDatabaseIdQueryImport.update({
+    path: '/insights/warehouse/$databaseId/query',
+    getParentRoute: () => rootRoute,
+  } as any)
+
+const InsightsWarehouseConnectionsCreateRoute =
+  InsightsWarehouseConnectionsCreateImport.update({
+    path: '/warehouse/connections/create',
+    getParentRoute: () => InsightsRoute,
+  } as any)
+
+const InsightsWarehouseConnectionsConnectionIdTableRoute =
+  InsightsWarehouseConnectionsConnectionIdTableImport.update({
+    path: '/warehouse/connections/$connectionId/table',
+    getParentRoute: () => InsightsRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -226,8 +605,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/aiGateway': {
+      preLoaderRoute: typeof AiGatewayImport
+      parentRoute: typeof rootRoute
+    }
+    '/aiRouter': {
+      preLoaderRoute: typeof AiRouterImport
+      parentRoute: typeof rootRoute
+    }
+    '/application': {
+      preLoaderRoute: typeof ApplicationImport
+      parentRoute: typeof rootRoute
+    }
     '/feed': {
       preLoaderRoute: typeof FeedImport
+      parentRoute: typeof rootRoute
+    }
+    '/insights': {
+      preLoaderRoute: typeof InsightsImport
       parentRoute: typeof rootRoute
     }
     '/login': {
@@ -242,6 +637,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PageImport
       parentRoute: typeof rootRoute
     }
+    '/playground': {
+      preLoaderRoute: typeof PlaygroundImport
+      parentRoute: typeof rootRoute
+    }
     '/register': {
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
@@ -254,8 +653,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsImport
       parentRoute: typeof rootRoute
     }
+    '/shortlink': {
+      preLoaderRoute: typeof ShortlinkImport
+      parentRoute: typeof rootRoute
+    }
     '/survey': {
       preLoaderRoute: typeof SurveyImport
+      parentRoute: typeof rootRoute
+    }
+    '/switchWorkspace': {
+      preLoaderRoute: typeof SwitchWorkspaceImport
       parentRoute: typeof rootRoute
     }
     '/telemetry': {
@@ -266,21 +673,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WebsiteImport
       parentRoute: typeof rootRoute
     }
+    '/worker': {
+      preLoaderRoute: typeof WorkerImport
+      parentRoute: typeof rootRoute
+    }
+    '/aiGateway/add': {
+      preLoaderRoute: typeof AiGatewayAddImport
+      parentRoute: typeof AiGatewayImport
+    }
+    '/aiRouter/add': {
+      preLoaderRoute: typeof AiRouterAddImport
+      parentRoute: typeof AiRouterImport
+    }
+    '/application/add': {
+      preLoaderRoute: typeof ApplicationAddImport
+      parentRoute: typeof ApplicationImport
+    }
+    '/application/compare': {
+      preLoaderRoute: typeof ApplicationCompareImport
+      parentRoute: typeof ApplicationImport
+    }
+    '/application/overview': {
+      preLoaderRoute: typeof ApplicationOverviewImport
+      parentRoute: typeof ApplicationImport
+    }
     '/feed/add': {
       preLoaderRoute: typeof FeedAddImport
       parentRoute: typeof FeedImport
+    }
+    '/feed/playground': {
+      preLoaderRoute: typeof FeedPlaygroundImport
+      parentRoute: typeof rootRoute
+    }
+    '/insights/cohorts': {
+      preLoaderRoute: typeof InsightsCohortsImport
+      parentRoute: typeof InsightsImport
+    }
+    '/insights/events': {
+      preLoaderRoute: typeof InsightsEventsImport
+      parentRoute: typeof InsightsImport
     }
     '/monitor/add': {
       preLoaderRoute: typeof MonitorAddImport
       parentRoute: typeof MonitorImport
     }
-    '/page/$slug': {
-      preLoaderRoute: typeof PageSlugImport
-      parentRoute: typeof PageImport
+    '/p/$slug': {
+      preLoaderRoute: typeof PSlugImport
+      parentRoute: typeof rootRoute
     }
     '/page/add': {
       preLoaderRoute: typeof PageAddImport
       parentRoute: typeof PageImport
+    }
+    '/settings/apiKey': {
+      preLoaderRoute: typeof SettingsApiKeyImport
+      parentRoute: typeof SettingsImport
     }
     '/settings/auditLog': {
       preLoaderRoute: typeof SettingsAuditLogImport
@@ -298,9 +745,17 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsUsageImport
       parentRoute: typeof SettingsImport
     }
+    '/settings/warehouse': {
+      preLoaderRoute: typeof SettingsWarehouseImport
+      parentRoute: typeof SettingsImport
+    }
     '/settings/workspace': {
       preLoaderRoute: typeof SettingsWorkspaceImport
       parentRoute: typeof SettingsImport
+    }
+    '/shortlink/add': {
+      preLoaderRoute: typeof ShortlinkAddImport
+      parentRoute: typeof ShortlinkImport
     }
     '/status/$slug': {
       preLoaderRoute: typeof StatusSlugImport
@@ -326,13 +781,101 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WebsiteOverviewImport
       parentRoute: typeof WebsiteImport
     }
+    '/worker/add': {
+      preLoaderRoute: typeof WorkerAddImport
+      parentRoute: typeof WorkerImport
+    }
+    '/aiGateway/': {
+      preLoaderRoute: typeof AiGatewayIndexImport
+      parentRoute: typeof AiGatewayImport
+    }
+    '/aiRouter/': {
+      preLoaderRoute: typeof AiRouterIndexImport
+      parentRoute: typeof AiRouterImport
+    }
+    '/application/': {
+      preLoaderRoute: typeof ApplicationIndexImport
+      parentRoute: typeof ApplicationImport
+    }
+    '/feed/': {
+      preLoaderRoute: typeof FeedIndexImport
+      parentRoute: typeof FeedImport
+    }
+    '/insights/': {
+      preLoaderRoute: typeof InsightsIndexImport
+      parentRoute: typeof InsightsImport
+    }
+    '/monitor/': {
+      preLoaderRoute: typeof MonitorIndexImport
+      parentRoute: typeof MonitorImport
+    }
+    '/page/': {
+      preLoaderRoute: typeof PageIndexImport
+      parentRoute: typeof PageImport
+    }
+    '/shortlink/': {
+      preLoaderRoute: typeof ShortlinkIndexImport
+      parentRoute: typeof ShortlinkImport
+    }
+    '/survey/': {
+      preLoaderRoute: typeof SurveyIndexImport
+      parentRoute: typeof SurveyImport
+    }
+    '/telemetry/': {
+      preLoaderRoute: typeof TelemetryIndexImport
+      parentRoute: typeof TelemetryImport
+    }
+    '/worker/': {
+      preLoaderRoute: typeof WorkerIndexImport
+      parentRoute: typeof WorkerImport
+    }
+    '/aiGateway/$gatewayId/edit': {
+      preLoaderRoute: typeof AiGatewayGatewayIdEditImport
+      parentRoute: typeof AiGatewayImport
+    }
+    '/aiGateway/$gatewayId/observer': {
+      preLoaderRoute: typeof AiGatewayGatewayIdObserverImport
+      parentRoute: typeof rootRoute
+    }
+    '/aiRouter/$routerId/edit': {
+      preLoaderRoute: typeof AiRouterRouterIdEditImport
+      parentRoute: typeof AiRouterImport
+    }
+    '/application/$applicationId/edit': {
+      preLoaderRoute: typeof ApplicationApplicationIdEditImport
+      parentRoute: typeof ApplicationImport
+    }
     '/feed/$channelId/edit': {
       preLoaderRoute: typeof FeedChannelIdEditImport
       parentRoute: typeof FeedImport
     }
+    '/feed/public/$shareId': {
+      preLoaderRoute: typeof FeedPublicShareIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/invitation/accept/$token': {
+      preLoaderRoute: typeof InvitationAcceptTokenImport
+      parentRoute: typeof rootRoute
+    }
     '/monitor/$monitorId/edit': {
       preLoaderRoute: typeof MonitorMonitorIdEditImport
       parentRoute: typeof MonitorImport
+    }
+    '/page/$slug/edit': {
+      preLoaderRoute: typeof PageSlugEditImport
+      parentRoute: typeof PageImport
+    }
+    '/page/$slug/editor': {
+      preLoaderRoute: typeof PageSlugEditorImport
+      parentRoute: typeof rootRoute
+    }
+    '/settings/billing/history': {
+      preLoaderRoute: typeof SettingsBillingHistoryImport
+      parentRoute: typeof SettingsImport
+    }
+    '/shortlink/$shortLinkId/edit': {
+      preLoaderRoute: typeof ShortlinkShortLinkIdEditImport
+      parentRoute: typeof ShortlinkImport
     }
     '/survey/$surveyId/edit': {
       preLoaderRoute: typeof SurveySurveyIdEditImport
@@ -342,13 +885,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WebsiteWebsiteIdConfigImport
       parentRoute: typeof WebsiteImport
     }
+    '/website/public/$shareId': {
+      preLoaderRoute: typeof WebsitePublicShareIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/website/visitor-map/$websiteId': {
+      preLoaderRoute: typeof WebsiteVisitorMapWebsiteIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/worker/$workerId/edit': {
+      preLoaderRoute: typeof WorkerWorkerIdEditImport
+      parentRoute: typeof WorkerImport
+    }
+    '/worker/modules/add': {
+      preLoaderRoute: typeof WorkerModulesAddImport
+      parentRoute: typeof WorkerImport
+    }
+    '/worker/$workerId/editor': {
+      preLoaderRoute: typeof WorkerWorkerIdEditorImport
+      parentRoute: typeof rootRoute
+    }
+    '/aiGateway/$gatewayId/': {
+      preLoaderRoute: typeof AiGatewayGatewayIdIndexImport
+      parentRoute: typeof AiGatewayImport
+    }
+    '/aiRouter/$routerId/': {
+      preLoaderRoute: typeof AiRouterRouterIdIndexImport
+      parentRoute: typeof AiRouterImport
+    }
+    '/application/$applicationId/': {
+      preLoaderRoute: typeof ApplicationApplicationIdIndexImport
+      parentRoute: typeof ApplicationImport
+    }
     '/feed/$channelId/': {
       preLoaderRoute: typeof FeedChannelIdIndexImport
       parentRoute: typeof FeedImport
     }
+    '/insights/warehouse/': {
+      preLoaderRoute: typeof InsightsWarehouseIndexImport
+      parentRoute: typeof InsightsImport
+    }
     '/monitor/$monitorId/': {
       preLoaderRoute: typeof MonitorMonitorIdIndexImport
       parentRoute: typeof MonitorImport
+    }
+    '/page/$slug/': {
+      preLoaderRoute: typeof PageSlugIndexImport
+      parentRoute: typeof PageImport
+    }
+    '/settings/billing/': {
+      preLoaderRoute: typeof SettingsBillingIndexImport
+      parentRoute: typeof SettingsImport
+    }
+    '/shortlink/$shortLinkId/': {
+      preLoaderRoute: typeof ShortlinkShortLinkIdIndexImport
+      parentRoute: typeof ShortlinkImport
     }
     '/survey/$surveyId/': {
       preLoaderRoute: typeof SurveySurveyIdIndexImport
@@ -358,6 +949,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WebsiteWebsiteIdIndexImport
       parentRoute: typeof WebsiteImport
     }
+    '/worker/$workerId/': {
+      preLoaderRoute: typeof WorkerWorkerIdIndexImport
+      parentRoute: typeof WorkerImport
+    }
+    '/worker/modules/': {
+      preLoaderRoute: typeof WorkerModulesIndexImport
+      parentRoute: typeof WorkerImport
+    }
+    '/insights/warehouse/connections/create': {
+      preLoaderRoute: typeof InsightsWarehouseConnectionsCreateImport
+      parentRoute: typeof InsightsImport
+    }
+    '/insights/warehouse/$databaseId/query': {
+      preLoaderRoute: typeof InsightsWarehouseDatabaseIdQueryImport
+      parentRoute: typeof rootRoute
+    }
+    '/survey/$workspaceId/$surveyId/public': {
+      preLoaderRoute: typeof SurveyWorkspaceIdSurveyIdPublicImport
+      parentRoute: typeof rootRoute
+    }
+    '/insights/warehouse/connections/': {
+      preLoaderRoute: typeof InsightsWarehouseConnectionsIndexImport
+      parentRoute: typeof InsightsImport
+    }
+    '/worker/modules/$moduleId/': {
+      preLoaderRoute: typeof WorkerModulesModuleIdIndexImport
+      parentRoute: typeof WorkerImport
+    }
+    '/insights/warehouse/connections/$connectionId/table': {
+      preLoaderRoute: typeof InsightsWarehouseConnectionsConnectionIdTableImport
+      parentRoute: typeof InsightsImport
+    }
   }
 }
 
@@ -365,40 +988,113 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   IndexRoute,
+  AiGatewayRoute.addChildren([
+    AiGatewayAddRoute,
+    AiGatewayIndexRoute,
+    AiGatewayGatewayIdEditRoute,
+    AiGatewayGatewayIdIndexRoute,
+  ]),
+  AiRouterRoute.addChildren([
+    AiRouterAddRoute,
+    AiRouterIndexRoute,
+    AiRouterRouterIdEditRoute,
+    AiRouterRouterIdIndexRoute,
+  ]),
+  ApplicationRoute.addChildren([
+    ApplicationAddRoute,
+    ApplicationCompareRoute,
+    ApplicationOverviewRoute,
+    ApplicationIndexRoute,
+    ApplicationApplicationIdEditRoute,
+    ApplicationApplicationIdIndexRoute,
+  ]),
   FeedRoute.addChildren([
     FeedAddRoute,
+    FeedIndexRoute,
     FeedChannelIdEditRoute,
     FeedChannelIdIndexRoute,
+  ]),
+  InsightsRoute.addChildren([
+    InsightsCohortsRoute,
+    InsightsEventsRoute,
+    InsightsIndexRoute,
+    InsightsWarehouseIndexRoute,
+    InsightsWarehouseConnectionsCreateRoute,
+    InsightsWarehouseConnectionsIndexRoute,
+    InsightsWarehouseConnectionsConnectionIdTableRoute,
   ]),
   LoginRoute,
   MonitorRoute.addChildren([
     MonitorAddRoute,
+    MonitorIndexRoute,
     MonitorMonitorIdEditRoute,
     MonitorMonitorIdIndexRoute,
   ]),
-  PageRoute.addChildren([PageSlugRoute, PageAddRoute]),
+  PageRoute.addChildren([
+    PageAddRoute,
+    PageIndexRoute,
+    PageSlugEditRoute,
+    PageSlugIndexRoute,
+  ]),
+  PlaygroundRoute,
   RegisterRoute,
   ServerRoute,
   SettingsRoute.addChildren([
+    SettingsApiKeyRoute,
     SettingsAuditLogRoute,
     SettingsNotificationsRoute,
     SettingsProfileRoute,
     SettingsUsageRoute,
+    SettingsWarehouseRoute,
     SettingsWorkspaceRoute,
+    SettingsBillingHistoryRoute,
+    SettingsBillingIndexRoute,
+  ]),
+  ShortlinkRoute.addChildren([
+    ShortlinkAddRoute,
+    ShortlinkIndexRoute,
+    ShortlinkShortLinkIdEditRoute,
+    ShortlinkShortLinkIdIndexRoute,
   ]),
   SurveyRoute.addChildren([
     SurveyAddRoute,
+    SurveyIndexRoute,
     SurveySurveyIdEditRoute,
     SurveySurveyIdIndexRoute,
   ]),
-  TelemetryRoute.addChildren([TelemetryTelemetryIdRoute, TelemetryAddRoute]),
+  SwitchWorkspaceRoute,
+  TelemetryRoute.addChildren([
+    TelemetryTelemetryIdRoute,
+    TelemetryAddRoute,
+    TelemetryIndexRoute,
+  ]),
   WebsiteRoute.addChildren([
     WebsiteAddRoute,
     WebsiteOverviewRoute,
     WebsiteWebsiteIdConfigRoute,
     WebsiteWebsiteIdIndexRoute,
   ]),
+  WorkerRoute.addChildren([
+    WorkerAddRoute,
+    WorkerIndexRoute,
+    WorkerWorkerIdEditRoute,
+    WorkerModulesAddRoute,
+    WorkerWorkerIdIndexRoute,
+    WorkerModulesIndexRoute,
+    WorkerModulesModuleIdIndexRoute,
+  ]),
+  FeedPlaygroundRoute,
+  PSlugRoute,
   StatusSlugRoute,
+  AiGatewayGatewayIdObserverRoute,
+  FeedPublicShareIdRoute,
+  InvitationAcceptTokenRoute,
+  PageSlugEditorRoute,
+  WebsitePublicShareIdRoute,
+  WebsiteVisitorMapWebsiteIdRoute,
+  WorkerWorkerIdEditorRoute,
+  InsightsWarehouseDatabaseIdQueryRoute,
+  SurveyWorkspaceIdSurveyIdPublicRoute,
 ])
 
 /* prettier-ignore-end */

@@ -1,0 +1,129 @@
+import React from 'react';
+import { Dayjs } from 'dayjs';
+import { trpc } from '../../api/trpc';
+import { useCurrentWorkspaceId } from '../../store/user';
+import { Card } from '../ui/card';
+import { useTranslation } from '@i18next-toolkit/react';
+import { DateUnit } from '../../utils/date';
+import { getUserTimezone } from '@/api/model/user';
+import { LoadingView } from '../LoadingView';
+
+interface AIGatewaySummaryStatsProps {
+  gatewayId: string;
+  startDate: Dayjs;
+  endDate: Dayjs;
+  unit: DateUnit;
+}
+
+export const AIGatewaySummaryStats: React.FC<AIGatewaySummaryStatsProps> =
+  React.memo((props) => {
+    const { t } = useTranslation();
+    const workspaceId = useCurrentWorkspaceId();
+    const { startDate, endDate, unit } = props;
+
+    const { data: summaryData = [], isLoading } = trpc.insights.query.useQuery(
+      {
+        workspaceId,
+        insightId: props.gatewayId,
+        insightType: 'aigateway',
+        metrics: [
+          { name: '$all_event', math: 'events' },
+          { name: 'inputToken', math: 'events' },
+          { name: 'outputToken', math: 'events' },
+          { name: 'cacheReadInputToken', math: 'events' },
+          { name: 'cacheWriteInputToken', math: 'events' },
+          { name: 'price', math: 'events' },
+        ],
+        filters: [],
+        groups: [],
+        time: {
+          startAt: startDate.valueOf(),
+          endAt: endDate.valueOf(),
+          unit,
+          timezone: getUserTimezone(),
+        },
+      },
+      {
+        select(data) {
+          if (!data || data.length === 0) {
+            return [];
+          }
+
+          const metricNames = [
+            '$all_event',
+            'inputToken',
+            'outputToken',
+            'cacheReadInputToken',
+            'cacheWriteInputToken',
+            'price',
+          ];
+          const totals: Record<string, number> = {};
+          data.forEach((metric, index) => {
+            const counts = metric?.data || [];
+            totals[metricNames[index]] = counts.reduce(
+              (sum, item) => sum + item.value,
+              0
+            );
+          });
+
+          return [
+            { name: '$all_event', total: totals['$all_event'] ?? 0 },
+            {
+              name: 'inputToken',
+              total:
+                (totals['inputToken'] ?? 0) +
+                (totals['cacheReadInputToken'] ?? 0) +
+                (totals['cacheWriteInputToken'] ?? 0),
+            },
+            { name: 'outputToken', total: totals['outputToken'] ?? 0 },
+            { name: 'price', total: totals['price'] ?? 0 },
+          ];
+        },
+      }
+    );
+
+    return (
+      <LoadingView isLoading={isLoading}>
+        <div className="mb-6">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {summaryData.map((metric) => {
+              let label = '';
+              let formattedValue = '';
+
+              switch (metric.name) {
+                case '$all_event':
+                  label = t('Total Count');
+                  formattedValue = metric.total.toLocaleString();
+                  break;
+                case 'inputToken':
+                  label = t('Total Input Tokens');
+                  formattedValue = metric.total.toLocaleString();
+                  break;
+                case 'outputToken':
+                  label = t('Total Output Tokens');
+                  formattedValue = metric.total.toLocaleString();
+                  break;
+                case 'price':
+                  label = t('Total Price');
+                  formattedValue = `$${metric.total.toFixed(4)}`;
+                  break;
+                default:
+                  return null;
+              }
+
+              return (
+                <Card key={metric.name} className="p-4">
+                  <div>
+                    <p className="text-muted-foreground text-sm">{label}</p>
+                    <p className="text-2xl font-bold">{formattedValue}</p>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      </LoadingView>
+    );
+  });
+
+AIGatewaySummaryStats.displayName = 'AIGatewaySummaryStats';

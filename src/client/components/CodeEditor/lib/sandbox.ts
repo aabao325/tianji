@@ -14,7 +14,7 @@ interface AxiosConfig {
     | 'unlink' | 'UNLINK';
   baseURL?: string;
   headers?: Record<string, string>;
-  params?: any;
+  params?: Record<string, string | number | boolean | undefined | null>;
   data?: any;
   timeout?: number;
   withCredentials?: boolean;
@@ -50,5 +50,60 @@ interface RequestReturn {
   status: number;
 }
 
-const request = async (config: AxiosConfig): Promise<RequestReturn> => {}
+interface FetchContext {
+  type: 'http' | 'cron' | 'manual' | 'test';
+  env: Record<string, string>;
+  request?: {
+    method: string;
+    url: string;
+    headers: Record<string, string>;
+  };
+}
+
+interface Console {
+  log(...data: any[]): void;
+  info(...data: any[]): void;
+  warn(...data: any[]): void;
+  error(...data: any[]): void;
+}
+
+declare const console: Console;
+
+declare function request(config: AxiosConfig): Promise<RequestReturn>;
+
+const request = async (config: AxiosConfig): Promise<RequestReturn> => {};
+
+type KVValue =
+  | null
+  | string
+  | number
+  | boolean
+  | KVValue[]
+  | { [key: string]: KVValue };
+
+interface KVScope {
+  get<T extends KVValue = KVValue>(key: string): Promise<T | undefined>;
+  set(key: string, value: KVValue, ttl?: number): Promise<void>;
+  delete(key: string): Promise<boolean>;
+}
+
+declare const kv: KVScope & {
+  workspace: KVScope;
+};
+
+type WorkerPayload = Record<string, any>;
+type WorkerResult = unknown;
+type WorkerFunction = (
+  payload: WorkerPayload,
+  context: FetchContext
+) => WorkerResult | Promise<WorkerResult>;
+
+interface TianjiWorker {
+  fetch: WorkerFunction;
+}
+
+declare function fetch(
+  payload: WorkerPayload,
+  context: FetchContext
+): WorkerResult | Promise<WorkerResult>;
 `;

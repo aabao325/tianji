@@ -1,12 +1,12 @@
 import * as z from "zod"
 import * as imports from "./schemas/index.js"
-import { CompleteWorkspace, RelatedWorkspaceModelSchema, CompleteMonitor, RelatedMonitorModelSchema, CompleteFeedChannel, RelatedFeedChannelModelSchema } from "./index.js"
+import { CompleteWorkspace, RelatedWorkspaceModelSchema, CompleteMonitor, RelatedMonitorModelSchema, CompleteFeedChannel, RelatedFeedChannelModelSchema, CompleteAIGatewayQuotaAlert, RelatedAIGatewayQuotaAlertModelSchema } from "./index.js"
 
 // Helper schema for JSON fields
 type Literal = boolean | number | string
 type Json = Literal | { [key: string]: Json } | Json[]
 const literalSchema = z.union([z.string(), z.number(), z.boolean()])
-const jsonSchema: z.ZodSchema<Json> = z.lazy(() => z.union([literalSchema, z.array(jsonSchema), z.record(jsonSchema)]))
+const jsonSchema: z.ZodSchema<Json> = z.lazy(() => z.union([literalSchema, z.array(jsonSchema), z.record(z.string(), jsonSchema)]))
 
 export const NotificationModelSchema = z.object({
   id: z.string(),
@@ -24,6 +24,7 @@ export interface CompleteNotification extends z.infer<typeof NotificationModelSc
   workspace: CompleteWorkspace
   monitors: CompleteMonitor[]
   feedChannels: CompleteFeedChannel[]
+  aiGatewayQuotaAlerts: CompleteAIGatewayQuotaAlert[]
 }
 
 /**
@@ -35,4 +36,5 @@ export const RelatedNotificationModelSchema: z.ZodSchema<CompleteNotification> =
   workspace: RelatedWorkspaceModelSchema,
   monitors: RelatedMonitorModelSchema.array(),
   feedChannels: RelatedFeedChannelModelSchema.array(),
+  aiGatewayQuotaAlerts: RelatedAIGatewayQuotaAlertModelSchema.array(),
 }))

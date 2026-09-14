@@ -1,0 +1,342 @@
+import { z } from 'zod';
+import {
+  router,
+  workspaceAdminProcedure,
+  workspaceProcedure,
+} from '../../trpc.js';
+import { prisma } from '../../../model/_client.js';
+import { WarehouseDatebaseModelSchema } from '../../../prisma/zod/warehousedatebase.js';
+import { WarehouseDatabaseTableModelSchema } from '../../../prisma/zod/warehousedatabasetable.js';
+import {
+  pingWarehouse,
+  getWarehouseConnection,
+  getMysqlFieldType,
+  getPostgresqlFieldType,
+  extractSchemaFromUrl,
+  clearWarehouseTablesCache,
+  disposeWarehouseConnection,
+  type WarehouseDriver,
+} from '../../../model/insights/warehouse/utils.js';
+import { upsertWarehouseTable } from '../../../model/insights/warehouse/connections.js';
+import { logger } from '../../../utils/logger.js';
+import { validateSqlIsQuery } from '../../../utils/sql.js';
+
+const warehouseDriverSchema = z.enum(['mysql', 'postgresql']);
+
+export const warehouseRouter = router({
+  database: router({
+    list: workspaceProcedure
+      .output(
+        z.array(
+          z.object({
+            id: z.string(),
+            workspaceId: z.string(),
+            name: z.string(),
+            description: z.string(),
+            dbDriver: z.string(),
+            createdAt: z.date(),
+            updatedAt: z.date(),
+          })
+        )
+      )
+      .query(async ({ input }) => {
+        const items = await prisma.warehouseDatabase.findMany({
+          where: { workspaceId: input.workspaceId },
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            workspaceId: true,
+            name: true,
+            description: true,
+            dbDriver: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        });
+        return items;
+      }),
+    sync: workspaceAdminProcedure
+      .input(
+        z.object({
+          id: z.string(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const db = await prisma.warehouseDatabase.findFirst({
+          where: { id: input.id, workspaceId: input.workspaceId },
+          select: { id: true, connectionUri: true },
+        });
+        if (!db) {
+          throw new Error('Warehouse database not found');
+        }
+        if (!db.connectionUri) {
+          throw new Error('No connection uri configured');
+        }
+        const result = await upsertWarehouseTable(db.id, db.connectionUri);
+        return result;
+      }),
+    upsert: workspaceAdminProcedure
+      .input(
+        z.object({
+          id: z.string().optional(),
+          name: z.string(),
+          description: z.string().optional().default(''),
+          connectionUri: z.string().optional(),
+          dbDriver: warehouseDriverSchema.optional().default('mysql'),
+        })
+      )
+      .output(WarehouseDatebaseModelSchema)
+      .mutation(async ({ input }) => {
+        let previousConnectionUri: string | undefined;
+        if (input.id) {
+          const previous = await prisma.warehouseDatabase.findFirst({
+            where: { id: input.id, workspaceId: input.workspaceId },
+            select: { connectionUri: true },
+          });
+          if (!previous) {
+            throw new Error('Warehouse database not found');
+          }
+          previousConnectionUri = previous.connectionUri;
+        }
+
+        // only ping when connectionUri provided (create or update connection string)
+        if (typeof input.connectionUri === 'string') {
+          const isHealthy = await pingWarehouse(
+            input.connectionUri,
+            input.dbDriver as WarehouseDriver
+          );
+          if (!isHealthy) {
+            throw new Error('Warehouse connection is not healthy');
+          }
+        }
+
+        if (input.id) {
+          const data: any = {
+            name: input.name,
+            description: input.description ?? '',
+          };
+          if (typeof input.connectionUri === 'string') {
+            data.connectionUri = input.connectionUri;
+          }
+          if (typeof input.dbDriver === 'string') {
+            data.dbDriver = input.dbDriver;
+          }
+          const res = await prisma.warehouseDatabase.update({
+            where: { id: input.id, workspaceId: input.workspaceId },
+            data,
+          });
+
+          if (typeof input.connectionUri === 'string') {
+            if (
+              previousConnectionUri &&
+              previousConnectionUri !== input.connectionUri
+            ) {
+              await disposeWarehouseConnection(previousConnectionUri);
+            }
+
+            clearWarehouseTablesCache(input.connectionUri);
+            await upsertWarehouseTable(input.id, input.connectionUri);
+          }
+
+          return res;
+        } else {
+          if (!input.connectionUri) {
+            throw new Error('connectionUri is required when creating');
+          }
+          const res = await prisma.warehouseDatabase.create({
+            data: {
+              workspaceId: input.workspaceId,
+              name: input.name,
+              description: input.description ?? '',
+              connectionUri: input.connectionUri,
+              dbDriver: input.dbDriver ?? 'mysql',
+            },
+          });
+
+          clearWarehouseTablesCache(input.connectionUri);
+          await upsertWarehouseTable(res.id, input.connectionUri);
+          return res;
+        }
+      }),
+    delete: workspaceAdminProcedure
+      .input(z.object({ id: z.string() }))
+      .output(WarehouseDatebaseModelSchema)
+      .mutation(async ({ input }) => {
+        const res = await prisma.warehouseDatabase.delete({
+          where: { id: input.id, workspaceId: input.workspaceId },
+        });
+        await disposeWarehouseConnection(res.connectionUri);
+        return res;
+      }),
+  }),
+  table: router({
+    list: workspaceProcedure
+      .output(z.array(WarehouseDatabaseTableModelSchema))
+      .query(async ({ input }) => {
+        const items = await prisma.warehouseDatabaseTable.findMany({
+          where: { workspaceId: input.workspaceId },
+          orderBy: { createdAt: 'desc' },
+        });
+        return items;
+      }),
+    upsert: workspaceAdminProcedure
+      .input(
+        z.object({
+          id: z.string().optional(),
+          databaseId: z.string(),
+          name: z.string(),
+          description: z.string().optional().default(''),
+          ddl: z.string().optional().default(''),
+          prompt: z.string().optional().default(''),
+        })
+      )
+      .output(WarehouseDatabaseTableModelSchema)
+      .mutation(async ({ input }) => {
+        if (input.id) {
+          const res = await prisma.warehouseDatabaseTable.update({
+            where: { id: input.id, workspaceId: input.workspaceId },
+            data: {
+              name: input.name,
+              description: input.description ?? '',
+              ddl: input.ddl ?? '',
+              prompt: input.prompt ?? '',
+            },
+          });
+          return res;
+        } else {
+          const database = await prisma.warehouseDatabase.findFirst({
+            where: {
+              id: input.databaseId,
+              workspaceId: input.workspaceId,
+            },
+            select: { id: true },
+          });
+          if (!database) {
+            throw new Error('Warehouse database not found');
+          }
+
+          const res = await prisma.warehouseDatabaseTable.create({
+            data: {
+              workspaceId: input.workspaceId,
+              databaseId: input.databaseId,
+              name: input.name,
+              description: input.description ?? '',
+              ddl: input.ddl ?? '',
+              prompt: input.prompt ?? '',
+            },
+          });
+          return res;
+        }
+      }),
+    delete: workspaceAdminProcedure
+      .input(z.object({ id: z.string() }))
+      .output(WarehouseDatabaseTableModelSchema)
+      .mutation(async ({ input }) => {
+        const res = await prisma.warehouseDatabaseTable.delete({
+          where: { id: input.id, workspaceId: input.workspaceId },
+        });
+        return res;
+      }),
+  }),
+  query: router({
+    execute: workspaceProcedure
+      .input(
+        z.object({
+          databaseId: z.string(),
+          sql: z.string(),
+        })
+      )
+      .output(
+        z.object({
+          columns: z.array(
+            z.object({
+              name: z.string(),
+              type: z.string(),
+            })
+          ),
+          rows: z.array(z.any()),
+          rowCount: z.number(),
+          executionTime: z.number(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { databaseId, sql, workspaceId } = input;
+        const startTime = Date.now();
+
+        // Validate SQL - only allow SELECT statements
+        const trimmedSql = sql.trim().toLowerCase();
+        if (!trimmedSql.startsWith('select')) {
+          throw new Error('Only SELECT queries are allowed');
+        }
+
+        // Check for dangerous behavior
+        if (!validateSqlIsQuery(sql)) {
+          throw new Error('Invalid SQL, should only allow SELECT statements');
+        }
+
+        // Auto-add LIMIT if not present
+        let finalSql = sql.trim();
+        if (!trimmedSql.includes('limit')) {
+          // Remove trailing semicolon if present
+          if (finalSql.endsWith(';')) {
+            finalSql = finalSql.slice(0, -1).trim();
+          }
+          finalSql = `${finalSql} LIMIT 1000`;
+        }
+
+        // Get database connection URI and driver
+        const database = await prisma.warehouseDatabase.findFirst({
+          where: { id: databaseId, workspaceId },
+          select: { connectionUri: true, dbDriver: true },
+        });
+
+        if (!database || !database.connectionUri) {
+          throw new Error('Database connection not found');
+        }
+
+        const driver = (database.dbDriver || 'mysql') as WarehouseDriver;
+
+        // Execute query
+        const connection = getWarehouseConnection(
+          database.connectionUri,
+          driver
+        );
+
+        try {
+          let columns: { name: string; type: string }[];
+          let rowsArray: any[];
+
+          if (connection.driver === 'postgresql') {
+            const result = await connection.pool.query(finalSql);
+            rowsArray = result.rows;
+            columns = result.fields.map((field) => ({
+              name: field.name,
+              type: getPostgresqlFieldType(field.dataTypeID),
+            }));
+          } else {
+            // MySQL query
+            const [rows, fields] = await connection.pool.query(finalSql);
+            rowsArray = Array.isArray(rows) ? rows : [];
+            columns = fields.map((field) => ({
+              name: field.name,
+              type: getMysqlFieldType(field.type ?? -1),
+            }));
+          }
+
+          const executionTime = Date.now() - startTime;
+
+          return {
+            columns,
+            rows: rowsArray,
+            rowCount: rowsArray.length,
+            executionTime,
+          };
+        } catch (error) {
+          logger.error('Query execution error:', error);
+          throw new Error(
+            `Query execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+          );
+        }
+      }),
+  }),
+});

@@ -6,18 +6,21 @@ import { CompleteWorkspace, RelatedWorkspaceModelSchema, CompleteSurveyResult, R
 type Literal = boolean | number | string
 type Json = Literal | { [key: string]: Json } | Json[]
 const literalSchema = z.union([z.string(), z.number(), z.boolean()])
-const jsonSchema: z.ZodSchema<Json> = z.lazy(() => z.union([literalSchema, z.array(jsonSchema), z.record(jsonSchema)]))
+const jsonSchema: z.ZodSchema<Json> = z.lazy(() => z.union([literalSchema, z.array(jsonSchema), z.record(z.string(), jsonSchema)]))
 
 export const SurveyModelSchema = z.object({
   id: z.string(),
   workspaceId: z.string(),
   name: z.string(),
+  desc: z.string(),
   /**
    * [SurveyPayload]
    */
   payload: imports.SurveyPayloadSchema,
   feedChannelIds: z.string().array(),
   feedTemplate: z.string(),
+  webhookUrl: z.string(),
+  recentSuggestionCategory: z.string().array(),
   createdAt: z.date(),
   updatedAt: z.date(),
 })

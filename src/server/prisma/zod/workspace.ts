@@ -1,12 +1,12 @@
 import * as z from "zod"
 import * as imports from "./schemas/index.js"
-import { CompleteWorkspacesOnUsers, RelatedWorkspacesOnUsersModelSchema, CompleteWebsite, RelatedWebsiteModelSchema, CompleteNotification, RelatedNotificationModelSchema, CompleteMonitor, RelatedMonitorModelSchema, CompleteMonitorStatusPage, RelatedMonitorStatusPageModelSchema, CompleteTelemetry, RelatedTelemetryModelSchema, CompleteUser, RelatedUserModelSchema, CompleteWorkspaceDailyUsage, RelatedWorkspaceDailyUsageModelSchema, CompleteWorkspaceAuditLog, RelatedWorkspaceAuditLogModelSchema, CompleteSurvey, RelatedSurveyModelSchema, CompleteFeedChannel, RelatedFeedChannelModelSchema } from "./index.js"
+import { CompleteWorkspaceSubscription, RelatedWorkspaceSubscriptionModelSchema, CompleteWorkspacesOnUsers, RelatedWorkspacesOnUsersModelSchema, CompleteWebsite, RelatedWebsiteModelSchema, CompleteApplication, RelatedApplicationModelSchema, CompleteNotification, RelatedNotificationModelSchema, CompleteMonitor, RelatedMonitorModelSchema, CompleteMonitorStatusPage, RelatedMonitorStatusPageModelSchema, CompleteTelemetry, RelatedTelemetryModelSchema, CompletePage, RelatedPageModelSchema, CompleteWorkspaceDailyUsage, RelatedWorkspaceDailyUsageModelSchema, CompleteWorkspaceAuditLog, RelatedWorkspaceAuditLogModelSchema, CompleteSurvey, RelatedSurveyModelSchema, CompleteFeedChannel, RelatedFeedChannelModelSchema, CompleteWorkspaceInvitation, RelatedWorkspaceInvitationModelSchema, CompleteFunctionWorker, RelatedFunctionWorkerModelSchema, CompleteSharedModule, RelatedSharedModuleModelSchema, CompleteWarehouseCohorts, RelatedWarehouseCohortsModelSchema, CompleteWarehouseDatabase, RelatedWarehouseDatabaseModelSchema, CompleteWarehouseDatabaseTable, RelatedWarehouseDatabaseTableModelSchema, CompleteAIGateway, RelatedAIGatewayModelSchema, CompleteAIRouter, RelatedAIRouterModelSchema, CompleteAIRouterTier, RelatedAIRouterTierModelSchema, CompleteAIRouterNode, RelatedAIRouterNodeModelSchema, CompleteAIRouterLogs, RelatedAIRouterLogsModelSchema, CompleteAIGatewayQuotaAlert, RelatedAIGatewayQuotaAlertModelSchema, CompleteWorkspaceConfig, RelatedWorkspaceConfigModelSchema, CompleteShortLink, RelatedShortLinkModelSchema } from "./index.js"
 
 // Helper schema for JSON fields
 type Literal = boolean | number | string
 type Json = Literal | { [key: string]: Json } | Json[]
 const literalSchema = z.union([z.string(), z.number(), z.boolean()])
-const jsonSchema: z.ZodSchema<Json> = z.lazy(() => z.union([literalSchema, z.array(jsonSchema), z.record(jsonSchema)]))
+const jsonSchema: z.ZodSchema<Json> = z.lazy(() => z.union([literalSchema, z.array(jsonSchema), z.record(z.string(), jsonSchema)]))
 
 export const WorkspaceModelSchema = z.object({
   id: z.string(),
@@ -20,22 +20,40 @@ export const WorkspaceModelSchema = z.object({
    * [CommonPayload]
    */
   settings: imports.CommonPayloadSchema,
+  credit: z.number().int(),
+  paused: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
 })
 
 export interface CompleteWorkspace extends z.infer<typeof WorkspaceModelSchema> {
+  subscription?: CompleteWorkspaceSubscription | null
   users: CompleteWorkspacesOnUsers[]
   websites: CompleteWebsite[]
+  applications: CompleteApplication[]
   notifications: CompleteNotification[]
   monitors: CompleteMonitor[]
   monitorStatusPages: CompleteMonitorStatusPage[]
   telemetryList: CompleteTelemetry[]
-  selectedUsers: CompleteUser[]
+  pages: CompletePage[]
   workspaceDailyUsage: CompleteWorkspaceDailyUsage[]
   workspaceAuditLog: CompleteWorkspaceAuditLog[]
   surveys: CompleteSurvey[]
   feedChannels: CompleteFeedChannel[]
+  workspaceInvitation: CompleteWorkspaceInvitation[]
+  functionWorkers: CompleteFunctionWorker[]
+  sharedModules: CompleteSharedModule[]
+  warehouseCohorts: CompleteWarehouseCohorts[]
+  warehouseDatabase: CompleteWarehouseDatabase[]
+  warehouseDatabaseTable: CompleteWarehouseDatabaseTable[]
+  aiGateways: CompleteAIGateway[]
+  aiRouters: CompleteAIRouter[]
+  aiRouterTiers: CompleteAIRouterTier[]
+  aiRouterNodes: CompleteAIRouterNode[]
+  aiRouterLogs: CompleteAIRouterLogs[]
+  aiGatewayQuotaAlerts: CompleteAIGatewayQuotaAlert[]
+  workspaceConfigs: CompleteWorkspaceConfig[]
+  shortLinks: CompleteShortLink[]
 }
 
 /**
@@ -44,15 +62,31 @@ export interface CompleteWorkspace extends z.infer<typeof WorkspaceModelSchema> 
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
 export const RelatedWorkspaceModelSchema: z.ZodSchema<CompleteWorkspace> = z.lazy(() => WorkspaceModelSchema.extend({
+  subscription: RelatedWorkspaceSubscriptionModelSchema.nullish(),
   users: RelatedWorkspacesOnUsersModelSchema.array(),
   websites: RelatedWebsiteModelSchema.array(),
+  applications: RelatedApplicationModelSchema.array(),
   notifications: RelatedNotificationModelSchema.array(),
   monitors: RelatedMonitorModelSchema.array(),
   monitorStatusPages: RelatedMonitorStatusPageModelSchema.array(),
   telemetryList: RelatedTelemetryModelSchema.array(),
-  selectedUsers: RelatedUserModelSchema.array(),
+  pages: RelatedPageModelSchema.array(),
   workspaceDailyUsage: RelatedWorkspaceDailyUsageModelSchema.array(),
   workspaceAuditLog: RelatedWorkspaceAuditLogModelSchema.array(),
   surveys: RelatedSurveyModelSchema.array(),
   feedChannels: RelatedFeedChannelModelSchema.array(),
+  workspaceInvitation: RelatedWorkspaceInvitationModelSchema.array(),
+  functionWorkers: RelatedFunctionWorkerModelSchema.array(),
+  sharedModules: RelatedSharedModuleModelSchema.array(),
+  warehouseCohorts: RelatedWarehouseCohortsModelSchema.array(),
+  warehouseDatabase: RelatedWarehouseDatabaseModelSchema.array(),
+  warehouseDatabaseTable: RelatedWarehouseDatabaseTableModelSchema.array(),
+  aiGateways: RelatedAIGatewayModelSchema.array(),
+  aiRouters: RelatedAIRouterModelSchema.array(),
+  aiRouterTiers: RelatedAIRouterTierModelSchema.array(),
+  aiRouterNodes: RelatedAIRouterNodeModelSchema.array(),
+  aiRouterLogs: RelatedAIRouterLogsModelSchema.array(),
+  aiGatewayQuotaAlerts: RelatedAIGatewayQuotaAlertModelSchema.array(),
+  workspaceConfigs: RelatedWorkspaceConfigModelSchema.array(),
+  shortLinks: RelatedShortLinkModelSchema.array(),
 }))

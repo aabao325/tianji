@@ -37,7 +37,7 @@ function PageComponent() {
             <Form layout="vertical">
               <Form.Item label={t('Current Workspace Id')}>
                 <Typography.Text copyable={true} code={true}>
-                  {userInfo?.currentWorkspace?.id}
+                  {userInfo?.currentWorkspaceId}
                 </Typography.Text>
               </Form.Item>
               <Form.Item label={t('User Id')}>
@@ -99,7 +99,7 @@ function PageComponent() {
                 <Input.Password />
               </Form.Item>
               <Form.Item
-                label={t('New Password Repeat')}
+                label={t('Repeat New Password')}
                 name="newPasswordRepeat"
                 rules={[
                   { required: true },
@@ -124,7 +124,7 @@ function PageComponent() {
               <Form.Item className="text-right">
                 <Button
                   type="submit"
-                  loading={changePasswordMutation.isLoading}
+                  loading={changePasswordMutation.isPending}
                 >
                   {t('Submit')}
                 </Button>

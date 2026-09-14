@@ -1,29 +1,44 @@
 import { trpc } from '@/api/trpc';
 import { CommonHeader } from '@/components/CommonHeader';
 import { CommonWrapper } from '@/components/CommonWrapper';
+import { DevContainer } from '@/components/DevContainer';
 import { ErrorTip } from '@/components/ErrorTip';
 import { Loading } from '@/components/Loading';
 import { NotFoundTip } from '@/components/NotFoundTip';
 import { Button } from '@/components/ui/button';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { WebsiteActionsMenu } from '@/components/website/WebsiteActionsMenu';
 import { WebsiteCodeBtn } from '@/components/website/WebsiteCodeBtn';
+import { WebsiteLighthouseBtn } from '@/components/website/WebsiteLighthouseBtn';
 import { WebsiteMetricsTable } from '@/components/website/WebsiteMetricsTable';
 import { WebsiteOverview } from '@/components/website/WebsiteOverview';
+import { WebsiteRetention } from '@/components/website/WebsiteRetention';
+import { WebsiteEventAnalysis } from '@/components/website/WebsiteEventAnalysis';
+import { WebsiteSimpleMap } from '@/components/website/WebsiteSimpleMap';
 import { WebsiteVisitorMapBtn } from '@/components/website/WebsiteVisitorMapBtn';
 import { useGlobalRangeDate } from '@/hooks/useGlobalRangeDate';
-import { useCurrentWorkspaceId } from '@/store/user';
+import { useInsightsStore } from '@/store/insights';
+import { useCurrentWorkspaceId, useHasAdminPermission } from '@/store/user';
 import { routeAuthBeforeLoad } from '@/utils/route';
 import { useTranslation } from '@i18next-toolkit/react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Card } from 'antd';
-import { LuSettings } from 'react-icons/lu';
+import { LuChevronDown, LuCompass, LuSettings } from 'react-icons/lu';
+import copy from 'copy-to-clipboard';
+import { toast } from 'sonner';
+import { useMemo, useState } from 'react';
 
 export const Route = createFileRoute('/website/$websiteId/')({
   beforeLoad: routeAuthBeforeLoad,
-  component: WebsiteDetailComponent,
+  component: PageComponent,
 });
 
-function WebsiteDetailComponent() {
+function PageComponent() {
   const { websiteId } = Route.useParams<{ websiteId: string }>();
   const { t } = useTranslation();
   const workspaceId = useCurrentWorkspaceId();
@@ -33,6 +48,25 @@ function WebsiteDetailComponent() {
   });
   const { startDate, endDate } = useGlobalRangeDate();
   const navigate = useNavigate();
+  const hasAdminPermission = useHasAdminPermission();
+  const [retentionOpen, setRetentionOpen] = useState(false);
+  const [lighthouseOpen, setLighthouseOpen] = useState(false);
+  const resetInsightsStore = useInsightsStore((state) => state.reset);
+  const setInsightTarget = useInsightsStore((state) => state.setInsightTarget);
+
+  const shareLink = useMemo(() => {
+    if (!website?.shareId) {
+      return '';
+    }
+
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+
+    if (origin) {
+      return `${origin}/website/public/${website.shareId}`;
+    }
+
+    return `/website/public/${website.shareId}`;
+  }, [website?.shareId]);
 
   if (!websiteId) {
     return <ErrorTip />;
@@ -56,30 +90,65 @@ function WebsiteDetailComponent() {
           title={website.name}
           actions={
             <div className="space-x-2">
-              <Button
-                size="icon"
-                variant="outline"
-                onClick={() =>
-                  navigate({
-                    to: '/website/$websiteId/config',
-                    params: {
-                      websiteId,
-                    },
-                  })
-                }
-              >
-                <LuSettings />
-              </Button>
+              {hasAdminPermission && (
+                <Button
+                  size="icon"
+                  variant="outline"
+                  onClick={() =>
+                    navigate({
+                      to: '/website/$websiteId/config',
+                      params: {
+                        websiteId,
+                      },
+                    })
+                  }
+                >
+                  <LuSettings />
+                </Button>
+              )}
+
+              <WebsiteRetention
+                workspaceId={workspaceId}
+                websiteId={websiteId}
+                startAt={startAt}
+                endAt={endAt}
+                open={retentionOpen}
+                onOpenChange={setRetentionOpen}
+                showTrigger={false}
+              />
+
+              <WebsiteLighthouseBtn
+                websiteId={website.id}
+                open={lighthouseOpen}
+                onOpenChange={setLighthouseOpen}
+                showTrigger={false}
+              />
+
               <WebsiteCodeBtn websiteId={website.id} />
+
+              <WebsiteActionsMenu
+                onRetention={() => setRetentionOpen(true)}
+                onLighthouse={() => setLighthouseOpen(true)}
+                onShare={
+                  website.shareId
+                    ? () => {
+                        copy(shareLink);
+                        toast.success(
+                          t('Public share link copied to clipboard')
+                        );
+                      }
+                    : undefined
+                }
+              />
             </div>
           }
         />
       }
     >
-      <ScrollArea className="h-full overflow-hidden p-4">
+      <ScrollArea className="h-full overflow-hidden">
         <ScrollBar orientation="horizontal" />
 
-        <Card>
+        <Card bordered={false} className="bg-transparent">
           <Card.Grid hoverable={false} className="!w-full">
             <WebsiteOverview website={website} showDateFilter={true} />
           </Card.Grid>
@@ -109,7 +178,7 @@ function WebsiteDetailComponent() {
           </Card.Grid>
           <Card.Grid
             hoverable={false}
-            className="!w-full sm:min-h-[470px] sm:!w-1/3"
+            className="!w-full sm:min-h-[470px] sm:!w-1/2 md:!w-1/3"
           >
             <WebsiteMetricsTable
               websiteId={websiteId}
@@ -121,7 +190,7 @@ function WebsiteDetailComponent() {
           </Card.Grid>
           <Card.Grid
             hoverable={false}
-            className="!w-full sm:min-h-[470px] sm:!w-1/3"
+            className="!w-full sm:min-h-[470px] sm:!w-1/2 md:!w-1/3"
           >
             <WebsiteMetricsTable
               websiteId={websiteId}
@@ -133,7 +202,7 @@ function WebsiteDetailComponent() {
           </Card.Grid>
           <Card.Grid
             hoverable={false}
-            className="!w-full sm:min-h-[470px] sm:!w-1/3"
+            className="!w-full sm:min-h-[470px] sm:!w-1/2 md:!w-1/3"
           >
             <WebsiteMetricsTable
               websiteId={websiteId}
@@ -145,19 +214,17 @@ function WebsiteDetailComponent() {
           </Card.Grid>
           <Card.Grid
             hoverable={false}
-            className="!w-full sm:min-h-[470px] sm:!w-1/3"
+            className="!w-full sm:min-h-[470px] sm:!w-full md:!w-2/3"
           >
-            <WebsiteMetricsTable
+            <WebsiteSimpleMap
               websiteId={websiteId}
-              type="title"
-              title={[t('Title'), t('Views')]}
               startAt={startAt}
               endAt={endAt}
             />
           </Card.Grid>
           <Card.Grid
             hoverable={false}
-            className="!w-full sm:min-h-[470px] sm:!w-1/3"
+            className="!w-full sm:min-h-[470px] sm:!w-1/2 md:!w-1/3"
           >
             <WebsiteMetricsTable
               websiteId={websiteId}
@@ -171,9 +238,57 @@ function WebsiteDetailComponent() {
               <WebsiteVisitorMapBtn websiteId={websiteId} />
             </div>
           </Card.Grid>
+
+          {/* UTM Analytics Section - Collapsible */}
+          <Card.Grid hoverable={false} className="!w-full">
+            <Collapsible defaultOpen={false}>
+              <CollapsibleTrigger className="group w-full" asChild>
+                <div className="flex cursor-pointer items-center justify-between transition-colors hover:opacity-80">
+                  <h3 className="text-lg font-semibold">
+                    {t('UTM Analytics')}
+                  </h3>
+                  <LuChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="grid grid-cols-1 gap-4 pt-4 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="min-h-[400px]">
+                    <WebsiteMetricsTable
+                      websiteId={websiteId}
+                      type="utm_source"
+                      title={[t('Source'), t('Views')]}
+                      startAt={startAt}
+                      endAt={endAt}
+                    />
+                  </div>
+
+                  <div className="min-h-[400px]">
+                    <WebsiteMetricsTable
+                      websiteId={websiteId}
+                      type="utm_medium"
+                      title={[t('Medium'), t('Views')]}
+                      startAt={startAt}
+                      endAt={endAt}
+                    />
+                  </div>
+
+                  <div className="min-h-[400px]">
+                    <WebsiteMetricsTable
+                      websiteId={websiteId}
+                      type="utm_campaign"
+                      title={[t('Campaign'), t('Views')]}
+                      startAt={startAt}
+                      endAt={endAt}
+                    />
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          </Card.Grid>
+
           <Card.Grid
             hoverable={false}
-            className="!w-full sm:min-h-[470px] sm:!w-1/3"
+            className="!w-full sm:min-h-[470px] sm:!w-1/2 md:!w-1/3"
           >
             <WebsiteMetricsTable
               websiteId={websiteId}
@@ -182,6 +297,30 @@ function WebsiteDetailComponent() {
               startAt={startAt}
               endAt={endAt}
             />
+
+            <DevContainer>
+              <div className="mt-2 text-center">
+                <Button
+                  variant="outline"
+                  Icon={LuCompass}
+                  onClick={() => {
+                    resetInsightsStore();
+                    setInsightTarget(websiteId, 'website');
+                    navigate({
+                      to: '/insights',
+                    });
+                  }}
+                >
+                  {t('Insights')}
+                </Button>
+              </div>
+            </DevContainer>
+          </Card.Grid>
+          <Card.Grid
+            hoverable={false}
+            className="!w-full sm:min-h-[470px] sm:!w-1/2 md:!w-2/3"
+          >
+            <WebsiteEventAnalysis websiteId={websiteId} />
           </Card.Grid>
         </Card>
       </ScrollArea>

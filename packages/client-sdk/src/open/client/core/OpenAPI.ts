@@ -40,14 +40,14 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-	BASE: 'http://localhost:12345/open',
+	BASE: '/open',
 	CREDENTIALS: 'include',
 	ENCODE_PATH: undefined,
 	HEADERS: undefined,
 	PASSWORD: undefined,
 	TOKEN: undefined,
 	USERNAME: undefined,
-	VERSION: '1.13.1',
+	VERSION: '1.30.10',
 	WITH_CREDENTIALS: false,
 	interceptors: {
 		request: new Interceptors(),

@@ -5,8 +5,10 @@ import { jwtVerify } from '../middleware/auth.js';
 import { TRPCError } from '@trpc/server';
 import { Prisma } from '@prisma/client';
 import { AdapterUser } from '@auth/core/adapters';
-import { md5 } from '../utils/common.js';
+import { md5, sha256 } from '../utils/common.js';
 import { logger } from '../utils/logger.js';
+import { promUserCounter } from '../utils/prometheus/client.js';
+import { env } from '../utils/env.js';
 
 async function hashPassword(password: string) {
   return await bcryptjs.hash(password, 10);
@@ -33,12 +35,7 @@ export const createUserSelect = {
   createdAt: true,
   updatedAt: true,
   deletedAt: true,
-  currentWorkspace: {
-    select: {
-      id: true,
-      name: true,
-    },
-  },
+  currentWorkspaceId: true,
   workspaces: {
     select: {
       role: true,
@@ -46,6 +43,8 @@ export const createUserSelect = {
         select: {
           id: true,
           name: true,
+          settings: true,
+          paused: true,
         },
       },
     },
@@ -92,6 +91,8 @@ export async function createAdminUser(username: string, password: string) {
     return user;
   });
 
+  promUserCounter.inc();
+
   return user;
 }
 
@@ -107,11 +108,32 @@ export async function createUser(username: string, password: string) {
   }
 
   const user = await prisma.$transaction(async (p) => {
-    const newWorkspace = await p.workspace.create({
-      data: {
-        name: username,
-      },
-    });
+    let workspaceId: string;
+    let workspaceRole: ROLES;
+
+    // Check if registerAutoJoinWorkspaceId is configured
+    if (env.registerAutoJoinWorkspaceId) {
+      // Verify the workspace exists
+      const targetWorkspace = await p.workspace.findUnique({
+        where: { id: env.registerAutoJoinWorkspaceId },
+      });
+
+      if (!targetWorkspace) {
+        throw new Error('Auto-join workspace not found');
+      }
+
+      workspaceId = env.registerAutoJoinWorkspaceId;
+      workspaceRole = ROLES.readOnly; // Default role for auto-joined users
+    } else {
+      // Create personal workspace as before
+      const newWorkspace = await p.workspace.create({
+        data: {
+          name: username + "'s Personal Workspace",
+        },
+      });
+      workspaceId = newWorkspace.id;
+      workspaceRole = ROLES.owner;
+    }
 
     const user = await p.user.create({
       data: {
@@ -121,18 +143,20 @@ export async function createUser(username: string, password: string) {
         workspaces: {
           create: [
             {
-              role: ROLES.owner,
-              workspaceId: newWorkspace.id,
+              role: workspaceRole,
+              workspaceId: workspaceId,
             },
           ],
         },
-        currentWorkspaceId: newWorkspace.id,
+        currentWorkspaceId: workspaceId,
       },
       select: createUserSelect,
     });
 
     return user;
   });
+
+  promUserCounter.inc();
 
   return user;
 }
@@ -149,15 +173,36 @@ export async function createUserWithAuthjs(data: Omit<AdapterUser, 'id'>) {
   }
 
   const user = await prisma.$transaction(async (p) => {
-    const newWorkspace = await p.workspace.create({
-      data: {
-        name: data.name ?? data.email,
-      },
-    });
+    let workspaceId: string;
+    let workspaceRole: ROLES;
+
+    // Check if registerAutoJoinWorkspaceId is configured
+    if (env.registerAutoJoinWorkspaceId) {
+      // Verify the workspace exists
+      const targetWorkspace = await p.workspace.findUnique({
+        where: { id: env.registerAutoJoinWorkspaceId },
+      });
+
+      if (!targetWorkspace) {
+        throw new Error('Auto-join workspace not found');
+      }
+
+      workspaceId = env.registerAutoJoinWorkspaceId;
+      workspaceRole = ROLES.readOnly; // Default role for auto-joined users
+    } else {
+      // Create personal workspace as before
+      const newWorkspace = await p.workspace.create({
+        data: {
+          name: data.name ?? data.email,
+        },
+      });
+      workspaceId = newWorkspace.id;
+      workspaceRole = ROLES.owner;
+    }
 
     const user = await p.user.create({
       data: {
-        username: data.email,
+        username: data.email ?? data.name ?? '',
         nickname: data.name,
         password: await hashPassword(md5(String(Date.now()))),
         email: data.email,
@@ -167,12 +212,12 @@ export async function createUserWithAuthjs(data: Omit<AdapterUser, 'id'>) {
         workspaces: {
           create: [
             {
-              role: ROLES.owner,
-              workspaceId: newWorkspace.id,
+              role: workspaceRole,
+              workspaceId: workspaceId,
             },
           ],
         },
-        currentWorkspaceId: newWorkspace.id,
+        currentWorkspaceId: workspaceId,
       },
       select: createUserSelect,
     });
@@ -339,4 +384,66 @@ export async function leaveWorkspace(userId: string, workspaceId: string) {
     logger.error(err);
     throw new Error('Leave Workspace Failed.');
   }
+}
+
+/**
+ * Generate User Api Key, for user to call api
+ */
+export async function generateUserApiKey(
+  userId: string,
+  expiredAt?: Date,
+  description?: string | null
+) {
+  const apiKey = `sk_${sha256(`${userId}.${Date.now()}`)}`;
+
+  const result = await prisma.userApiKey.create({
+    data: {
+      apiKey,
+      userId,
+      expiredAt,
+      description,
+    },
+  });
+
+  return result.apiKey;
+}
+
+/**
+ * Verify User Api Key
+ */
+export async function verifyUserApiKey(apiKey: string) {
+  const result = await prisma.userApiKey.findUnique({
+    where: {
+      apiKey,
+    },
+    select: {
+      user: true,
+      expiredAt: true,
+    },
+  });
+
+  if (result?.expiredAt && result.expiredAt.valueOf() < Date.now()) {
+    throw Object.assign(new Error('API key has expired.'), { status: 401 });
+  }
+
+  if (!result) {
+    throw Object.assign(new Error('Invalid API key.'), { status: 401 });
+  }
+
+  prisma.userApiKey
+    .update({
+      where: {
+        apiKey,
+      },
+      data: {
+        usage: {
+          increment: 1,
+        },
+      },
+    })
+    .catch((err) => {
+      logger.error('Failed to update API key usage', err);
+    });
+
+  return result.user;
 }

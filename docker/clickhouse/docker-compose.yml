@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: tianji-clickhouse
+    ports:
+      - "127.0.0.1:8123:8123" # HTTP endpoint
+      # - "9000:9000" # Native endpoint
+      - "127.0.0.1:9004:9004" # Mysql endpoint
+    environment:
+      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
+      - CLICKHOUSE_DB=tianji
+      - CLICKHOUSE_USER=tianji
+      - CLICKHOUSE_PASSWORD=tianji
+    # volumes:
+    #   - clickhouse_data:/var/lib/clickhouse
+      # - ./config.xml:/etc/clickhouse-server/config.xml
+    restart: unless-stopped
+  ch-ui:
+    image: ghcr.io/caioricciuti/ch-ui:latest
+    restart: always
+    ports:
+      - "5521:5521"
+    environment:
+      VITE_CLICKHOUSE_URL: "http://127.0.0.1:8123"
+      VITE_CLICKHOUSE_USER: "tianji"
+      VITE_CLICKHOUSE_PASS: "tianji"
+
+# volumes:
+#   clickhouse_data:
+#     driver: local
+#   clickhouse_config:
+#     driver: local

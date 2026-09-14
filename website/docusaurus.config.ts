@@ -4,6 +4,7 @@
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import { themes } from 'prism-react-renderer';
+import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 
 const lightTheme = themes.github;
 const darkTheme = themes.dracula;
@@ -16,7 +17,7 @@ const config: Config = {
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://tianji.msgbyte.com',
+  url: 'https://tianji.dev',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
@@ -34,7 +35,7 @@ const config: Config = {
   // to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en', 'fr', 'de', 'id', 'ja', 'zh-Hans', 'es'],
   },
 
   presets: [
@@ -43,13 +44,13 @@ const config: Config = {
       /** @type {import('docusaurus-preset-openapi').Options} */
       {
         api: {
-          path: './openapi.json',
+          path: './static/openapi.json',
           routeBasePath: '/api',
         },
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           routeBasePath: '/docs',
-          editUrl: 'https://github.com/msgbyte/tianji/tree/main/website/',
+          editUrl: 'https://github.com/msgbyte/tianji/tree/master/website/',
         },
         theme: {
           customCss: [
@@ -57,11 +58,27 @@ const config: Config = {
             require.resolve('./src/css/custom.css'),
           ],
         },
+        // need .git file, not easy build in vercel with cli, ignore now
+        sitemap: {
+          lastmod: 'date',
+          changefreq: 'weekly',
+          priority: 0.5,
+          ignorePatterns: ['/tags/**'],
+          filename: 'sitemap.xml',
+          createSitemapItems: async (params) => {
+            const { defaultCreateSitemapItems, ...rest } = params;
+            const items = await defaultCreateSitemapItems(rest);
+            return items.filter((item) => !item.url.includes('/page/'));
+          },
+        },
       },
     ],
   ],
 
-  plugins: [require.resolve('docusaurus-plugin-image-zoom')],
+  plugins: [
+    require.resolve('docusaurus-plugin-image-zoom'),
+    TsConfigPathsPlugin,
+  ],
 
   themeConfig: {
     // Replace with your project's social card
@@ -73,6 +90,10 @@ const config: Config = {
           'opensource, free, tianji, umami, uptime, kuma, website, analysis, monitor, serverstatus, status page, docker',
       },
       { name: 'twitter:card', content: 'summary_large_image' },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:site_name', content: 'Tianji' },
+      { name: 'twitter:site', content: '@moonrailgun' },
+      { name: 'twitter:creator', content: '@moonrailgun' },
     ],
     colorMode: {
       defaultMode: 'dark',
@@ -96,8 +117,8 @@ const config: Config = {
         { to: '/changelog', label: 'Changelog', position: 'left' },
         { to: '/api', label: 'API', position: 'left' },
         {
-          href: 'https://demo.tianji.msgbyte.com/',
-          label: 'Demo',
+          href: 'https://app.tianji.dev/',
+          label: 'Cloud',
           position: 'right',
         },
         {
@@ -108,6 +129,10 @@ const config: Config = {
         {
           href: 'https://github.com/msgbyte/tianji',
           label: 'GitHub',
+          position: 'right',
+        },
+        {
+          type: 'localeDropdown',
           position: 'right',
         },
       ],
@@ -121,6 +146,10 @@ const config: Config = {
             {
               label: 'Tutorial',
               to: '/docs/intro',
+            },
+            {
+              label: 'Blog',
+              to: '/blog',
             },
           ],
         },
@@ -188,3 +217,16 @@ const config: Config = {
 };
 
 module.exports = config;
+
+function TsConfigPathsPlugin(context, options) {
+  return {
+    name: 'tsconfig-paths-plugin',
+    configureWebpack() {
+      return {
+        resolve: {
+          plugins: [new TsconfigPathsPlugin()],
+        },
+      };
+    },
+  };
+}

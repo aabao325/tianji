@@ -1,0 +1,29 @@
+import * as z from "zod"
+import * as imports from "./schemas/index.js"
+import { CompleteFunctionWorker, RelatedFunctionWorkerModelSchema, CompleteUser, RelatedUserModelSchema, CompleteFunctionWorkerRevisionModuleBinding, RelatedFunctionWorkerRevisionModuleBindingModelSchema } from "./index.js"
+
+export const FunctionWorkerRevisionModelSchema = z.object({
+  id: z.string(),
+  workerId: z.string(),
+  operatorId: z.string().nullish(),
+  revision: z.number().int(),
+  code: z.string(),
+  createdAt: z.date(),
+})
+
+export interface CompleteFunctionWorkerRevision extends z.infer<typeof FunctionWorkerRevisionModelSchema> {
+  worker: CompleteFunctionWorker
+  operator?: CompleteUser | null
+  moduleBindings: CompleteFunctionWorkerRevisionModuleBinding[]
+}
+
+/**
+ * RelatedFunctionWorkerRevisionModelSchema contains all relations on your model in addition to the scalars
+ *
+ * NOTE: Lazy required in case of potential circular dependencies within schema
+ */
+export const RelatedFunctionWorkerRevisionModelSchema: z.ZodSchema<CompleteFunctionWorkerRevision> = z.lazy(() => FunctionWorkerRevisionModelSchema.extend({
+  worker: RelatedFunctionWorkerModelSchema,
+  operator: RelatedUserModelSchema.nullish(),
+  moduleBindings: RelatedFunctionWorkerRevisionModuleBindingModelSchema.array(),
+}))

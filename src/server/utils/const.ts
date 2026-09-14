@@ -1,3 +1,9 @@
+/**
+ * This is the initial workspace id for the admin user.
+ */
+export const INIT_WORKSPACE_ID = 'clnzoxcy10001vy2ohi4obbi0';
+export const INIT_ADMIN_USER_ID = 'clnzoxcy00000vy2ork8praw0';
+
 export const COLLECTION_TYPE = {
   event: 'event',
   identify: 'identify',
@@ -41,6 +47,9 @@ export const MOBILE_SCREEN_WIDTH = 479;
 export const URL_LENGTH = 500;
 export const EVENT_NAME_LENGTH = 50;
 
+export const DATETIME_REGEX =
+  /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{3}(Z|\+[0-9]{2}:[0-9]{2})?)?$/;
+
 export const EVENT_TYPE = {
   pageView: 1,
   customEvent: 2,
@@ -54,7 +63,18 @@ export const DATA_TYPE = {
   array: 5,
 } as const;
 
-export const EVENT_COLUMNS = ['url', 'referrer', 'title', 'query', 'event'];
+export const EVENT_COLUMNS = [
+  'url',
+  'referrer',
+  'title',
+  'query',
+  'event',
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_term',
+  'utm_content',
+];
 
 export const SESSION_COLUMNS = [
   'browser',
@@ -97,6 +117,11 @@ export const FILTER_COLUMNS = {
   city: 'city',
   language: 'language',
   event: 'eventName',
+  utm_source: 'utmSource',
+  utm_medium: 'utmMedium',
+  utm_campaign: 'utmCampaign',
+  utm_term: 'utmTerm',
+  utm_content: 'utmContent',
 };
 
 export const DEFAULT_RESET_DATE = '2000-01-01';
@@ -106,10 +131,16 @@ export enum OPENAPI_TAG {
   WORKSPACE = 'Workspace',
   USER = 'User',
   WEBSITE = 'Website',
+  APPLICATION = 'Application',
   MONITOR = 'Monitor',
+  PAGE = 'Page',
   AUDIT_LOG = 'AuditLog',
   BILLING = 'Billing',
   TELEMETRY = 'Telemetry',
   SURVEY = 'Survey',
   FEED = 'Feed',
+  AI = 'AI',
+  AI_GATEWAY = 'AIGateway',
+  AI_ROUTER = 'AIRouter',
+  WORKER = 'Worker',
 }

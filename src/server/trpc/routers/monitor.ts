@@ -2,7 +2,7 @@ import {
   OpenApiMetaInfo,
   publicProcedure,
   router,
-  workspaceOwnerProcedure,
+  workspaceAdminProcedure,
   workspaceProcedure,
 } from '../trpc.js';
 import { prisma } from '../../model/_client.js';
@@ -11,6 +11,7 @@ import {
   getMonitorData,
   getMonitorPublicInfos,
   getMonitorRecentData,
+  getMonitorSummaryWithDay,
   monitorManager,
 } from '../../model/monitor/index.js';
 import dayjs from 'dayjs';
@@ -20,18 +21,18 @@ import {
   monitorStatusSchema,
 } from '../../model/_schema/index.js';
 import { OPENAPI_TAG } from '../../utils/const.js';
-import { OpenApiMeta } from 'trpc-openapi';
-import {
-  MonitorModelSchema,
-  MonitorStatusPageModelSchema,
-} from '../../prisma/zod/index.js';
-import { runCodeInVM } from '../../model/monitor/provider/custom.js';
+import { OpenApiMeta } from 'trpc-to-openapi';
+import { MonitorModelSchema } from '../../prisma/zod/index.js';
 import { createAuditLog } from '../../model/auditLog.js';
 import {
   MonitorInfoWithNotificationIds,
   monitorPublicInfoSchema,
 } from '../../model/_schema/monitor.js';
-import { monitorPageManager } from '../../model/monitor/page/manager.js';
+import { token } from '../../model/notification/token/index.js';
+import { runCodeInVM } from '../../utils/vm/index.js';
+import { nanoid } from 'nanoid';
+import { get } from 'lodash-es';
+import { logger } from '../../utils/logger.js';
 
 export const monitorRouter = router({
   all: workspaceProcedure
@@ -39,6 +40,7 @@ export const monitorRouter = router({
       buildMonitorOpenapi({
         method: 'GET',
         path: '/all',
+        summary: 'Get all monitors',
       })
     )
     .output(z.array(monitorInfoWithNotificationIdSchema))
@@ -66,7 +68,8 @@ export const monitorRouter = router({
     .meta(
       buildMonitorOpenapi({
         method: 'GET',
-        path: '/{monitorId}',
+        path: '/{monitorId}/get',
+        summary: 'Get monitor',
       })
     )
     .input(
@@ -100,6 +103,7 @@ export const monitorRouter = router({
         protect: false,
         method: 'POST',
         path: '/monitor/getPublicInfo',
+        summary: 'Get public info',
       },
     })
     .input(
@@ -113,11 +117,12 @@ export const monitorRouter = router({
 
       return getMonitorPublicInfos(monitorIds);
     }),
-  upsert: workspaceOwnerProcedure
+  upsert: workspaceAdminProcedure
     .meta(
       buildMonitorOpenapi({
         method: 'POST',
         path: '/upsert',
+        summary: 'Upsert monitor',
       })
     )
     .input(
@@ -131,6 +136,8 @@ export const monitorRouter = router({
         trendingMode: z.boolean().default(false),
         notificationIds: z.array(z.string()).default([]),
         payload: z.object({}).passthrough(),
+        upMessageTemplate: z.string().nullish(),
+        downMessageTemplate: z.string().nullish(),
       })
     )
     .output(MonitorModelSchema)
@@ -146,6 +153,8 @@ export const monitorRouter = router({
         trendingMode,
         notificationIds,
         payload,
+        upMessageTemplate,
+        downMessageTemplate,
       } = input;
 
       const monitor = await monitorManager.upsert({
@@ -159,15 +168,18 @@ export const monitorRouter = router({
         trendingMode,
         notificationIds,
         payload,
+        upMessageTemplate: upMessageTemplate || null,
+        downMessageTemplate: downMessageTemplate || null,
       });
 
       return monitor;
     }),
-  delete: workspaceOwnerProcedure
+  delete: workspaceAdminProcedure
     .meta(
       buildMonitorOpenapi({
         method: 'DELETE',
-        path: '/{monitorId}',
+        path: '/{monitorId}/del',
+        summary: 'Delete monitor',
       })
     )
     .input(
@@ -181,7 +193,63 @@ export const monitorRouter = router({
 
       return monitorManager.delete(workspaceId, monitorId);
     }),
-  testCustomScript: workspaceOwnerProcedure
+  regeneratePushToken: workspaceAdminProcedure
+    .meta(
+      buildMonitorOpenapi({
+        method: 'POST',
+        path: '/{monitorId}/regeneratePushToken',
+        summary: 'Regenerate push token',
+      })
+    )
+    .input(
+      z.object({
+        monitorId: z.string().cuid2(),
+      })
+    )
+    .output(z.string())
+    .mutation(async ({ input, ctx }) => {
+      const { workspaceId, monitorId } = input;
+
+      const monitor = await prisma.monitor.findUnique({
+        where: {
+          id: monitorId,
+          workspaceId,
+        },
+      });
+
+      if (!monitor) {
+        throw new Error('Monitor not found');
+      }
+
+      if (monitor.type !== 'push') {
+        throw new Error('This operation is only available for push monitors');
+      }
+
+      const newPushToken = nanoid(16);
+
+      await prisma.monitor.update({
+        where: {
+          id: monitorId,
+          workspaceId,
+        },
+        data: {
+          payload: {
+            ...monitor.payload,
+            pushToken: newPushToken,
+          },
+        },
+      });
+
+      await createAuditLog({
+        workspaceId,
+        relatedId: monitorId,
+        relatedType: 'Monitor',
+        content: `Monitor(id: ${monitorId}) push token regenerated by ${String(ctx.user.username)}(${ctx.user.id})`,
+      });
+
+      return newPushToken;
+    }),
+  testCustomScript: workspaceAdminProcedure
     .input(
       z.object({
         code: z.string(),
@@ -203,11 +271,90 @@ export const monitorRouter = router({
         usage: res.usage,
       };
     }),
+  testNotifyScript: workspaceAdminProcedure
+    .input(
+      z.object({
+        monitorId: z.string(),
+      })
+    )
+    .output(z.void())
+    .mutation(async ({ input }) => {
+      const { monitorId } = input;
+      const runner = monitorManager.getRunner(monitorId);
+      if (!runner) {
+        throw new Error('This monitor is not running or not existed.');
+      }
+
+      if (runner.monitor.notifications.length === 0) {
+        throw new Error('This monitor not has any notifications.');
+      }
+
+      await runner.notify('Test title', [
+        token.paragraph('Test content'),
+        token.paragraph(`Send from monitor: ${runner.monitor.name}`),
+        token.paragraph(`Date: ${runner.getCurrentTime()}`),
+      ]);
+    }),
+  triggerMonitor: workspaceProcedure
+    .meta(
+      buildMonitorOpenapi({
+        method: 'POST',
+        path: '/{monitorId}/trigger',
+        summary: 'Trigger monitor',
+      })
+    )
+    .input(
+      z.object({
+        monitorId: z.string(),
+      })
+    )
+    .output(z.void())
+    .mutation(async ({ input, ctx }) => {
+      const { workspaceId, monitorId } = input;
+      const user = ctx.user;
+
+      try {
+        const runner = await monitorManager.ensureRunner(
+          workspaceId,
+          monitorId
+        );
+
+        await runner.manualTrigger();
+
+        await createAuditLog({
+          workspaceId,
+          relatedId: monitorId,
+          relatedType: 'Monitor',
+          content: `Monitor(id: ${monitorId}) manual trigger by ${String(
+            user.username
+          )}(${String(user.id)})`,
+        });
+      } catch (err) {
+        const errorMessage = get(err, 'message', String(err));
+        logger.error(
+          `[Monitor] (id: ${monitorId}) manual trigger error:`,
+          errorMessage
+        );
+
+        // Create audit log for error
+        await createAuditLog({
+          workspaceId: workspaceId,
+          relatedId: monitorId,
+          relatedType: 'Monitor',
+          content: `Monitor(id: ${monitorId}) manual trigger error: ${errorMessage} by ${String(
+            user.username
+          )}(${String(user.id)})`,
+        });
+
+        throw new Error(`Manual trigger failed: ${errorMessage}`);
+      }
+    }),
   data: workspaceProcedure
     .meta(
       buildMonitorOpenapi({
         method: 'GET',
         path: '/{monitorId}/data',
+        summary: 'Get data',
       })
     )
     .input(
@@ -235,11 +382,12 @@ export const monitorRouter = router({
         new Date(endAt)
       );
     }),
-  changeActive: workspaceOwnerProcedure
+  changeActive: workspaceAdminProcedure
     .meta(
       buildMonitorOpenapi({
         method: 'PATCH',
         path: '/{monitorId}/changeActive',
+        summary: 'Change active status',
       })
     )
     .input(
@@ -253,30 +401,21 @@ export const monitorRouter = router({
       const { workspaceId, monitorId, active } = input;
       const user = ctx.user;
 
-      const monitor = await prisma.monitor.update({
-        where: {
-          workspaceId,
-          id: monitorId,
-        },
-        data: {
-          active,
-        },
-        include: {
-          notifications: true,
-        },
-      });
-      let runner = monitorManager.getRunner(monitorId);
-      if (!runner) {
-        runner = monitorManager.createRunner(monitor);
-      }
+      const { monitor } = await monitorManager.setActive(
+        workspaceId,
+        monitorId,
+        active
+      );
 
       if (active === true) {
-        runner.startMonitor();
-        runner.createEvent(
-          'UP',
-          `Monitor [${monitor.name}] has been manual start`
-        );
-        createAuditLog({
+        await prisma.monitorEvent.create({
+          data: {
+            monitorId,
+            type: 'UP',
+            message: `Monitor [${monitor.name}] has been manual start`,
+          },
+        });
+        await createAuditLog({
           workspaceId: workspaceId,
           relatedId: monitorId,
           relatedType: 'Monitor',
@@ -285,12 +424,14 @@ export const monitorRouter = router({
           )}(${String(user.id)})`,
         });
       } else {
-        runner.stopMonitor();
-        runner.createEvent(
-          'DOWN',
-          `Monitor [${monitor.name}] has been manual stop`
-        );
-        createAuditLog({
+        await prisma.monitorEvent.create({
+          data: {
+            monitorId,
+            type: 'DOWN',
+            message: `Monitor [${monitor.name}] has been manual stop`,
+          },
+        });
+        await createAuditLog({
           workspaceId: workspaceId,
           relatedId: monitorId,
           relatedType: 'Monitor',
@@ -308,6 +449,7 @@ export const monitorRouter = router({
         method: 'GET',
         protect: false,
         path: '/{monitorId}/recentData',
+        summary: 'Get recent data',
       })
     )
     .input(
@@ -330,11 +472,77 @@ export const monitorRouter = router({
 
       return getMonitorRecentData(workspaceId, monitorId, take);
     }),
+  publicSummary: publicProcedure
+    .meta(
+      buildMonitorOpenapi({
+        method: 'GET',
+        protect: false,
+        path: '/{monitorId}/publicSummary',
+        summary: 'Get public summary',
+      })
+    )
+    .input(
+      z.object({
+        workspaceId: z.string().cuid2(),
+        monitorId: z.string().cuid2(),
+      })
+    )
+    .output(
+      z.array(
+        z.object({
+          day: z.string(),
+          totalCount: z.number(),
+          upCount: z.number(),
+          upRate: z.number(),
+        })
+      )
+    )
+    .query(async ({ input, ctx }) => {
+      const { monitorId } = input;
+      const { timezone } = ctx;
+      const summary = await getMonitorSummaryWithDay(monitorId, 30, timezone);
+
+      return summary;
+    }),
+  publicData: publicProcedure
+    .meta(
+      buildMonitorOpenapi({
+        method: 'GET',
+        protect: false,
+        path: '/{monitorId}/publicData',
+        summary: 'Get public data',
+      })
+    )
+    .input(
+      z.object({
+        workspaceId: z.string().cuid2(),
+        monitorId: z.string().cuid2(),
+      })
+    )
+    .output(
+      z.array(
+        z.object({
+          value: z.number(),
+          createdAt: z.date(),
+        })
+      )
+    )
+    .query(async ({ input }) => {
+      const { workspaceId, monitorId } = input;
+
+      return getMonitorData(
+        workspaceId,
+        monitorId,
+        dayjs().subtract(1, 'days').toDate(),
+        dayjs().toDate()
+      );
+    }),
   dataMetrics: workspaceProcedure
     .meta(
       buildMonitorOpenapi({
         method: 'GET',
         path: '/{monitorId}/dataMetrics',
+        summary: 'Get data metrics',
       })
     )
     .input(
@@ -435,11 +643,12 @@ export const monitorRouter = router({
       buildMonitorOpenapi({
         method: 'GET',
         path: '/events',
+        summary: 'Get events',
       })
     )
     .input(
       z.object({
-        monitorId: z.string().cuid2().optional(),
+        monitorId: z.cuid2().optional(),
         limit: z.number().default(20),
       })
     )
@@ -462,11 +671,12 @@ export const monitorRouter = router({
 
       return list;
     }),
-  clearEvents: workspaceOwnerProcedure
+  clearEvents: workspaceAdminProcedure
     .meta(
       buildMonitorOpenapi({
         method: 'DELETE',
         path: '/clearEvents',
+        summary: 'Clear events',
       })
     )
     .input(
@@ -489,11 +699,12 @@ export const monitorRouter = router({
 
       return count;
     }),
-  clearData: workspaceOwnerProcedure
+  clearData: workspaceAdminProcedure
     .meta(
       buildMonitorOpenapi({
         method: 'DELETE',
         path: '/clearData',
+        summary: 'Clear data',
       })
     )
     .input(
@@ -521,6 +732,7 @@ export const monitorRouter = router({
       buildMonitorOpenapi({
         method: 'GET',
         path: '/{monitorId}/status',
+        summary: 'Get status',
       })
     )
     .input(
@@ -541,203 +753,6 @@ export const monitorRouter = router({
           },
         },
       });
-    }),
-  getAllPages: workspaceProcedure
-    .meta(
-      buildMonitorOpenapi({
-        method: 'GET',
-        path: '/getAllPages',
-      })
-    )
-    .output(z.array(MonitorStatusPageModelSchema))
-    .query(({ input }) => {
-      const { workspaceId } = input;
-
-      return prisma.monitorStatusPage.findMany({
-        where: {
-          workspaceId,
-        },
-        orderBy: {
-          updatedAt: 'desc',
-        },
-      });
-    }),
-  getPageInfo: publicProcedure
-    .meta({
-      openapi: {
-        tags: [OPENAPI_TAG.MONITOR],
-        method: 'GET',
-        path: '/monitor/getPageInfo',
-      },
-    })
-    .input(
-      z.object({
-        slug: z.string(),
-      })
-    )
-    .output(MonitorStatusPageModelSchema.nullable())
-    .query(({ input }) => {
-      const { slug } = input;
-
-      return prisma.monitorStatusPage.findUnique({
-        where: {
-          slug,
-        },
-      });
-    }),
-  createPage: workspaceOwnerProcedure
-    .meta(
-      buildMonitorOpenapi({
-        method: 'POST',
-        path: '/createStatusPage',
-      })
-    )
-    .input(
-      z
-        .object({
-          slug: z.string(),
-          title: z.string(),
-        })
-        .merge(
-          MonitorStatusPageModelSchema.pick({
-            description: true,
-            monitorList: true,
-            domain: true,
-          }).partial()
-        )
-    )
-    .output(MonitorStatusPageModelSchema)
-    .mutation(async ({ input }) => {
-      const { workspaceId, slug, title, description, monitorList, domain } =
-        input;
-
-      const existSlugCount = await prisma.monitorStatusPage.count({
-        where: {
-          slug,
-        },
-      });
-
-      if (existSlugCount > 0) {
-        throw new Error('This slug has been existed');
-      }
-
-      if (domain && !(await monitorPageManager.checkDomain(domain))) {
-        throw new Error('This domain has been used');
-      }
-
-      const page = await prisma.monitorStatusPage.create({
-        data: {
-          workspaceId,
-          slug,
-          title,
-          description,
-          monitorList,
-          domain: domain || null, // make sure not ''
-        },
-      });
-
-      if (page.domain) {
-        monitorPageManager.updatePageDomain(page.domain, {
-          workspaceId: page.workspaceId,
-          pageId: page.id,
-          slug: page.slug,
-        });
-      }
-
-      return page;
-    }),
-  editPage: workspaceOwnerProcedure
-    .meta(
-      buildMonitorOpenapi({
-        method: 'PATCH',
-        path: '/updateStatusPage',
-      })
-    )
-    .input(
-      MonitorStatusPageModelSchema.pick({
-        id: true,
-      }).merge(
-        MonitorStatusPageModelSchema.pick({
-          slug: true,
-          title: true,
-          description: true,
-          monitorList: true,
-          domain: true,
-        }).partial()
-      )
-    )
-    .output(MonitorStatusPageModelSchema)
-    .mutation(async ({ input }) => {
-      const { id, workspaceId, slug, title, description, monitorList, domain } =
-        input;
-
-      if (slug) {
-        const existSlugCount = await prisma.monitorStatusPage.count({
-          where: {
-            slug,
-            id: {
-              not: id,
-            },
-          },
-        });
-
-        if (existSlugCount > 0) {
-          throw new Error('This slug has been existed');
-        }
-      }
-
-      if (domain && !(await monitorPageManager.checkDomain(domain, id))) {
-        throw new Error('This domain has been used by others');
-      }
-
-      const page = await prisma.monitorStatusPage.update({
-        where: {
-          id,
-          workspaceId,
-        },
-        data: {
-          slug,
-          title,
-          description,
-          monitorList,
-          domain: domain || null,
-        },
-      });
-
-      if (page.domain) {
-        monitorPageManager.updatePageDomain(page.domain, {
-          workspaceId: page.workspaceId,
-          pageId: page.id,
-          slug: page.slug,
-        });
-      }
-
-      return page;
-    }),
-  deletePage: workspaceOwnerProcedure
-    .meta(
-      buildMonitorOpenapi({
-        method: 'DELETE',
-        path: '/deleteStatusPage',
-      })
-    )
-    .input(
-      MonitorStatusPageModelSchema.pick({
-        id: true,
-      })
-    )
-    .output(MonitorStatusPageModelSchema)
-    .mutation(async ({ input }) => {
-      const { id, workspaceId } = input;
-
-      const res = await prisma.monitorStatusPage.delete({
-        where: {
-          id,
-          workspaceId,
-        },
-      });
-
-      return res;
     }),
 });
 

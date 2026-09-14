@@ -6,7 +6,7 @@ import { CompleteWorkspace, RelatedWorkspaceModelSchema, CompleteWebsite, Relate
 type Literal = boolean | number | string
 type Json = Literal | { [key: string]: Json } | Json[]
 const literalSchema = z.union([z.string(), z.number(), z.boolean()])
-const jsonSchema: z.ZodSchema<Json> = z.lazy(() => z.union([literalSchema, z.array(jsonSchema), z.record(jsonSchema)]))
+const jsonSchema: z.ZodSchema<Json> = z.lazy(() => z.union([literalSchema, z.array(jsonSchema), z.record(z.string(), jsonSchema)]))
 
 export const MonitorModelSchema = z.object({
   id: z.string(),
@@ -21,6 +21,9 @@ export const MonitorModelSchema = z.object({
    */
   payload: imports.CommonPayloadSchema,
   trendingMode: z.boolean(),
+  recentError: z.string().nullish(),
+  upMessageTemplate: z.string().nullish(),
+  downMessageTemplate: z.string().nullish(),
   createdAt: z.date(),
   updatedAt: z.date(),
 })

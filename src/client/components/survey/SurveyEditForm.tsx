@@ -1,12 +1,7 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useTranslation } from '@i18next-toolkit/react';
+import { t, useTranslation } from '@i18next-toolkit/react';
 import { Button } from '@/components/ui/button';
-import { useEvent, useEventWithLoading } from '@/hooks/useEvent';
-import { useCurrentWorkspaceId } from '@/store/user';
-import { defaultErrorHandler, trpc } from '@/api/trpc';
+import { useEventWithLoading } from '@/hooks/useEvent';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { CommonWrapper } from '@/components/CommonWrapper';
-import { routeAuthBeforeLoad } from '@/utils/route';
 import { z } from 'zod';
 import {
   Form,
@@ -18,7 +13,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useForm, useFieldArray, useWatch } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { generateRandomString } from '@/utils/common';
 import { LuArrowDown, LuArrowUp, LuMinus, LuPlus } from 'react-icons/lu';
@@ -29,33 +24,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import React, { useState } from 'react';
+import React from 'react';
+import { useLocalStorageState } from 'ahooks';
 import { TipIcon } from '../TipIcon';
 import { cn } from '@/utils/style';
 import { Switch } from '../ui/switch';
 import { FeedChannelPicker } from '../feed/FeedChannelPicker';
+import { Textarea } from '../ui/textarea';
+
+const advancedModeStorageKey = 'tianji:survey:advanced-mode';
 
 const addFormSchema = z.object({
   name: z.string(),
+  desc: z.string().optional(),
   payload: z.object({
     items: z.array(
       z.object({
         label: z.string(),
         name: z.string(),
-        type: z.enum(['text', 'select', 'email']),
+        type: z.enum(['text', 'select', 'email', 'url', 'imageUrl', 'hidden']),
         options: z.array(z.string()).optional(),
       })
     ),
   }),
   feedChannelIds: z.array(z.string()),
   feedTemplate: z.string(),
+  webhookUrl: z.string().url().or(z.literal('')),
 });
 
 export type SurveyEditFormValues = z.infer<typeof addFormSchema>;
 
 function generateDefaultItem() {
   return {
-    label: 'New Field',
+    label: t('New Field'),
     name: 'field_' + generateRandomString(4),
     type: 'text' as const,
   };
@@ -69,17 +70,22 @@ export const SurveyEditForm: React.FC<SurveyEditFormProps> = React.memo(
   (props) => {
     const { t } = useTranslation();
 
-    const [advancedMode, setAdvancedMode] = useState(false);
+    const [advancedMode = false, setAdvancedMode] =
+      useLocalStorageState<boolean>(advancedModeStorageKey, {
+        defaultValue: false,
+      });
 
     const form = useForm<SurveyEditFormValues>({
       resolver: zodResolver(addFormSchema),
       defaultValues: props.defaultValues ?? {
         name: 'New Survey',
+        desc: '',
         payload: {
           items: [generateDefaultItem()],
         },
         feedChannelIds: [],
         feedTemplate: '',
+        webhookUrl: '',
       },
     });
 
@@ -87,7 +93,7 @@ export const SurveyEditForm: React.FC<SurveyEditFormProps> = React.memo(
 
     const [handleSubmit, isLoading] = useEventWithLoading(
       async (values: SurveyEditFormValues) => {
-        await props.onSubmit(values);
+        await props.onSubmit({ ...values });
         form.reset();
       }
     );
@@ -119,12 +125,29 @@ export const SurveyEditForm: React.FC<SurveyEditFormProps> = React.memo(
                 )}
               />
 
+              <FormField
+                control={form.control}
+                name="desc"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel optional={true}>{t('Description')}</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      {t('Survey description to display on public page')}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <div className="border-muted mt-2 rounded-lg border p-4">
                 <h2 className="mb-2 font-bold leading-6">{t('Form Info')}</h2>
                 <div className="flex items-center justify-end gap-2">
                   <Switch
                     checked={advancedMode}
-                    onCheckedChange={(checked) => setAdvancedMode(checked)}
+                    onCheckedChange={setAdvancedMode}
                   />
                   <div className="text-sm">{t('Advanced Mode')}</div>
                 </div>
@@ -157,32 +180,40 @@ export const SurveyEditForm: React.FC<SurveyEditFormProps> = React.memo(
                       </FormItem>
                     )}
 
-                    <FormItem>
-                      <FormLabel>{t('Type')}</FormLabel>
-                      <FormControl>
-                        <Select
-                          defaultValue="text"
-                          onValueChange={(val) =>
-                            form.setValue(`payload.items.${i}.type`, val as any)
-                          }
-                        >
-                          <SelectTrigger
-                            className="w-[100px]"
-                            {...form.register(`payload.items.${i}.type`)}
+                    <FormField
+                      control={form.control}
+                      name={`payload.items.${i}.type`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('Type')}</FormLabel>
+                          <Select
+                            value={field.value}
+                            onValueChange={field.onChange}
                           >
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="text">{t('Text')}</SelectItem>
-                            <SelectItem value="email">{t('Email')}</SelectItem>
-                            {/* <SelectItem value="select">
-                              {t('Select')}
-                            </SelectItem> */}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                            <FormControl>
+                              <SelectTrigger className="w-[130px]">
+                                <SelectValue />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="text">{t('Text')}</SelectItem>
+                              <SelectItem value="email">{t('Email')}</SelectItem>
+                              <SelectItem value="url">{t('Url')}</SelectItem>
+                              <SelectItem value="imageUrl">
+                                {t('Image Url')}
+                              </SelectItem>
+                              <SelectItem value="hidden">
+                                {t('Hidden Field')}
+                              </SelectItem>
+                              {/* <SelectItem value="select">
+                                {t('Select')}
+                              </SelectItem> */}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
                     {/* actions */}
                     <div className="grid min-w-10 grid-flow-col grid-cols-2 grid-rows-2 gap-0.5 self-end">
@@ -252,7 +283,7 @@ export const SurveyEditForm: React.FC<SurveyEditFormProps> = React.memo(
                 name="feedChannelIds"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('Feed Channels')}</FormLabel>
+                    <FormLabel optional={true}>{t('Feed Channels')}</FormLabel>
                     <FormControl className="w-full">
                       <FeedChannelPicker
                         allowClear={true}
@@ -277,7 +308,9 @@ export const SurveyEditForm: React.FC<SurveyEditFormProps> = React.memo(
                       <FormLabel>{t('Feed Template')}</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="survey {{_surveyName}} receive a new record."
+                          placeholder={t(
+                            'survey {{_surveyName}} receive a new record.'
+                          )}
                           {...field}
                         />
                       </FormControl>
@@ -297,6 +330,23 @@ export const SurveyEditForm: React.FC<SurveyEditFormProps> = React.memo(
                   )}
                 />
               )}
+
+              <FormField
+                control={form.control}
+                name="webhookUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel optional={true}>{t('Webhook Url')}</FormLabel>
+                    <FormControl className="w-full">
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      {t('Optional, webhook url to send survey payload')}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
 
             <CardFooter>

@@ -1,4 +1,5 @@
 import { Auth, AuthConfig, createActionURL } from '@auth/core';
+import { type Provider } from '@auth/core/providers';
 import Nodemailer from '@auth/core/providers/nodemailer';
 import Credentials from '@auth/core/providers/credentials';
 import Github from '@auth/core/providers/github';
@@ -20,6 +21,7 @@ import { SYSTEM_ROLES } from '@tianji/shared';
 import { IncomingMessage } from 'http';
 import { type Session } from '@auth/express';
 import { compact, set } from 'lodash-es';
+import { logger } from '../utils/logger.js';
 
 export interface UserAuthPayload {
   id: string;
@@ -31,6 +33,10 @@ export const authConfig: Omit<AuthConfig, 'raw'> = {
   debug: env.isProd ? false : true,
   basePath: '/api/auth',
   trustHost: true,
+  useSecureCookies:
+    typeof env.auth.useSecureCookies === 'boolean'
+      ? env.auth.useSecureCookies
+      : undefined,
   providers: compact([
     Credentials({
       id: 'account',
@@ -81,6 +87,7 @@ export const authConfig: Omit<AuthConfig, 'raw'> = {
       Github({
         id: 'github',
         name: 'Github',
+        issuer: 'https://github.com/login/oauth',
         ...env.auth.github,
       }),
     env.auth.provider.includes('google') &&
@@ -89,6 +96,11 @@ export const authConfig: Omit<AuthConfig, 'raw'> = {
         name: 'Google',
         ...env.auth.google,
       }),
+    env.auth.provider.includes('custom') &&
+      ({
+        id: 'custom',
+        ...env.auth.custom,
+      } as Provider),
   ]),
   adapter: TianjiPrismaAdapter(prisma),
   secret: env.auth.secret,
@@ -145,6 +157,13 @@ export async function getAuthSession(
     authConfig.basePath
   );
 
+  if (!req.headers.cookie) {
+    logger.warn('No cookie in request, can not get auth session:', {
+      protocol,
+      headers: req.headers,
+    });
+  }
+
   const response = await Auth(
     new Request(url, { headers: { cookie: req.headers.cookie ?? '' } }),
     authConfig
@@ -152,9 +171,23 @@ export async function getAuthSession(
 
   const { status = 200 } = response;
 
-  const data = await response.json();
+  // Read text first to avoid "Body has already been read" error
+  const raw = await response.text();
+
+  let data;
+  try {
+    data = JSON.parse(raw);
+  } catch (error) {
+    logger.error('Failed to parse auth session response:', error);
+    return null;
+  }
 
   if (!data || !Object.keys(data).length) {
+    logger.error('Can not get info, auth session raw:', {
+      raw,
+      protocol,
+      headers: req.headers,
+    });
     return null;
   }
 
@@ -185,8 +218,10 @@ function TianjiPrismaAdapter(
   const p = prisma as PrismaClient;
 
   return {
-    // We need to let Prisma generate the ID because our default UUID is incompatible with MongoDB
     createUser: async ({ id: _id, ...data }) => {
+      if (!data.email) {
+        data.email = `${_id}@auth.tianji.com`;
+      }
       const user = await createUserWithAuthjs(data);
 
       return toAdapterUser(user);

@@ -13,6 +13,7 @@ module.exports = {
       './components/**/*.{js,jsx,ts,tsx}',
       './pages/**/*.{js,jsx,ts,tsx}',
       './routes/**/*.{js,jsx,ts,tsx}',
+      './utils/health.ts',
     ],
   },
   theme: {
@@ -24,6 +25,9 @@ module.exports = {
       },
     },
     extend: {
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+      },
       colors: {
         gray: colors.neutral,
         border: 'hsl(var(--border))',

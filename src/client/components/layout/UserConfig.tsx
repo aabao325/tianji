@@ -15,20 +15,24 @@ import {
   DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
 import { useEvent } from '@/hooks/useEvent';
-import { useSettingsStore } from '@/store/settings';
+import { updateColorScheme, useSettingsStore } from '@/store/settings';
 import {
   setUserInfo,
+  useCurrentWorkspace,
   useCurrentWorkspaceId,
   useUserInfo,
   useUserStore,
 } from '@/store/user';
-import { languages } from '@/utils/constants';
+import { languages } from '@/utils/i18n';
 import { useTranslation, setLanguage } from '@i18next-toolkit/react';
 import { useNavigate } from '@tanstack/react-router';
 import { version } from '@/utils/env';
 import React from 'react';
-import { LuMoreVertical } from 'react-icons/lu';
+import { LuEllipsisVertical } from 'react-icons/lu';
 import { trpc } from '@/api/trpc';
+import { useSocketConnected } from '@/api/socketio';
+import { cn } from '@/utils/style';
+import { recordEvent } from '@/utils/tracker';
 
 interface UserConfigProps {
   isCollapsed: boolean;
@@ -39,6 +43,7 @@ export const UserConfig: React.FC<UserConfigProps> = React.memo((props) => {
   const navigate = useNavigate();
   const colorScheme = useSettingsStore((state) => state.colorScheme);
   const workspaceId = useCurrentWorkspaceId();
+  const currentWorkspace = useCurrentWorkspace();
   const workspaces = useUserStore((state) => {
     const userInfo = state.info;
     if (userInfo) {
@@ -46,7 +51,7 @@ export const UserConfig: React.FC<UserConfigProps> = React.memo((props) => {
         id: w.workspace.id,
         name: w.workspace.name,
         role: w.role,
-        current: userInfo.currentWorkspace?.id === w.workspace.id,
+        current: currentWorkspace.id === w.workspace.id,
       }));
     }
 
@@ -57,20 +62,36 @@ export const UserConfig: React.FC<UserConfigProps> = React.memo((props) => {
       setUserInfo(userInfo);
     },
   });
+  const socketConnected = useSocketConnected();
 
   const handleChangeColorSchema = useEvent((colorScheme) => {
-    useSettingsStore.setState({
-      colorScheme,
-    });
+    updateColorScheme(colorScheme);
+  });
+
+  const handleOpenChange = useEvent((open) => {
+    if (open) {
+      recordEvent('user_config_menu_open');
+    }
   });
 
   const nickname = userInfo?.nickname ?? userInfo?.username ?? '';
 
   const avatar = (
-    <Avatar size={props.isCollapsed ? 'sm' : 'default'}>
-      <AvatarImage src={userInfo?.avatar ?? undefined} />
-      <AvatarFallback>{nickname.substring(0, 2).toUpperCase()}</AvatarFallback>
-    </Avatar>
+    <div className="relative">
+      <Avatar size={props.isCollapsed ? 'sm' : 'default'}>
+        {userInfo?.avatar && <AvatarImage src={userInfo.avatar} />}
+
+        <AvatarFallback delayMs={userInfo?.avatar ? undefined : 0}>
+          {nickname.substring(0, 2).toUpperCase()}
+        </AvatarFallback>
+      </Avatar>
+      <div
+        className={cn(
+          'absolute bottom-0 right-0 h-2 w-2 rounded-full border border-white border-opacity-50',
+          socketConnected ? 'bg-green-400' : 'bg-gray-400'
+        )}
+      />
+    </div>
   );
 
   const name = (
@@ -81,13 +102,13 @@ export const UserConfig: React.FC<UserConfigProps> = React.memo((props) => {
 
   const more = (
     <Button variant="outline" size="icon" className="shrink-0">
-      <LuMoreVertical />
+      <LuEllipsisVertical />
     </Button>
   );
 
   return (
     <div className="flex items-center gap-2 p-2">
-      <DropdownMenu>
+      <DropdownMenu onOpenChange={handleOpenChange}>
         {props.isCollapsed ? (
           <>
             <DropdownMenuTrigger asChild={true} className="cursor-pointer">
@@ -156,7 +177,7 @@ export const UserConfig: React.FC<UserConfigProps> = React.memo((props) => {
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
                 <DropdownMenuRadioGroup
-                  value={i18n.language}
+                  value={i18n.language ?? 'en'}
                   onValueChange={setLanguage}
                 >
                   {languages.map((language) => (
@@ -180,6 +201,9 @@ export const UserConfig: React.FC<UserConfigProps> = React.memo((props) => {
                   value={colorScheme}
                   onValueChange={handleChangeColorSchema}
                 >
+                  <DropdownMenuRadioItem value={'system'}>
+                    {t('System')}
+                  </DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value={'dark'}>
                     {t('Dark')}
                   </DropdownMenuRadioItem>
@@ -194,7 +218,7 @@ export const UserConfig: React.FC<UserConfigProps> = React.memo((props) => {
           <DropdownMenuSeparator />
 
           <DropdownMenuItem
-            onClick={() => window.open('https://tianji.msgbyte.com/docs/intro')}
+            onClick={() => window.open('https://tianji.dev/docs/intro')}
           >
             {t('Document')}
           </DropdownMenuItem>
@@ -218,7 +242,7 @@ export const UserConfig: React.FC<UserConfigProps> = React.memo((props) => {
             </DropdownMenuPortal>
           </DropdownMenuSub>
 
-          <DropdownMenuLabel className="text-muted-foreground dark:text-muted">
+          <DropdownMenuLabel className="text-gray-500">
             v{version}
           </DropdownMenuLabel>
         </DropdownMenuContent>

@@ -7,8 +7,10 @@ import { useIsLogined } from '../store/user';
 
 const useSocketStore = create<{
   socket: Socket | null;
+  connected: boolean;
 }>(() => ({
   socket: null,
+  connected: false,
 }));
 
 export function createSocketIOClient(workspaceId: string) {
@@ -21,6 +23,24 @@ export function createSocketIOClient(workspaceId: string) {
     transports: ['websocket'],
     reconnectionDelayMax: 10000,
     forceNew: true,
+  });
+
+  socket.on('connect', () => {
+    useSocketStore.setState({
+      connected: true,
+    });
+  });
+
+  socket.on('disconnect', () => {
+    useSocketStore.setState({
+      connected: false,
+    });
+  });
+
+  socket.on('connect_error', () => {
+    useSocketStore.setState({
+      connected: false,
+    });
   });
 
   useSocketStore.setState({
@@ -89,7 +109,24 @@ export function useSocket() {
   return { socket, emit, subscribe };
 }
 
-export function useSocketSubscribe<T>(
+export function useSocketSubscribe<K extends keyof SubscribeEventMap>(
+  name: K,
+  cb: (data: SubscribeEventData<K>) => void
+) {
+  const { subscribe } = useSocket();
+
+  const fn = useEvent(cb);
+
+  useEffect(() => {
+    const unsubscribe = subscribe(name, fn);
+
+    return () => {
+      unsubscribe();
+    };
+  }, [name]);
+}
+
+export function useSocketSubscribeData<T>(
   name: keyof SubscribeEventMap,
   defaultData: T
 ): T {
@@ -109,6 +146,10 @@ export function useSocketSubscribe<T>(
   }, [name]);
 
   return data;
+}
+
+export function useSocketConnected() {
+  return useSocketStore((state) => state.connected);
 }
 
 interface UseSocketSubscribeListOptions<K, T> {
